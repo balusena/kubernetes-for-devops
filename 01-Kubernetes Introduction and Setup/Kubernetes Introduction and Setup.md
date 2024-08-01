@@ -79,10 +79,10 @@ broad ecosystem of tools, enhancing its functionality and adaptability to divers
    This includes:
 
     1. **Horizontal Pod Autoscaler (HPA)**: Adjusts the number of pod replicas based on CPU usage, memory 
-      usage, or other custom metrics, ensuring the application can handle varying loads.
+       usage, or other custom metrics, ensuring the application can handle varying loads.
    
     2. **Vertical Pod Autoscaler (VPA)**: Adjusts the resource limits and requests for containers to optimize 
-      resource usage and maintain performance.
+       resource usage and maintain performance.
    
     3. **Cluster Autoscaler (CA)**: Adjusts the number of nodes in the cluster based on the demands of the 
        workloads.If there are insufficient resources to schedule new pods, the Cluster Autoscaler will add 
