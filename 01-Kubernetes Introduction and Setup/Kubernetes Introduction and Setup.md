@@ -96,6 +96,120 @@ environments.
 
 ![Kubernetes Architecture](https://github.com/balusena/kubernetes-for-devops/blob/main/01-Kubernetes%20Introduction%20and%20Setup/kubernetes_architecture.png)
 
+Kubernetes is an open-source platform designed to manage containerized applications. Its architecture 
+is divided into several components and is organized into master (control plane) nodes and worker nodes. 
+Below is an overview of these components and their roles:
+
+## Master Node (Control Plane) Components
+
+The master node manages the Kubernetes cluster and includes the following components:
+
+- **API Server (`kube-apiserver`)**
+   - **Role:** Serves as the entry point for all API requests.
+   - **Function:** Handles CRUD operations for Kubernetes resources and serves as the communication hub between various components.
+
+- **Controller Manager (`kube-controller-manager`)**
+   - **Role:** Governs controllers that manage the state of the cluster.
+   - **Function:** Ensures the desired state of resources like Deployments, ReplicaSets, and StatefulSets is maintained by performing actions such as scaling pods or replacing failed ones.
+
+- **Scheduler (`kube-scheduler`)**
+   - **Role:** Assigns new pods to nodes.
+   - **Function:** Determines the most suitable nodes for running pods based on resource availability and constraints.
+
+- **etcd**
+   - **Role:** A distributed key-value store for cluster data.
+   - **Function:** Stores all cluster state data, including configurations, metadata, and the current state of resources.
+
+- **Cloud Controller Manager (`cloud-controller-manager`)**
+   - **Role:** Manages interactions with cloud providers.
+   - **Function:** Handles cloud-specific tasks like managing load balancers, volumes, and other resources that are specific to cloud environments.
+
+## Worker Node Components
+
+Worker nodes are responsible for running application workloads. Each worker node includes the following components:
+
+- **Kubelet**
+   - **Role:** Manages the state of containers on the node.
+   - **Function:** Ensures that containers are running as expected, communicates with the API server, and manages pod lifecycle.
+
+- **Kube-Proxy**
+   - **Role:** Manages network communication.
+   - **Function:** Maintains network rules on each node and handles service discovery and load balancing for services.
+
+- **Container Runtime**
+   - **Role:** Executes containerized applications.
+   - **Function:** Handles container creation, execution, and management. Examples include Docker, containerd, and CRI-O.
+
+## Additional Components and Resources
+
+- **Pods**
+   - **Role:** The smallest deployable unit in Kubernetes.
+   - **Function:** Encapsulates one or more containers, along with storage and networking. Pods are the basic unit of execution.
+
+- **Services**
+   - **Role:** Provides a stable network endpoint for accessing pods.
+   - **Function:** Abstracts and load-balances access to a set of pods and provides a consistent way to access them.
+
+- **Deployments**
+   - **Role:** Manages the deployment and scaling of pods.
+   - **Function:** Manages the creation and scaling of pod replicas and facilitates rolling updates and rollbacks.
+
+- **ConfigMaps**
+   - **Role:** Manages configuration data.
+   - **Function:** Stores configuration data that can be consumed by pods.
+
+- **Secrets**
+   - **Role:** Manages sensitive data.
+   - **Function:** Stores sensitive information like passwords and API keys securely.
+
+- **Namespaces**
+   - **Role:** Provides a mechanism for isolating resources.
+   - **Function:** Organizes resources within a cluster into logical groups, often used for separating different environments or teams.
+
+- **Ingress**
+   - **Role:** Manages external access to services.
+   - **Function:** Provides HTTP and HTTPS routing rules for services and integrates with load balancers or reverse proxies.
+
+- **Volumes**
+   - **Role:** Manages persistent storage.
+   - **Function:** Provides storage that can be shared and persisted beyond the lifecycle of individual pods.
+
+## Visual Representation
+
+Below is a simplified view of how these components fit together:
+
+                            +---------------------+
+                            |      Master Node    |
+                            |  (Control Plane)    |
+                            +---------------------+
+                            |  - API Server       |
+                            |  - Controller Manager|
+                            |  - Scheduler        |
+                            |  - etcd             |
+                            |  - Cloud Controller |
+                            |    Manager          |
+                            +---------------------+
+                                     |
+                                     |
+                +--------------------+-------------------+
+                |                                        |
++------------+------------+                +-----------+-----------+
+|       Worker Node       |                |      Worker Node       |
++-------------------------+                +------------------------+
+|  - Kubelet              |                |  - Kubelet             |
+|  - Kube-Proxy           |                |  - Kube-Proxy          |
+|  - Container Runtime    |                |  - Container Runtime   |
+|  - Pods                 |                |  - Pods                |
+|  - Volumes              |                |  - Volumes             |
++-------------------------+                +------------------------+
+
+In this architecture:
+- **Master Node** manages the overall cluster and ensures the desired state of the system.
+- **Worker Nodes** run the actual applications and manage container execution and networking.
+
+
+
+
 
 
 
