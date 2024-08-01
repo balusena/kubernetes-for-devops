@@ -93,8 +93,8 @@ applications, providing automation, resilience, and scalability necessary for mo
 environments.
 
 ## Kubernetes Architecture
-![Kubernetes Architecture](https://github.com/balusena/kubernetes-for-devops/blob/main/01-Kubernetes%20Introduction%20and%20and%20Setup/kubernetes_architecture.png)
 
+![Kubernetes Architecture](https://github.com/balusena/kubernetes-for-devops/blob/main/01-Kubernetes%20Introduction%20and%20Setup/kubernetes_architecture.png)
 
 
 
