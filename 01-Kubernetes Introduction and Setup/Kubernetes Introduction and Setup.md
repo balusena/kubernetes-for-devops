@@ -178,7 +178,6 @@ Worker nodes are responsible for running application workloads. Each worker node
 
 Below is a simplified view of how these components fit together:
 ```
-
                             +---------------------+
                             |      Master Node    |
                             |  (Control Plane)    |
@@ -194,16 +193,16 @@ Below is a simplified view of how these components fit together:
                                      |
                 +--------------------+-------------------+
                 |                                        |
-+------------+------------+                +-----------+-----------+
-|       Worker Node       |                |      Worker Node       |
-+-------------------------+                +------------------------+
-|  - Kubelet              |                |  - Kubelet             |
-|  - Kube-Proxy           |                |  - Kube-Proxy          |
-|  - Container Runtime    |                |  - Container Runtime   |
-|  - Pods                 |                |  - Pods                |
-|  - Volumes              |                |  - Volumes             |
-+-------------------------+                +------------------------+
-
+   +------------+------------+                +-----------+-----------+
+   |       Worker Node       |                |      Worker Node       |
+   +-------------------------+                +------------------------+
+   |  - Kubelet              |                |  - Kubelet             |
+   |  - Kube-Proxy           |                |  - Kube-Proxy          |
+   |  - Container Runtime    |                |  - Container Runtime   |
+   |  - Pods                 |                |  - Pods                |
+   |  - Volumes              |                |  - Volumes             |
+   +-------------------------+                +------------------------+
+                         
 ```
 In this architecture:
 - **Master Node** manages the overall cluster and ensures the desired state of the system.
