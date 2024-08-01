@@ -92,6 +92,10 @@ These features collectively make Kubernetes a powerful and flexible platform for
 applications, providing automation, resilience, and scalability necessary for modern cloud-native 
 environments.
 
+## Kubernetes Architecture
+
+![Kubernetes Architecture](https://github.com/balusena/kubernetes-for-devops/blob/main/01-Kubernetes%20Introduction%20and%20and%20Setup/kubernetes_architecture.png)
+
 
 
 
