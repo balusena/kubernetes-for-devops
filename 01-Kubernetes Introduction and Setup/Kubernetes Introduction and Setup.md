@@ -78,15 +78,15 @@ broad ecosystem of tools, enhancing its functionality and adaptability to divers
    Kubernetes can automatically scale applications up or down based on resource utilization or custom metrics.
    This includes:
 
-    1. **Horizontal Pod Autoscaler (HPA)**: Adjusts the number of pod replicas based on CPU usage, memory 
-       usage, or other custom metrics, ensuring the application can handle varying loads.
+      1.**Horizontal Pod Autoscaler (HPA)**: Adjusts the number of pod replicas based on CPU usage, memory 
+        usage, or other custom metrics, ensuring the application can handle varying loads.
    
-    2. **Vertical Pod Autoscaler (VPA)**: Adjusts the resource limits and requests for containers to optimize 
-       resource usage and maintain performance.
+      2.**Vertical Pod Autoscaler (VPA)**: Adjusts the resource limits and requests for containers to optimize 
+        resource usage and maintain performance.
    
-    3. **Cluster Autoscaler (CA)**: Adjusts the number of nodes in the cluster based on the demands of the 
-       workloads.If there are insufficient resources to schedule new pods, the Cluster Autoscaler will add 
-       more nodes.Conversely, it will remove underutilized nodes to reduce costs.
+      3.**Cluster Autoscaler (CA)**: Adjusts the number of nodes in the cluster based on the demands of the 
+        workloads.If there are insufficient resources to schedule new pods, the Cluster Autoscaler will add 
+        more nodes.Conversely, it will remove underutilized nodes to reduce costs.
 
 These features collectively make Kubernetes a powerful and flexible platform for managing containerized 
 applications, providing automation, resilience, and scalability necessary for modern cloud-native 
