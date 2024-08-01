@@ -177,6 +177,7 @@ Worker nodes are responsible for running application workloads. Each worker node
 ## Visual Representation
 
 Below is a simplified view of how these components fit together:
+```
 
                             +---------------------+
                             |      Master Node    |
@@ -203,6 +204,7 @@ Below is a simplified view of how these components fit together:
 |  - Volumes              |                |  - Volumes             |
 +-------------------------+                +------------------------+
 
+```
 In this architecture:
 - **Master Node** manages the overall cluster and ensures the desired state of the system.
 - **Worker Nodes** run the actual applications and manage container execution and networking.
