@@ -78,13 +78,13 @@ broad ecosystem of tools, enhancing its functionality and adaptability to divers
    Kubernetes can automatically scale applications up or down based on resource utilization or custom metrics.
    This includes:
 
-    - **Horizontal Pod Autoscaler (HPA)**: Adjusts the number of pod replicas based on CPU usage, memory 
+    1.**Horizontal Pod Autoscaler (HPA)**: Adjusts the number of pod replicas based on CPU usage, memory 
       usage, or other custom metrics, ensuring the application can handle varying loads.
    
-    - **Vertical Pod Autoscaler (VPA)**: Adjusts the resource limits and requests for containers to optimize 
+    2.**Vertical Pod Autoscaler (VPA)**: Adjusts the resource limits and requests for containers to optimize 
       resource usage and maintain performance.
    
-    - **Cluster Autoscaler**: Adjusts the number of nodes in the cluster based on the demands of the workloads.
+    3.**Cluster Autoscaler**: Adjusts the number of nodes in the cluster based on the demands of the workloads.
       If there are insufficient resources to schedule new pods, the Cluster Autoscaler will add more nodes. 
       Conversely, it will remove underutilized nodes to reduce costs.
 
