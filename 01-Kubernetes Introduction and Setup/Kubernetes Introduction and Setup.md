@@ -178,22 +178,22 @@ Worker nodes are responsible for running application workloads. Each worker node
 
 Below is a simplified view of how these components fit together:
 ```
-                            +---------------------+
-                            |      Master Node    |
-                            |  (Control Plane)    |
-                            +---------------------+
-                            |  - API Server       |
+                            +----------------------+
+                            |      Master Node     |
+                            |    (Control Plane)   |
+                            +----------------------+
+                            |  - API Server        |
                             |  - Controller Manager|
-                            |  - Scheduler        |
-                            |  - etcd             |
-                            |  - Cloud Controller |
-                            |    Manager          |
-                            +---------------------+
-                                     |
-                                     |
-                +--------------------+-------------------+
-                |                                        |
-   +------------+------------+                +-----------+-----------+
+                            |  - Scheduler         |
+                            |  - etcd              |
+                            |  - Cloud Controller  |
+                            |    Manager           |
+                            +----------------------+
+                                       |
+                                       |
+                +----------------------+------------------+
+                |                                         |
+   +------------+------------+                +-----------+------------+
    |       Worker Node       |                |      Worker Node       |
    +-------------------------+                +------------------------+
    |  - Kubelet              |                |  - Kubelet             |
