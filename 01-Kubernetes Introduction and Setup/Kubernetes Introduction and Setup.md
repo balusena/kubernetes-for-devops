@@ -532,14 +532,174 @@ ubuntu@balasenapathi:~$ minikube stop
 ✋  Stopping node "minikube"  ...
 🛑  1 node stopped.
 ```
-### 9.Running Docker in Minikube
+
+## **Multi-node Minikube Kubernetes cluster**
+
+### 1.Start Minikube with Multiple Nodes
+```
+ubuntu@balasenapathi:~$ minikube start --nodes 2 -p local-cluster --driver=docker
+😄  [local-cluster] minikube v1.31.1 on Ubuntu 20.04
+✨  Using the docker driver based on user configuration
+📌  Using Docker driver with root privileges
+👍  Starting control plane node local-cluster in cluster local-cluster
+🚜  Pulling base image ...
+🔥  Creating docker container (CPUs=2, Memory=2200MB) ...
+🎉  minikube 1.31.2 is available! Download it: https://github.com/kubernetes/minikube/releases/tag/v1.31.2
+💡  To disable this notice, run: 'minikube config set WantUpdateNotification false'
+
+🐳  Preparing Kubernetes v1.27.3 on Docker 24.0.4 ...
+    ▪ Generating certificates and keys ...
+    ▪ Booting up control plane ...
+    ▪ Configuring RBAC rules ...
+🔗  Configuring CNI (Container Networking Interface) ...
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🔎  Verifying Kubernetes components...
+🌟  Enabled addons: storage-provisioner, default-storageclass
+
+👍  Starting worker node local-cluster-m02 in cluster local-cluster
+🚜  Pulling base image ...
+🔥  Creating docker container (CPUs=2, Memory=2200MB) ...
+🌐  Found network options:
+    ▪ NO_PROXY=192.168.58.2
+🐳  Preparing Kubernetes v1.27.3 on Docker 24.0.4 ...
+    ▪ env NO_PROXY=192.168.58.2
+🔎  Verifying Kubernetes components...
+🏄  Done! kubectl is now configured to use "local-cluster" cluster and "default" namespace by default
+```
+This setup creates a multi-node Kubernetes environment within Docker containers. The control plane and 
+worker nodes are managed by Minikube, and kubectl is configured to use the newly created cluster.
+
+### 2.Checking the Status of Minikube with Cluster Name -- local-cluster
+```
+ubuntu@balasenapathi:~$ minikube status -p local-cluster
+local-cluster
+type: Control Plane
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
+
+local-cluster-m02
+type: Worker
+host: Running
+kubelet: Running
+```
+**Note:**
+Here,we are mimicking a multi-node cluster on our local machine using containers.However,in a production
+environment,it is not recommended to use Minikube or kind.For production setups,we use individual machines
+to create clusters with tools like kubeadm, Rancher Kubernetes Engine, or managed clusters like AWS EKS, 
+etc. This local setup is intended for practice on your local laptops.
+
+### 3.To Get the Nodes in the Cluster
+
+```
+ubuntu@balasenapathi:~$ kubectl get nodes
+NAME                STATUS   ROLES           AGE   VERSION
+local-cluster       Ready    control-plane   98m   v1.27.3
+local-cluster-m02   Ready    <none>          93m   v1.27.3
+```
+**Note:**
+Here, we created two nodes, with each node running as a container.
+
+### 4.To view the running Docker containers, use:
+```
+ubuntu@balasenapathi:~$ docker ps
+CONTAINER ID   IMAGE                                 COMMAND                  CREATED       STATUS     
+PORTS                                                                                                                                  
+NAMES
+d1440bedba94   gcr.io/k8s-minikube/kicbase:v0.0.40   "/usr/local/bin/entr…"   2 hours ago   Up 2 hours   127.0.0.1:32777->22/tcp, 
+127.0.0.1:32776->2376/tcp, 127.0.0.1:32775->5000/tcp, 127.0.0.1:32774->8443/tcp, 127.0.0.1:32773->32443/tcp   local-cluster-m02
+8fa42c563600   gcr.io/k8s-minikube/kicbase:v0.0.40   "/usr/local/bin/entr…"   2 hours ago   Up 2 hours   127.0.0.1:32772->22/tcp, 
+127.0.0.1:32771->2376/tcp, 127.0.0.1:32770->5000/tcp, 127.0.0.1:32769->8443/tcp, 127.0.0.1:32768->32443/tcp   local-cluster
+```
+### 5.To List All the Clusters
+```
+ubuntu@balasenapathi:~$ kubectl config get-contexts
+CURRENT   NAME            CLUSTER         AUTHINFO        NAMESPACE
+*         local-cluster   local-cluster   local-cluster   default
+```
+**Note:**
+The star (*) indicates the active cluster in use, which is local-cluster in this case. You can 
+create multiple clusters and switch between them as needed.
+
+### 6.To switch between the cluster we need to use:
+```
+ubuntu@balasenapathi:~$ kubectl config set-context local-cluster
+Context "local-cluster" modified.
+```
+
+### 7.To add the one more new node to the cluster:
+```
+ubuntu@balasenapathi:~$ minikube node add --worker -p local-cluster
+😄  Adding node m03 to cluster local-cluster
+👍  Starting worker node local-cluster-m03 in cluster local-cluster
+🚜  Pulling base image ...
+🔥  Creating docker container (CPUs=2, Memory=2200MB) ...
+🐳  Preparing Kubernetes v1.27.3 on Docker 24.0.4 ...
+🔎  Verifying Kubernetes components...
+🏄  Successfully added m03 to local-cluster!
+```
+
+### 8.To run kubernetes dashboard in minikube:
+```
+ubuntu@balasenapathi:~$ minikube dashboard --url -p local-cluster
+🔌  Enabling dashboard ...
+▪ Using image docker.io/kubernetesui/dashboard:v2.7.0
+▪ Using image docker.io/kubernetesui/metrics-scraper:v1.0.8
+💡  Some dashboard features require the metrics-server addon. To enable all features please run:
+
+	minikube -p local-cluster addons enable metrics-server	
+
+
+🤔  Verifying dashboard health ...
+🚀  Launching proxy ...
+🤔  Verifying proxy health ...
+http://127.0.0.1:45715/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
+```
+**Note:**
+To exit from the Minikube Kubernetes Dashboard, press CTRL+C.
+
+```
+# 1.To get information about kubernetes cluster
+
+ubuntu@balasenapathi:~$kubectl cluster-info
+Kubernetes control plane is running at https://127.0.0.1:32768
+CoreDNS is running at https://127.0.0.1:32768/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+```
+```
+# 2.To get the information about number of nodes
+
+ubuntu@balasenapathi:~$ kubectl get nodes
+NAME                STATUS   ROLES           AGE   VERSION
+local-cluster       Ready    control-plane   98m   v1.27.3
+local-cluster-m02   Ready    <none>          93m   v1.27.3
+local-cluster-m03   Ready    <none>          92m   v1.27.3
+```
+### 9.To delete the node from the local-cluster:
+```
+ubuntu@balasenapathi:~$ minikube node delete local-cluster-m03 -p local-cluster
+🔥  Deleting node local-cluster-m03 from cluster local-cluster
+✋  Stopping node "local-cluster-m03"  ...
+🛑  Powering off "local-cluster-m03" via SSH ...
+🔥  Deleting "local-cluster-m03" in docker ...
+💀  Node local-cluster-m03 was successfully deleted.
+```
+### 10.Stop Your Minikube Cluster
+When you are done working with your cluster, you can stop Minikube with:
+```
+ubuntu@balasenapathi:~$ minikube stop
+🔥  Stopping node "local-cluster" ...
+🔥  Stopping node "local-cluster-m02" ...
+```
+
+## Running Docker in Minikube
 
 To run Docker inside Minikube, you need to configure your local Docker client to interact with the Docker 
 daemon within Minikube. This is achieved using the `eval $(minikube docker-env)` command, which sets up 
 the necessary environment variables. This allows you to build, push, and manage Docker images within 
 Minikube, seamlessly integrating local development workflows with Kubernetes.
 
-#### How to Use Local Docker Images with Minikube
+### How to Use Local Docker Images with Minikube
 
 ```
 # 1.Start the minikube cluster.
