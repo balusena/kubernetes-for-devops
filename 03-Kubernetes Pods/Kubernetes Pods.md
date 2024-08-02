@@ -1,13 +1,13 @@
 # Kubernetes Pods
 
-## Introduction to Kubernetes Pods
+## 1.Introduction to Kubernetes Pods
 
 A Pod is the smallest and simplest Kubernetes object. It represents a single instance of a running process 
 in a cluster. Pods encapsulate one or more containers that share the same network namespace, storage, and 
 lifecycle. Containers within a Pod communicate using `localhost` and share storage volumes, making Pods ideal
 for applications requiring closely coupled components.
 
-## Sidecar Containers and Their Use Cases
+## 2.Sidecar Containers and Their Use Cases
 
 Sidecar containers run alongside the main container in a Pod, sharing the same network and storage. They are
 used to extend the functionality of the primary container. Common use cases include:
@@ -16,7 +16,7 @@ used to extend the functionality of the primary container. Common use cases incl
 - **Proxying:** Acts as a proxy server to handle network traffic.
 - **Data Synchronization:** Manages data backup or synchronization tasks.
 
-## Need for a Pod
+## 3.Need for a Pod
 
 Pods are essential for:
 
@@ -26,7 +26,7 @@ Pods are essential for:
 - **Lifecycle Management:** Pods manage the lifecycle of containers as a single unit, simplifying updates and
   scaling.
 
-## Scaling Applications with Pods
+## 4.Scaling Applications with Pods
 
 Scaling applications involves adjusting the number of Pod replicas running to handle varying loads. 
 Kubernetes provides several methods for scaling:
@@ -35,7 +35,7 @@ Kubernetes provides several methods for scaling:
 - **Horizontal Pod Autoscaler (HPA):** Automatically scales the number of Pod replicas based on metrics like
   CPU utilization or custom metrics.
 
-## Pod Communication
+## 5.Pod Communication
 
 Pods communicate with each other and with other services through:
 ### Pod Communication
