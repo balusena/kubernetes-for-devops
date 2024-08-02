@@ -309,6 +309,7 @@ ubuntu@balasenapathi:~$ nproc
 ```
 
 ### 4.Install the Latest Minikube Stable Release on x86-64 Linux Using Binary Download.
+**Single-node Minikube Kubernetes cluster**
 
 #### 1. Download the Latest Minikube Binary for Linux
 
@@ -347,7 +348,7 @@ using an additional virtualization layer, which can simplify setup and reduce re
 Alternatively, you can use drivers like docker, virtualbox, or kvm2 for more isolated and flexible 
 environments.
 
-#### 6. Start the minikube cluster.
+#### 6.Start the minikube cluster.
 ```
 ubuntu@balasenapathi:~$ minikube start
 😄  minikube v1.31.1 on Ubuntu 20.04
@@ -508,6 +509,21 @@ Opening in existing browser session.
 **Note:**
 To exit from the Minikube Kubernetes Dashboard, press CTRL+C.
 
+```
+# 1.To get information about kubernetes cluster
+
+ubuntu@balasenapathi:~$kubectl cluster-info
+Kubernetes control plane is running at http://127.0.0.1:8080
+CoreDNS is running at http://127.0.0.1:8080/api/v1/namespaces/kube-system/services/kube-dns:dn
+```
+```
+# 2.To get the information about number of nodes
+
+ubuntu@balasenapathi:~$ kubectl get nodes
+NAME       STATUS   ROLES    AGE     VERSION
+minikube   Ready    master   10m     v1.27.3
+```
+
 ### 8.Stop Your Minikube Cluster
 When you are done working with your cluster, you can stop Minikube with:
 ```
@@ -515,7 +531,44 @@ ubuntu@balasenapathi:~$ minikube stop
 ✋  Stopping node "minikube"  ...
 🛑  1 node stopped.
 ```
+### 9.Running Docker in Minikube
 
+To run Docker inside Minikube, you need to configure your local Docker client to interact with the Docker 
+daemon within Minikube. This is achieved using the `eval $(minikube docker-env)` command, which sets up 
+the necessary environment variables. This allows you to build, push, and manage Docker images within 
+Minikube, seamlessly integrating local development workflows with Kubernetes.
+
+#### How to Use Local Docker Images with Minikube
+
+```
+# 1.Start the minikube cluster.
+
+ubuntu@balasenapathi:~$ minikube start --kubernetes-version=v1.27.3
+😄  minikube v1.31.1 on Ubuntu 20.04
+✨  Automatically selected the docker driver. Other choices: virtualbox, ssh
+📌  Using Docker driver with root privileges
+👍  Starting control plane node minikube in cluster minikube
+🚜  Pulling base image ...
+💾  Downloading Kubernetes v1.27.3 preload ...
+    > preloaded-images-k8s-v18-v1...:  393.19 MiB / 393.19 MiB  100.00% 709.31 
+    > gcr.io/k8s-minikube/kicbase...:  447.62 MiB / 447.62 MiB  100.00% 672.98 
+🔥  Creating docker container (CPUs=2, Memory=2200MB) ...
+🐳  Preparing Kubernetes v1.27.3 on Docker 24.0.4 ...
+    ▪ Generating certificates and keys ...
+    ▪ Booting up control plane ...
+    ▪ Configuring RBAC rules ...
+🔗  Configuring bridge CNI (Container Networking Interface) ...
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🔎  Verifying Kubernetes components...
+🌟  Enabled addons: storage-provisioner, default-storageclass
+🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+```
+```
+# 2.Set Docker Environment, configure your local Docker client to use the Docker daemon inside Minikube.
+
+ubuntu@balasenapathi:~$ eval $(minikube docker-env)
+Host added: /home/ubuntu/.ssh/known_hosts ([127.0.0.1]:49157)
+```
 
 
 
