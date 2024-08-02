@@ -308,8 +308,9 @@ ubuntu@balasenapathi:~$ nproc
 2
 ```
 
+# **Single-node Minikube Kubernetes cluster**
+
 ### 4.Install the Latest Minikube Stable Release on x86-64 Linux Using Binary Download.
-**Single-node Minikube Kubernetes cluster**
 
 #### 1. Download the Latest Minikube Binary for Linux
 
