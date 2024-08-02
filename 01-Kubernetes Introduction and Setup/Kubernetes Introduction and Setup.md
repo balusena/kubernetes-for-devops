@@ -232,9 +232,11 @@ To enable virtualization in your host system, follow these steps:
 Open the terminal on your Ubuntu VM and run the following commands:
 ```
 # 1.Update Your Ubuntu System.
+
 ubuntu@balasenapathi:~$ sudo apt update
 
 # 2.Upgrade Your Ubuntu System.
+
 ubuntu@balasenapathi:~$ sudo apt upgrade
 ```
 ### 3. Install cpu-checker
