@@ -89,3 +89,208 @@ Pods in Kubernetes communicate with each other and with other services through s
 
 - **Kubectl**: Interact with Kubernetes and manage pods using `kubectl` commands.
 
+## 6.Creating Pods with kubectl:
+```
+#1.Creating a nginx pod using kubectl.
+
+ubuntu@balasenapathi:~$ kubectl run nginx-pod --image=nginx
+pod/nginx-pod created
+```
+```
+#2.To see list of pods in kubernetes cluster:
+
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME        READY   STATUS    RESTARTS   AGE
+nginx-pod   1/1     Running   0          102s
+```
+## 7.Creating Pods with YAML:
+```
+#1.Clone this repository and move to example folder
+
+git clone https://github.com/balusena/kubernetes-for-devops.git
+cd  03-Kubernetes Pods/examples
+```
+```
+# 2.To get the apiVersion of pods in kubernetes:
+
+ubuntu@balasenapathi:~$ kubectl api-resources | grep pods
+pods                              po           v1                                     true         Pod
+```
+```
+#3.Create the yaml file nginx-pod.yaml
+
+ubuntu@balasenapathi:~$ nano nginx-pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod1
+  labels:
+    team: integrations
+    app: todo
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+```
+```
+#4.Creating a Pod
+
+ubuntu@balasenapathi:~$ kubectl apply -f nginx-pod.yaml
+pod/nginx-pod1 created
+```
+```
+#5.Listing the Pods
+
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME         READY   STATUS    RESTARTS   AGE
+nginx-pod    1/1     Running   0          27m
+nginx-pod1   1/1     Running   0          54s
+```
+```
+#6.Deleting a Pod
+
+ubuntu@balasenapathi:~$ kubectl delete pod nginx-pod1
+pod "nginx-pod1" deleted
+```
+## 8.Filtering Pods 
+
+```
+#1.Filtering Pods by Label.
+
+ubuntu@balasenapathi:~$ kubectl get pods -l team=integrations
+NAME         READY   STATUS    RESTARTS   AGE
+nginx-pod1   1/1     Running   0          5m15s
+```
+```
+#2.Filtering Pods with Multiple Labels
+
+ubuntu@balasenapathi:~$ kubectl get pods -l team=integrations,app=todo
+NAME         READY   STATUS    RESTARTS   AGE
+nginx-pod1   1/1     Running   0          6m54s
+```
+```
+#3.Getting Detailed Pod Information
+
+ubuntu@balasenapathi:~$ kubectl get pod nginx-pod1 -o wide
+NAME         READY   STATUS    RESTARTS   AGE     IP           NODE                NOMINATED NODE   READINESS GATES
+nginx-pod1   1/1     Running   0          9m50s   10.244.1.3   local-cluster-m02   <none>    
+```
+```
+#4.Getting Pod Information in YAML Format
+
+ubuntu-dsbda@ubuntudsbda-virtual-machine:~$ kubectl get pod nginx-pod1 -o yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"labels":{"app":"todo","team":"integrations"},"name":"nginx-
+      pod1","namespace":"default"},"spec":{"containers":[{"image":"nginx:latest","name":"nginx-container","ports":[{"containerPort":
+      80}]}]}}
+  creationTimestamp: "2023-09-03T14:39:08Z"
+  labels:
+    app: todo
+    team: integrations
+  name: nginx-pod1
+  namespace: default
+  resourceVersion: "19270"
+  uid: bb7f8789-ee2d-49a7-998f-bcceacd6eb83
+spec:
+  containers:
+  - image: nginx:latest
+    imagePullPolicy: Always
+    name: nginx-container
+    ports:
+    - containerPort: 80
+      protocol: TCP
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-8rwzz
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: local-cluster-m02
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-8rwzz
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2023-09-03T14:39:08Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2023-09-03T14:39:14Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2023-09-03T14:39:14Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2023-09-03T14:39:08Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://fcc3768f72a48103c62caa155a58016630401a6d98ad79a30a264091666d28cd
+    image: nginx:latest
+    imageID: docker-pullable://nginx@sha256:104c7c5c54f2685f0f46f3be607ce60da7085da3eaa5ad22d3d9f01594295e9c
+    lastState: {}
+    name: nginx-container
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2023-09-03T14:39:14Z"
+  hostIP: 192.168.58.3
+  phase: Running
+  podIP: 10.244.1.3
+  podIPs:
+  - ip: 10.244.1.3
+  qosClass: BestEffort
+  startTime: "2023-09-03T14:39:08Z"
+```
+
+
+
+
