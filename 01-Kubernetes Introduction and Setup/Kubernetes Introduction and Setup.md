@@ -470,6 +470,53 @@ ubuntu@balasenapathi:~$ kubectl version --output=json
 }
 ```
 
+### 6.Interact with Your minikube cluster and access your cluster with `kubectl`.
+
+Once `kubectl` is installed, you can interact with your Kubernetes cluster. For example, to list all pods
+across all namespaces, run:
+
+```
+ubuntu@balasenapathi:~$ kubectl get po -A
+NAMESPACE     NAME                               READY   STATUS    RESTARTS      AGE
+kube-system   coredns-5d78c9869d-lf5lk           1/1     Running   0             19m
+kube-system   coredns-5d78c9869d-mwcvs           1/1     Running   0             19m
+kube-system   etcd-minikube                      1/1     Running   0             19m
+kube-system   kube-apiserver-minikube            1/1     Running   0             19m
+kube-system   kube-controller-manager-minikube   1/1     Running   1 (19m ago)   19m
+kube-system   kube-proxy-lzknw                   1/1     Running   0             19m
+kube-system   kube-scheduler-minikube            1/1     Running   0             19m
+kube-system   storage-provisioner                1/1     Running   1 (18m ago)   18m
+```
+### 7.Access the Kubernetes Dashboard
+For additional insight into your cluster's state, Minikube includes the Kubernetes Dashboard. This 
+graphical interface helps you get acclimated to your new environment more easily.
+```
+ubuntu@balasenapathi:~$ minikube dashboard
+🔌  Enabling dashboard ...
+▪ Using image docker.io/kubernetesui/dashboard:v2.7.0
+▪ Using image docker.io/kubernetesui/metrics-scraper:v1.0.8
+💡  Some dashboard features require the metrics-server addon. To enable all features please run:
+
+    minikube addons enable metrics-server
+
+🤔  Verifying dashboard health ...
+🚀  Launching proxy ...
+🤔  Verifying proxy health ...
+🎉  Opening http://127.0.0.1:41139/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/ in your default browser...
+Opening in existing browser session.
+```
+**Note:**
+To exit from the Minikube Kubernetes Dashboard, press CTRL+C.
+
+### 8.Stop Your Minikube Cluster
+When you are done working with your cluster, you can stop Minikube with:
+```
+ubuntu@balasenapathi:~$ minikube stop
+✋  Stopping node "minikube"  ...
+🛑  1 node stopped.
+```
+
+
 
 
 
