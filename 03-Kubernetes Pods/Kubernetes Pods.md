@@ -63,3 +63,4 @@ Pods in Kubernetes communicate with each other and with other services through s
 
 ![Kubernetes Pod](https://github.com/balusena/kubernetes-for-devops/blob/main/03-Kubernetes%20Pods/kubernetes_pod.png)
 
+
