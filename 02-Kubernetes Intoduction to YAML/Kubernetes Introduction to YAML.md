@@ -33,9 +33,9 @@ Source ----------------------------> [0011000100011100000001] ------------------
              "city": "New York"
            }
 
-The process of converting an object to binary is called serialization.
+* The process of converting an object to binary is called serialization.
 
-The process of converting binary back to the original data is called deserialization.
+* The process of converting binary back to the original data is called deserialization.
 
 ```
 ```
@@ -50,7 +50,7 @@ Binary Data ---------------------------->    {                        ----------
 
                                                        Network
 
-The process of converting binary back to the original data is called deserialization.
+* The process of converting binary back to the original data is called deserialization.
 
-The process of converting an object to binary is called serialization.
+* The process of converting an object to binary is called serialization.
 ```
