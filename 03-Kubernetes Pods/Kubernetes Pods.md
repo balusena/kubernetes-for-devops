@@ -58,3 +58,8 @@ Pods in Kubernetes communicate with each other and with other services through s
   (e.g., `my-service.default.svc.cluster.local`), which resolves to the IP addresses of the Pods behind the 
   Service. This allows Pods to discover and communicate with each other efficiently, regardless of their 
   individual IP addresses.
+
+### Pod Overview
+
+![Kubernetes Pod](https://github.com/balusena/kubernetes-for-devops/blob/main/03-Kubernetes%20Pods/kubernetes_pod.png)
+
