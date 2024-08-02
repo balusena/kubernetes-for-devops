@@ -42,8 +42,8 @@ The process of converting binary back to the original data is called deserializa
 #Deserialization:
 
                   Deserialization                                          Serialization
-Binary Data ---------------------------->    {                        ---------------------> Application
-            [0011000100011100000001]              "name": "John",
+Binary Data ---------------------------->    {                        ---------------------> Original Data
+              [0011000100011100000001]            "name": "John",
                                                   "age": 30,
                                                   "city": "New York"
                                              } 
