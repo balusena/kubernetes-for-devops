@@ -471,7 +471,6 @@ ubuntu@balasenapathi:~$ kubectl version --output=json
   }
 }
 ```
-
 ### 6.Interact with Your minikube cluster and access your cluster with `kubectl`.
 
 Once `kubectl` is installed, you can interact with your Kubernetes cluster. For example, to list all pods
@@ -691,7 +690,55 @@ ubuntu@balasenapathi:~$ minikube stop
 🔥  Stopping node "local-cluster" ...
 🔥  Stopping node "local-cluster-m02" ...
 ```
+## Setting Up Kubernetes Environment Variables
 
+To ensure that the `minikube` and `kubectl` commands are available in all terminal sessions, you need to 
+add their binary directories to your system's `PATH` environment variable. Follow these steps:
+
+### 1. Find the Paths
+Check the locations of the `minikube` and `kubectl` binaries:
+```
+# 1.Check location for minikube.
+
+ubuntu@balasenapathi:~$ which minikube
+/usr/local/bin/minikube
+```
+```
+# 2.Check location for kubectl.
+
+ubuntu@balasenapathi:~$ which kubectl
+/usr/local/bin/kubectl
+```
+
+### 2.Update User-Specific Environment
+Edit the .bashrc file to include the Minikube and Kubectl paths:
+```
+# 1.Add the following lines to the end of the .bashrc file:
+
+ubuntu@balasenapathi:~$ nano ~/.bashrc
+# Minikube, Kubectl path
+export PATH=/usr/local/bin:$PATH
+```
+```
+# 2.Save the file and exit the editor. Then, apply the changes:
+
+ubuntu@balasenapathi:~$ source ~/.bashrc
+```
+### 3.Update System-Wide Environment
+If you want to make these changes system-wide, you need to update the /etc/profile file. Open the file 
+with root privileges:
+```
+# 1.Add the following lines to the end of the /etc/profile file.
+
+ubuntu@balasenapathi:~$ sudo nano /etc/profile
+# Minikube, Kubectl path
+export PATH=/usr/local/bin:$PATH
+```
+```
+# 2.Save the file and exit the editor. Apply the changes:
+
+ubuntu@balasenapathi:~$ . /etc/profile
+```
 ## Running Docker in Minikube
 
 To run Docker inside Minikube, you need to configure your local Docker client to interact with the Docker 
