@@ -48,6 +48,10 @@ Nodes can have different states during their lifecycle:
 - **Health Monitoring:** Kubernetes continuously monitors node health and will attempt to replace or reschedule Pods if a node fails.
 - **Maintenance:** Nodes can be drained to safely remove Pods before performing maintenance tasks, ensuring minimal disruption to running applications.
 
+### Node Overview
+
+![Kubernetes Nodes](https://github.com/balusena/kubernetes-for-devops/blob/main/04-Kubernetes%20Nodes/kubernetes_nodes.png)
+
 ### Example Commands
 
 To view nodes in your cluster:
