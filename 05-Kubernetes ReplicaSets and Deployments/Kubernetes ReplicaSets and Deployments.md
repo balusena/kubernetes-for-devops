@@ -190,6 +190,82 @@ as rollouts, rolling updates, and the ability to specify deployment strategies. 
 Deployment is created, a ReplicaSet is automatically created, so there is no need to create ReplicaSets 
 manually when using Deployments.
 
+## Rolling Update and Rollback in Deployment 
+**Rolling Updates:**
+Rolling update provides the orderly migration from one version to a newer version. Rolling update is used 
+in such situation when a new version of application came and you have to switch to a newer version. In the
+rolling update all the running pod will be replaced with the newer version of application by systematically
+terminating the older version of application pods.
+
+**Rollback:**
+Rollback on the other hand is used to roll back to older version of your application. Suppose you have a
+new bug in the application that needs to be solved in that case you might need to go to the older version
+of the application with rollback you can achieve that. With rollback all the replicas of the pod which are
+running on the new version of the application will be rollback again to previous version.
+
+**Deployment with Replicaset**
+Deployments are generallyused with replicaset as they are used to manage replicsets. With the help of 
+deployment You can simply roll back to a previous Deployment revision. When you are managing ReplicaSet 
+using Deployment You can also use a Deployment to create a new revision of a ReplicaSet and then migrate 
+existing pods from an older revision into the new revision. After that, the Deployment can take care of 
+cleaning up old, unused ReplicaSets.
+
+So, Replicaset ensure replicas of pods are available whereas deployment are reponsible for managing 
+different versions of the application. Like deployment replicaset cant rollout or rollback to different 
+version of application nor maintain any revisions for the same.
+
+### 1.Deleting All Objects and Services from Kubernetes Cluster
+```
+ubuntu@balasenapathi:~$ kubectl delete all --all
+pod "nginx-replicaset-d466v" deleted
+pod "nginx-replicaset-szqkn" deleted
+pod "nginx-replicaset-v7pb5" deleted
+service "kubernetes" deleted
+replicaset.apps "nginx-replicaset" deleted
+```
+**Note:** All refers to all resource types such as pods, deployments, services, etc. The --all flag deletes
+every object instead of specifying each resource name individually.
+
+### 2.Confirming Deletion
+```
+ubuntu@balasenapathi:~$ kubectl get all
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   2m4s
+```
+
+**Note:** The service/kubernetes is a default service created by Kubernetes and cannot be deleted.
+
+### 3.To get the apiVersion of deployments in kubernetes:
+```
+ubuntu@balasenapathi:~$ kubectl api-resources | grep deployment
+deployments                       deploy       apps/v1                                true         Deployment
+```
+### 4.Create a deployment using file nginx-deployment.yaml
+```
+ubuntu@balasenapathi:~$ nano nginx-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+```
+
+
 
 
 
