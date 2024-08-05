@@ -690,6 +690,20 @@ Normal  Started    24m   kubelet            Started container nginx-container
 **Note:** We can confirm that the image has been rolled back to the previous deployment REVISION:1, i.e., 
 Image: nginx:latest.
 
+**Summary:**
+- A ReplicaSet manages a specified number of replicas for a generic application. 
+- A DaemonSet, on the other hand, ensures that a copy of your app runs on every node in the cluster.
+- If you delete a ReplicaSet, by default, the associated Pods will also be deleted. This is because the 
+  ReplicaSet manages those Pods.
+
+A ReplicaSet ensures that a specified number of pod replicas are running at any given time. However, a 
+Deployment is a higher-level concept that manages ReplicaSets and provides declarative updates to Pods 
+along with a lot of other useful features. Therefore,recommend using Deployments instead of directly 
+using ReplicaSets, unless we require custom update orchestration or don’t require updates at all.
+
+This actually means that we may never need to manipulate ReplicaSet objects: use a Deployment instead, 
+and define application in the spec section. 
+
 
 
 
