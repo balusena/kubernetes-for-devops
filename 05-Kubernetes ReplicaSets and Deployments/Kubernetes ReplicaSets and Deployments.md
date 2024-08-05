@@ -448,6 +448,20 @@ either by directly using kubectl commands or by updating the deployment file, it
 practice to use the deployment file. This ensures that changes are managed consistently and in a controlled
 manner.
 
+# Viewing Rollout History of a Deployment
+```
+ubuntu@balasenapathi:~$ kubectl rollout history deployment/nginx-deployment
+deployment.apps/nginx-deployment 
+REVISION  CHANGE-CAUSE
+1         <none>  --------> The initial deployment
+2         <none>  --------> Updated latest version to version 1.21.3 using deployment file with kubectl apply
+3         <none>  --------> Updated version 1.21.3 to version 1.21 using the kubectl set image command
+```
+**Note:** The output shows three revisions for this deployment. It is best practice to provide a 
+"CHANGE-CAUSE" for each revision. This helps in maintaining a clear record of what has changed. 
+You can specify a change cause using the --record flag when applying changes with kubectl. This way, 
+each revision will have a meaningful description of the changes made.
+
 
 
 
