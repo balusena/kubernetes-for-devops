@@ -301,6 +301,155 @@ replicaset.apps/nginx-deployment-85dd4d599f   3         3         3       7m1s
 **Note:** Whenever a deployment is created, a ReplicaSet is automatically created. This can be confirmed by
 the presence of replicaset.apps/nginx-deployment-85dd4d599f.
 
+### 8.Verifying Pod Labels in Kubernetes Cluster
+```
+ubuntu@balasenapathi:~$ kubectl get pods --show-labels
+NAME                                READY   STATUS    RESTARTS   AGE   LABELS
+nginx-deployment-85dd4d599f-5r66l   1/1     Running   0          13m   app=nginx,pod-template-hash=85dd4d599f
+nginx-deployment-85dd4d599f-7w8vm   1/1     Running   0          13m   app=nginx,pod-template-hash=85dd4d599f
+nginx-deployment-85dd4d599f-vr2bb   1/1     Running   0          13m   app=nginx,pod-template-hash=85dd4d599f
+```
+**Note:** As we can see, the nginx label is added to the pods, as specified in the deployment spec file. 
+This label is added by Kubernetes.
+
+### 9.Scaling an Application in Kubernetes 
+
+If we want to scale our application by increasing the number of instances, we can simply adjust the number 
+of replicas. For example, setting `replicas: 4` will scale up the application, while setting `replicas: 2`
+will scale it down. We can apply these changes in the deployment file.
+
+
+### 10.Listing All Pods before applying scaling.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-85dd4d599f-7w8vm   1/1     Running   0          22m
+nginx-deployment-85dd4d599f-vr2bb   1/1     Running   0          22m
+```
+**Note:** We currently have two pods, as specified in the deployment file. This is automatically managed
+by the ReplicaSet created by the deployment.
+
+### 10.Scaling an Application Using `kubectl`
+You can scale the application without modifying the deployment file by using the `kubectl scale` command. 
+For example, to scale the application to 4 replicas:
+```
+ubuntu@balasenapathi:~$ kubectl scale --replicas=4 deployment/nginx-deployment
+deployment.apps/nginx-deployment scaled
+```
+**Note:** The output confirms that the deployment has been scaled.
+
+### 11.Listing All Pods after applying scaling using kubectl.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-85dd4d599f-7qkg7   1/1     Running   0          5m36s
+nginx-deployment-85dd4d599f-7w8vm   1/1     Running   0          34m
+nginx-deployment-85dd4d599f-n46kj   1/1     Running   0          5m36s
+nginx-deployment-85dd4d599f-vr2bb   1/1     Running   0          34m
+```
+**Note:** Be cautious when making changes directly with kubectl scale, as it can lead to discrepancies 
+between the deployment file and the cluster state. In the example above, we have 4 replicas running in 
+the cluster, but the deployment file specifies only 2 replicas. This can cause confusion. It is always 
+recommended to make changes in the deployment file and apply them using the kubectl apply command to 
+maintain consistency.
+
+### 12.We are changing the version from 1.21.3 to 1.21 using kubectl command without using deployment file:
+```
+ubuntu@balasenapathi:~$ kubectl set image deployment/nginx-deployment nginx-container=nginx:1.21
+deployment.apps/nginx-deployment image updated
+```
+**Note:** "nginx-container" this is conatiner name a pod can have multiple conatiners with multiple images
+so we should specify in which container  we want to apply this image.
+
+**Note:** The output confirms that the image is updated.
+
+### 13.Now try to list down the resources:
+```
+ubuntu@balasenapathi:~$ kubectl get all
+NAME                                    READY   STATUS    RESTARTS   AGE
+pod/nginx-deployment-865f6b58b8-42w86   1/1     Running   0          2m10s
+pod/nginx-deployment-865f6b58b8-dtfbz   1/1     Running   0          79s
+pod/nginx-deployment-865f6b58b8-tjdnb   1/1     Running   0          77s
+pod/nginx-deployment-865f6b58b8-zw7v6   1/1     Running   0          2m10s
+
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   17h
+
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx-deployment   4/4     4            4           16h
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-deployment-7c55946d5c   0         0         0       23m
+replicaset.apps/nginx-deployment-85dd4d599f   0         0         0       16h
+replicaset.apps/nginx-deployment-865f6b58b8   4         4         4       2m10s
+```
+**Note:** As we can see 4 replicas are running and we can check if the image is updated or not by using
+the below command.
+
+### 14.Inspecting Pod Details
+```
+ubuntu@balasenapathi:~$ kubectl describe pod/nginx-deployment-865f6b58b8-42w86
+Name:             nginx-deployment-865f6b58b8-42w86
+Namespace:        default
+Priority:         0
+Service Account:  default
+Node:             local-cluster-m03/192.168.58.4
+Start Time:       Tue, 05 Sep 2023 16:53:11 +0530
+Labels:           app=nginx
+                  pod-template-hash=865f6b58b8
+Annotations:      <none>
+Status:           Running
+IP:               10.244.1.4
+IPs:
+  IP:           10.244.1.4
+Controlled By:  ReplicaSet/nginx-deployment-865f6b58b8
+Containers:
+  nginx-container:
+    Container ID:   docker://394b122b91e237cae7944a7d9db1ed3b773ad19ad98b4847ac908c5e735cc05f
+    Image:          nginx:1.21
+    Image ID:       docker-pullable://nginx@sha256:2bcabc23b45489fb0885d69a06ba1d648aeda973fae7bb981bafbb884165e514
+    Port:           80/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Tue, 05 Sep 2023 16:54:02 +0530
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-2fglj (ro)
+Conditions:
+  Type              Status
+  Initialized       True 
+  Ready             True 
+  ContainersReady   True 
+  PodScheduled      True 
+Volumes:
+  kube-api-access-2fglj:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age    From               Message
+  ----    ------     ----   ----               -------
+  Normal  Scheduled  5m52s  default-scheduler  Successfully assigned default/nginx-deployment-865f6b58b8-42w86 to local-cluster-m03
+  Normal  Pulling    5m50s  kubelet            Pulling image "nginx:1.21"
+  Normal  Pulled     5m11s  kubelet            Successfully pulled image "nginx:1.21" in 38.984340097s (38.984350101s including waiting)
+  Normal  Created    5m2s   kubelet            Created container nginx-container
+  Normal  Started    5m1s   kubelet            Started container nginx-container
+```
+**Note:** The image is updated to version 1.21. This demonstrates that while you can update the application
+either by directly using kubectl commands or by updating the deployment file, it is always safer and better
+practice to use the deployment file. This ensures that changes are managed consistently and in a controlled
+manner.
+
+
+
 
 
 
