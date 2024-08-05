@@ -165,4 +165,3 @@ nginx-replicaset-v7pb5   1/1     Running   0          109s   10.244.2.2   local-
 **Note:** As we can see, the pods are automatically recreated on the available active running node 
 "local-cluster-m03" after deleting the node "local-cluster-m02". This demonstrates how Kubernetes 
 ensures high availability by redistributing pods to available nodes when one node is removed.
-
