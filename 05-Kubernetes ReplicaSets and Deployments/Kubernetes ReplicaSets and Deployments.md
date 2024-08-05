@@ -353,7 +353,7 @@ the cluster, but the deployment file specifies only 2 replicas. This can cause c
 recommended to make changes in the deployment file and apply them using the kubectl apply command to 
 maintain consistency.
 
-### 12.We are changing the version from 1.21.3 to 1.21 using kubectl command without using deployment file:
+### 12.Changing the version from 1.21.3 to 1.21 using kubectl command without using deployment file:
 ```
 ubuntu@balasenapathi:~$ kubectl set image deployment/nginx-deployment nginx-container=nginx:1.21
 deployment.apps/nginx-deployment image updated
@@ -573,12 +573,7 @@ spec:
           ports:
             - containerPort: 80
 ```
-### Viewing Rollout History of Revisions
-
-## Getting the Rollout History
-
-To view the history of rollouts for the deployment:
-
+### 22.Viewing Rollout History of Revisions
 ```
 ubuntu@balasenapathi:~$ kubectl rollout history deployment/nginx-deployment
 deployment.apps/nginx-deployment 
