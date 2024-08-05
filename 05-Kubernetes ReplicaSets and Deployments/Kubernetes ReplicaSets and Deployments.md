@@ -448,7 +448,7 @@ either by directly using kubectl commands or by updating the deployment file, it
 practice to use the deployment file. This ensures that changes are managed consistently and in a controlled
 manner.
 
-# Viewing Rollout History of a Deployment
+### 15.Viewing Rollout History of a Deployment
 ```
 ubuntu@balasenapathi:~$ kubectl rollout history deployment/nginx-deployment
 deployment.apps/nginx-deployment 
@@ -461,6 +461,141 @@ REVISION  CHANGE-CAUSE
 "CHANGE-CAUSE" for each revision. This helps in maintaining a clear record of what has changed. 
 You can specify a change cause using the --record flag when applying changes with kubectl. This way, 
 each revision will have a meaningful description of the changes made.
+
+### 16.Now change the image from version 1.21 to version 1.20 using --record:
+```
+ubuntu@balasenapathi:~$ kubectl set image deployment/nginx-deployment nginx-container=nginx:1.20 --record
+Flag --record has been deprecated, --record will be removed in the future
+deployment.apps/nginx-deployment image updated
+```
+**Note:** Now the CHANGE-CAUSE will be recorded because of the above command
+
+### 17.To get the history of revisions done by rollouts:
+```
+ubuntu@balasenapathi:~$ kubectl rollout history deployment/nginx-deployment
+deployment.apps/nginx-deployment
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+3         <none>
+4         kubectl set image deployment/nginx-deployment nginx-container=nginx:1.20 --record=true
+```
+**Note:** The CHANGE-CAUSE is recorded as "kubectl set image deployment/nginx-deployment 
+nginx-container=nginx:1.20 --record=true". For best practices, it is recommended to specify 
+a meaningful CHANGE-CAUSE using annotations. Annotations can be added via kubectl commands 
+or directly in the deployment specification file.
+
+- Here we are giving annotations in the deploymenyt specification file:
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: nginx
+  annotations:
+    kubernetes.io/change-cause: "Updating to alpine version"
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+```
+**The changes made include:**
+- **Annotations**: Added `kubernetes.io/change-cause: "Updating to alpine version"`
+- **Spec**: Updated the `image` to `nginx:alpine`
+
+### 18.Attempting to Create the Deployment
+```
+ubuntu@balasenapathi:~$ kubectl apply -f nginx-deployment.yaml
+Error from server (NotFound): error when creating "nginx-deployment.yaml": namespaces "nginx" not found
+```
+### 19.To check the available namespaces:
+```
+ubuntu@balasenapathi:~$ kubectl get namespaces
+NAME                   STATUS   AGE
+default                Active   2d19h
+kube-node-lease        Active   2d19h
+kube-public            Active   2d19h
+kube-system            Active   2d19h
+kubernetes-dashboard   Active   2d16h
+```
+### 20.Creating the Namespace
+Create the "nginx" namespace if it does not exist:
+```
+ubuntu@balasenapathi:~$ kubectl create namespace nginx
+namespace/nginx created
+```
+### 21.Reapply nginx deployment configuration, after creating the namespace.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f nginx-deployment.yaml
+deployment.apps/nginx-deployment created
+```
+**Note:** In my case, I had not created the namespace before, which resulted in an error.To resolve this
+issue, I removed the namespace: nginx line from the deployment file and successfully applied the changes. 
+The removal of the namespace resolved the error, and the CHANGE-CAUSE is now reflected in the rollout 
+history.
+
+- Here iam removing "namespace: nginx" in the deploymenyt specification file.
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  annotations:
+    kubernetes.io/change-cause: "Updating to alpine version"
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+```
+### Viewing Rollout History of Revisions
+
+## Getting the Rollout History
+
+To view the history of rollouts for the deployment:
+
+```
+ubuntu@balasenapathi:~$ kubectl rollout history deployment/nginx-deployment
+deployment.apps/nginx-deployment 
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+3         <none>
+4         kubectl set image deployment/nginx-deployment nginx-container=nginx:1.20 --record=true
+5         Updating to alpine version
+```
+**Note:** The CHANGE-CAUSE is updated to "Updating to alpine version" as specified in the deployment file.
+This is how rollouts manage updates, allowing us to upgrade our application at any point in time. By 
+keeping track of changes through CHANGE-CAUSE, we can better understand and manage the evolution of our 
+deployment configurations.
+
+
+
 
 
 
