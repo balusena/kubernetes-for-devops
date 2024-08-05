@@ -692,8 +692,8 @@ Image: nginx:latest.
 
 **Summary:**
 - A ReplicaSet manages a specified number of replicas for a generic application. 
-- A DaemonSet, on the other hand, ensures that a copy of your app runs on every node in the cluster.
-- If you delete a ReplicaSet, by default, the associated Pods will also be deleted. This is because the 
+- A DaemonSet, on the other hand, ensures that a copy of our app runs on every node in the cluster.
+- If we delete a ReplicaSet, by default, the associated Pods will also be deleted. This is because the 
   ReplicaSet manages those Pods.
 
 A ReplicaSet ensures that a specified number of pod replicas are running at any given time. However, a 
