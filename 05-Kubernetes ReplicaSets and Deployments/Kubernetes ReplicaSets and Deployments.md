@@ -191,20 +191,20 @@ Deployment is created, a ReplicaSet is automatically created, so there is no nee
 manually when using Deployments.
 
 ## Rolling Update and Rollback in Deployment 
-**Rolling Updates:**
+**1.Rolling Updates:**
 Rolling update provides the orderly migration from one version to a newer version. Rolling update is used 
 in such situation when a new version of application came and you have to switch to a newer version. In the
 rolling update all the running pod will be replaced with the newer version of application by systematically
 terminating the older version of application pods.
 
-**Rollback:**
+**2.Rollback:**
 Rollback on the other hand is used to roll back to older version of your application. Suppose you have a
 new bug in the application that needs to be solved in that case you might need to go to the older version
 of the application with rollback you can achieve that. With rollback all the replicas of the pod which are
 running on the new version of the application will be rollback again to previous version.
 
-**Deployment with Replicaset**
-Deployments are generallyused with replicaset as they are used to manage replicsets. With the help of 
+**3.Deployment with Replicaset**
+Deployments are generally used with replicaset as they are used to manage replicsets. With the help of 
 deployment You can simply roll back to a previous Deployment revision. When you are managing ReplicaSet 
 using Deployment You can also use a Deployment to create a new revision of a ReplicaSet and then migrate 
 existing pods from an older revision into the new revision. After that, the Deployment can take care of 
