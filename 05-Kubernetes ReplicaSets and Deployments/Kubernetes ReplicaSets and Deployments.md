@@ -165,3 +165,19 @@ nginx-replicaset-v7pb5   1/1     Running   0          109s   10.244.2.2   local-
 **Note:** As we can see, the pods are automatically recreated on the available active running node 
 "local-cluster-m03" after deleting the node "local-cluster-m02". This demonstrates how Kubernetes 
 ensures high availability by redistributing pods to available nodes when one node is removed.
+
+## Deployment
+Deployment is used to maintain the versions of your application running in the pod. It helps to efficiently
+scale the number of replica pods and enable the rollout and rollback to an earlier deployment version. 
+Deployments runs on multiple replicas of the pod and automatically replaces a pod in case of any failure or
+unresponsive. In this way Deployments helps to ensure that one or more instances of your application are 
+available to serve user requests.
+
+Deployments use a Pod template, which contains a specification for its Pods. The Pod specification 
+determines how each Pod should look like: what applications should run inside its containers, which 
+volumes the Pods should mount, its labels, and more. When a Deployment's Pod template is changed, new 
+Pods are automatically created one at a time.
+
+![Kubernetes Deployment](https://github.com/balusena/kubernetes-for-devops/blob/main/05-Kubernetes%20ReplicaSets%20and%20Deployments/kubernetes_deployment.png)
+
+
