@@ -180,4 +180,9 @@ Pods are automatically created one at a time.
 
 ![Kubernetes Deployment](https://github.com/balusena/kubernetes-for-devops/blob/main/05-Kubernetes%20ReplicaSets%20and%20Deployments/kubernetes_deployment.png)
 
+Kubernetes ReplicaSet and deployment in a single frame
+
+![Kubernetes ReplicaSet Deployment](https://github.com/balusena/kubernetes-for-devops/blob/main/05-Kubernetes%20ReplicaSets%20and%20Deployments/kubernetes_replicaset_deployment.png)
+
+
 
