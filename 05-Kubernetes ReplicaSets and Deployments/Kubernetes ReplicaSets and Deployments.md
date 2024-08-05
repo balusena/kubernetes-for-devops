@@ -184,5 +184,12 @@ Pods are automatically created one at a time.
 
 ![Kubernetes ReplicaSet Deployment](https://github.com/balusena/kubernetes-for-devops/blob/main/05-Kubernetes%20ReplicaSets%20and%20Deployments/kubernetes_replicaset_deployment.png)
 
+The difference between a ReplicaSet and a Deployment is that a ReplicaSet ensures the desired number of 
+replicas are always available. In contrast, Deployments offer many more advantages over ReplicaSets, such
+as rollouts, rolling updates, and the ability to specify deployment strategies. Additionally, when a 
+Deployment is created, a ReplicaSet is automatically created, so there is no need to create ReplicaSets 
+manually when using Deployments.
+
+
 
 
