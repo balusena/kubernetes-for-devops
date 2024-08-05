@@ -214,6 +214,8 @@ So, Replicaset ensure replicas of pods are available whereas deployment are repo
 different versions of the application. Like deployment replicaset cant rollout or rollback to different 
 version of application nor maintain any revisions for the same.
 
+**1.Rolling Updates:**
+
 ### 1.Deleting All Objects and Services from Kubernetes Cluster
 ```
 ubuntu@balasenapathi:~$ kubectl delete all --all
@@ -547,7 +549,7 @@ issue, I removed the namespace: nginx line from the deployment file and successf
 The removal of the namespace resolved the error, and the CHANGE-CAUSE is now reflected in the rollout 
 history.
 
-- Here iam removing "namespace: nginx" in the deploymenyt specification file.
+- Here iam removing "namespace: nginx" in the deployment specification file.
 
 ```
 apiVersion: apps/v1
@@ -588,6 +590,105 @@ REVISION  CHANGE-CAUSE
 This is how rollouts manage updates, allowing us to upgrade our application at any point in time. By 
 keeping track of changes through CHANGE-CAUSE, we can better understand and manage the evolution of our 
 deployment configurations.
+
+**2.Rollback:**
+
+Let's say after this rollout we find some issues and want to roll back to the previous version. Instead of
+using `history`, we should use `undo`. This will roll back to the previous version of the deployment, such
+as `nginx:1.20`. To do this, use:
+```
+ubuntu@balasenapathi:~$ kubectl rollout undo deployment/nginx-deployment
+```
+Alternatively, you can specify a revision number to roll back to a specific version. For example, you can 
+roll back to revision 1, which might correspond to the nginx:latest version, using:
+```
+ubuntu@balasenapathi:~$ kubectl rollout undo deployment/nginx-deployment --to-revision=1
+```
+### 1.To rollback the deployment to previous versions:
+```
+ubuntu@balasenapathi:~$ kubectl rollout undo deployment/nginx-deployment --to-revision=1
+deployment.apps/nginx-deployment rolled back
+```
+### 2.To see the rollout deployment status using kubectl rollout status:
+```
+ubuntu@balasenapathi:~$ kubectl rollout status deployment/nginx-deployment
+deployment "nginx-deployment" successfully rolled out
+```
+### 3.To verify it was rolled back to the nginx:latest version, list all the pods and check the pod image:
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-85dd4d599f-62sx9   1/1     Running   0          16m
+nginx-deployment-85dd4d599f-jcqr2   1/1     Running   0          16m
+nginx-deployment-85dd4d599f-vq66t   1/1     Running   0          16m
+nginx-deployment-85dd4d599f-zx4jm   1/1     Running   0          16m
+
+ubuntu@balasenapathi:~$ kubectl describe pod nginx-deployment-85dd4d599f-62sx9 | grep image
+Normal  Pulling    19m   kubelet            Pulling image "nginx:latest"
+Normal  Pulled     19m   kubelet            Successfully pulled image "nginx:latest" in 1.57
+```
+**Note:** From the above output, we can see that the image version has been successfully rolled back to 
+the newest version, i.e., nginx:latest.
+
+### 4.To get the complete information about a pod:
+```
+ubuntu@balasenapathi:~$ kubectl describe pod/nginx-deployment-85dd4d599f-62sx9
+Name:             nginx-deployment-85dd4d599f-62sx9
+Namespace:        default
+Priority:         0
+Service Account:  default
+Node:             local-cluster-m03/192.168.58.4
+Start Time:       Tue, 05 Sep 2023 18:56:57 +0530
+Labels:           app=nginx
+pod-template-hash=85dd4d599f
+Annotations:      <none>
+Status:           Running
+IP:               10.244.1.13
+IPs:
+IP:           10.244.1.13
+Controlled By:  ReplicaSet/nginx-deployment-85dd4d599f
+Containers:
+nginx-container:
+Container ID:   docker://a3da30068eda16b8cbb0629c8521240209ef061ae04144115cea09328682e851
+Image:          nginx:latest
+Image ID:       docker-pullable://nginx@sha256:104c7c5c54f2685f0f46f3be607ce60da7085da3eaa5ad22d3d9f01594295e9c
+Port:           80/TCP
+Host Port:      0/TCP
+State:          Running
+Started:      Tue, 05 Sep 2023 18:57:02 +0530
+Ready:          True
+Restart Count:  0
+Environment:    <none>
+Mounts:
+/var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-lgjk8 (ro)
+Conditions:
+Type              Status
+Initialized       True
+Ready             True
+ContainersReady   True
+PodScheduled      True
+Volumes:
+kube-api-access-lgjk8:
+Type:                    Projected (a volume that contains injected data from multiple sources)
+TokenExpirationSeconds:  3607
+ConfigMapName:           kube-root-ca.crt
+ConfigMapOptional:       <nil>
+DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+Normal  Scheduled  24m   default-scheduler  Successfully assigned default/nginx-deployment-85dd4d599f-62sx9 to local-cluster-m03
+Normal  Pulling    24m   kubelet            Pulling image "nginx:latest"
+Normal  Pulled     24m   kubelet            Successfully pulled image "nginx:latest" in 1.575317185s (1.575328811s including waiting)
+Normal  Created    24m   kubelet            Created container nginx-container
+Normal  Started    24m   kubelet            Started container nginx-container
+```
+**Note:** We can confirm that the image has been rolled back to the previous deployment REVISION:1, i.e., 
+Image: nginx:latest.
 
 
 
