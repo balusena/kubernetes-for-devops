@@ -203,7 +203,7 @@ new bug in the application that needs to be solved in that case you might need t
 of the application with rollback you can achieve that. With rollback all the replicas of the pod which are
 running on the new version of the application will be rollback again to previous version.
 
-**3.Deployment with Replicaset**
+**3.Deployment with Replicaset:**
 Deployments are generally used with replicaset as they are used to manage replicsets. With the help of 
 deployment You can simply roll back to a previous Deployment revision. When you are managing ReplicaSet 
 using Deployment You can also use a Deployment to create a new revision of a ReplicaSet and then migrate 
@@ -238,7 +238,7 @@ service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   2m4s
 ### 3.To get the apiVersion of deployments in kubernetes:
 ```
 ubuntu@balasenapathi:~$ kubectl api-resources | grep deployment
-deployments                       deploy       apps/v1                                true         Deployment
+deployments         deploy       apps/v1         true         Deployment
 ```
 ### 4.Create a deployment using file nginx-deployment.yaml
 ```
@@ -264,6 +264,44 @@ spec:
           ports:
             - containerPort: 80
 ```
+### 5.To create the deployment in kubernetes cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f nginx-deployment.yaml
+deployment.apps/nginx-deployment created
+```
+
+### 6.To check whether replicaset is created in kubernetes cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get deploy
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-deployment   3/3     3            3           5m20s
+
+ubuntu-dsbda@ubuntudsbda-virtual-machine:~$ kubectl get deployments
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-deployment   3/3     3            3           2m48s
+```
+
+### 7.To get the list of all resources in kubernetes cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get all
+NAME                                    READY   STATUS    RESTARTS   AGE
+pod/nginx-deployment-85dd4d599f-5r66l   1/1     Running   0          7m1s
+pod/nginx-deployment-85dd4d599f-7w8vm   1/1     Running   0          7m1s
+pod/nginx-deployment-85dd4d599f-vr2bb   1/1     Running   0          7m1s
+
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   34m
+
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx-deployment   3/3     3            3           7m1s
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-deployment-85dd4d599f   3         3         3       7m1s
+```
+**Note:** Whenever a deployment is created, a ReplicaSet is automatically created. This can be confirmed by
+the presence of replicaset.apps/nginx-deployment-85dd4d599f.
+
+
 
 
 
