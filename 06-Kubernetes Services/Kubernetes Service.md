@@ -729,6 +729,8 @@ appropriate pods.
 
 ### nginx-service.yaml
 
+**Note:** Use this yaml file to configure the NodePort Services in Kubernetes Cluster.
+
 ```
 apiVersion: v1
 kind: Service
