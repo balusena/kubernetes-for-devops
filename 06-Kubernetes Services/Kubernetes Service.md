@@ -132,7 +132,7 @@ apiservices                       apiregistration.k8s.io/v1              false  
 ```
 ### 2.Create a service using file nginx-service.yaml
 ```
-ubuntu-dsbda@ubuntudsbda-virtual-machine:~$ nano nginx-service.yaml
+ubuntu@balasenapathi:~$ nano nginx-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -182,6 +182,95 @@ spec:
       targetPort: 80
 ```
 ![Kubernetes Services Workflow](https://github.com/balusena/kubernetes-for-devops/blob/main/06-Kubernetes%20Services/clusterip_services.png)
+
+**Notes:**
+- In the spec section, you should provide labels with the selector attribute. Here, you should specify the
+  Pod labels defined as part of the deployment. In this example, we have given app: nginx which matches 
+  those Pods.
+
+- If multiple labels are defined as a selector,all the labels should match with the Pod labels,not just one.
+
+This setup ensures that the Service properly routes traffic to the appropriate set of Pods based on the 
+label selector.
+
+### 3.Now apply the changes to the services into kubernetes:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f nginx-service.yaml
+service/nginx-service created
+```
+
+### 4.Now list down all the services
+```
+ubuntu@balasenapathi:~$ kubectl get services
+NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+kubernetes      ClusterIP   10.96.0.1       <none>        443/TCP    2d3h
+nginx-service   ClusterIP   10.103.232.64   <none>        8082/TCP   101m
+
+ubuntu@balasenapathi:~$ kubectl get svc
+NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+kubernetes      ClusterIP   10.96.0.1       <none>        443/TCP    2d3h
+nginx-service   ClusterIP   10.103.232.64   <none>        8082/TCP   102m
+```
+**Note:** Whenever a Service is created it gets a Private Cluster IP Address "10.103.232.64" as this cannot
+be accessed externally there is no EXTERNAL-IP <none> for this ClusterIP Service and this service can be 
+accessible on 8082 Port.
+
+**Verifying External Access:**
+
+### 5.This service is not accessible from outside of the cluster lets verify:
+```
+ubuntu@balasenapathi:~$ curl 10.103.232.64:8082
+^C
+```
+**Note:** As we can see it is not able to reach the service,as we discussed that this service can be 
+accessed from any of the pods from the cluster(local-cluster)
+
+**Verifying Internal Access:**
+
+### 6.This service can be accessible from any of the Pods with in the cluster lets verify this by getting into any of the Pods in cluster:
+
+### To get the list of all Pods Running in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-785c55b987-nxzr8   1/1     Running   0          2m22s
+nginx-deployment-785c55b987-wkw6d   1/1     Running   0          115s
+```
+### Using kubectl exec to enter one of the pods and trying to access the service internally.
+```
+ubuntu@balasenapathi:~$ kubectl exec -it nginx-deployment-785c55b987-nxzr8 -- /bin/bash
+root@nginx-deployment-785c55b987-nxzr8:/# curl 10.103.232.64:8082
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+```
+**Note:** By using curl 10.103.232.64:8082 inside the Pod in the cluster, we can access the Nginx 
+service/container using the ClusterIP service. This demonstrates that ClusterIP services cannot be 
+accessed from outside of the cluster, but these services can be used to access from all the pods in 
+the cluster. As the name suggests, these services are restricted to the cluster.
+
+
+
 
 
 
