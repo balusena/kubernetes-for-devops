@@ -909,7 +909,12 @@ Commercial support is available at nginx.com.
 
 Thank you for using nginx.
 ```
-
+**Note:** As observed, it still functions like a NodePort Service because Minikube does not support 
+LoadBalancer functionality. In a cloud environment, such as AWS EKS, Azure AKS, or Google GKE, the 
+cloud provider's native LoadBalancer will create an external load balancer that routes requests to 
+the Kubernetes Service. The Service then directs these requests to the appropriate pods. Although 
+the service type is LoadBalancer, all service types—ClusterIP, Multi-Port, NodePort, and 
+LoadBalancer—handle load balancing to some extent.
 
 
 
