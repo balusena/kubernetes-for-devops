@@ -586,6 +586,76 @@ nginx-service   10.244.1.2:80,10.244.1.3:80   151m
 - 1 Pod IP and Port Number ===> 10.244.1.2:80 
 - 2 Pod IP and Port Number ===> 10.244.1.3:80
 
+We can also check which pods are associated with a service by describing the service:
+
+```
+ubuntu@balasenapathi:~$ kubectl describe service/nginx-service
+Name:              nginx-service
+Namespace:         default
+Labels:            <none>
+Annotations:       <none>
+Selector:          app=nginx
+Type:              ClusterIP
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                10.103.232.64
+IPs:               10.103.232.64
+Port:              <unset>  8082/TCP
+TargetPort:        80/TCP
+Endpoints:         10.244.1.2:80,10.244.1.3:80
+Session Affinity:  None
+Events:            <none>
+```
+**Note:** The Endpoints field shows the pods associated with the nginx-service, which are:
+- 1 Pod IP and Port Number ===> 10.244.1.2:80
+- 2 Pod IP and Port Number ===> 10.244.1.3:80
+
+### Checking Pods and Endpoints
+
+When a pod is added or deleted with the label that we have given in the service,the IP addresses associated
+with the service endpoints change seamlessly.
+
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-7c4c499fd5-ppcnb   1/1     Running   0          76s
+nginx-deployment-7c4c499fd5-wz67p   1/1     Running   0          76s
+```
+```
+ubuntu@balasenapathi:~$ kubectl get endpoints
+NAME            ENDPOINTS                     AGE
+kubernetes      192.168.58.2:8443             11m
+nginx-service   10.244.2.2:80,10.244.2.3:80   86s
+```
+```
+ubuntu-dsbda@ubuntudsbda-virtual-machine:~$ kubectl describe service/nginx-service
+Name:              nginx-service
+Namespace:         default
+Labels:            <none>
+Annotations:       <none>
+Selector:          app=nginx
+Type:              ClusterIP
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                10.100.253.136
+IPs:               10.100.253.136
+Port:              <unset>  8082/TCP
+TargetPort:        80/TCP
+Endpoints:         10.244.2.2:80,10.244.2.3:80
+Session Affinity:  None
+Events:            <none>
+```
+**Note:** The Endpoints field has updated to reflect the new IP addresses 10.244.2.2:80 and 10.244.2.3:80 
+as new pods have been added or existing pods have been replaced. This demonstrates how Kubernetes services
+handle dynamic changes in the pod infrastructure seamlessly.
+
+- The Endpoints field shows the new pods associated with the nginx-service, which are:
+- 1 Pod IP and Port Number ===> 10.244.2.2:80
+- 2 Pod IP and Port Number ===> 10.244.2.3:80
+
+
+
+
 
 
 
