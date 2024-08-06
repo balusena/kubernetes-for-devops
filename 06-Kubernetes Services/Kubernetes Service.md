@@ -882,6 +882,12 @@ NAME            TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          A
 kubernetes      ClusterIP      10.96.0.1        <none>        443/TCP          3h36m
 nginx-service   LoadBalancer   10.100.253.136   <pending>     8082:30000/TCP   3h26m
 ```
+**Note:** As shown, the `TYPE` of the service has been changed to `LoadBalancer`, and the `EXTERNAL-IP` 
+is set to `<pending>`. If your cluster is running on a cloud provider, you would typically see an actual
+`EXTERNAL-IP` instead of `<pending>`, which can be accessed over the internet. Additionally, the 
+`nodePort: 30000` and `targetPort: 8082` are visible. The LoadBalancer Service internally functions 
+like both a NodePort and a ClusterIP Service. In Minikube, you can access this LoadBalancer Service using
+the same `minikube service` command.
 
 
 
