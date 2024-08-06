@@ -117,6 +117,74 @@ pod replicas; it picks a pod randomly and forwards the request to it. So, we don
 load balancing when we have multiple pods running the same application. Services also offer other 
 advantages like service discovery and zero downtime deployments.
 
+### The different Service types in Kubernetes are:
+
+1.ClusterIP Service
+2.Multi-Port Service
+3.NodePort Service
+4.LoadBalancer Service
+
+### 1.To get the apiVersion of services in kubernetes
+```
+ubuntu@balasenapathi:~$ kubectl api-resources | grep services
+services             svc          v1                                     true         Service
+apiservices                       apiregistration.k8s.io/v1              false        APIService
+```
+### 2.Create a service using file nginx-service.yaml
+```
+ubuntu-dsbda@ubuntudsbda-virtual-machine:~$ nano nginx-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: ClusterIP
+  selector:
+    app: nginx
+  ports:
+    - port: 8082
+      targetPort: 80
+```
+Note:
+1.Port on which Service will receive the request ---> 8082
+2.targetPort on which the container is running   ---> 80
+
+**ClusterIP-Service:**
+A `ClusterIP` service exposes the ports on an IP Address that is internal to the cluster. This means the IP
+Address cannot be accessed from outside of the cluster. This type of service is useful when you don't want
+to expose your application to the outside world but want all the pods inside the cluster (local-cluster) to
+access it.
+
+- Example: Database Service
+
+**Note:** This service is the default service. If no type is specified, it will be treated as a `ClusterIP`
+service.
+
+## Understanding Services
+
+A `Service` in Kubernetes is an abstraction for a set of Pods. To communicate with the Pods, you should 
+communicate through the `Service` instead of directly interacting with the Pods. If there are hundreds of
+Pods, the `Service` uses labels to know to which Pods it should forward the request. This works similarly
+to how Kubernetes deployments work.
+
+### Example Service YAML
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - port: 8082
+      targetPort: 80
+```
+![Kubernetes Services Workflow](https://github.com/balusena/kubernetes-for-devops/blob/main/06-Kubernetes%20Services/clusterip_services.png)
+
+
+
 
 
 
