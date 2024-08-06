@@ -117,7 +117,7 @@ pod replicas; it picks a pod randomly and forwards the request to it. So, we don
 load balancing when we have multiple pods running the same application. Services also offer other 
 advantages like service discovery and zero downtime deployments.
 
-### The different Service types in Kubernetes are:
+### The different Service types in Kubernetes are.
 
 - 1.ClusterIP Service
 - 2.Multi-Port Service
@@ -193,7 +193,7 @@ spec:
 This setup ensures that the Service properly routes traffic to the appropriate set of Pods based on the 
 label selector.
 
-### 3.Now apply the changes to the services into kubernetes:
+### 3.Now apply the changes to the services into kubernetes.
 ```
 ubuntu@balasenapathi:~$ kubectl apply -f nginx-service.yaml
 service/nginx-service created
@@ -217,7 +217,7 @@ accessible on 8082 Port.
 
 **Verifying External Access:**
 
-### 5.This service is not accessible from outside of the cluster lets verify:
+### 5.This service is not accessible from outside of the cluster lets verify.
 ```
 ubuntu@balasenapathi:~$ curl 10.103.232.64:8082
 ^C
@@ -352,14 +352,14 @@ Thank you for using nginx.
 Kubernetes Services provide load balancing to distribute traffic across multiple Pods. To verify that load
 balancing is working, we can generate some load by continuously accessing the Nginx service multiple times.
 
-### To get the list of all Pods Running in the cluster:
+### To get the list of all Pods Running in the cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl get pods
 NAME                                READY   STATUS    RESTARTS   AGE
 nginx-deployment-785c55b987-nxzr8   1/1     Running   0          12m
 nginx-deployment-785c55b987-wkw6d   1/1     Running   0          12m
 ```
-### To get into the pod with sh:
+### To get into the pod with sh.
 ```
 ubuntu@balasenapathi:~$ kubectl exec -it nginx-deployment-785c55b987-nxzr8 -- sh 
 / #
@@ -755,13 +755,13 @@ spec:
 
 ![Kubernetes NodePort Service](https://github.com/balusena/kubernetes-for-devops/blob/main/06-Kubernetes%20Services/nodeport_service.png)
 
-### 1.Apply the changes of the service in the kubernetes cluster:
+### 1.Apply the changes of the service in the kubernetes cluster.
 ```
 ubuntu@balasenapathi:~$  kubectl apply -f nginx-service.yaml
 service/nginx-service created
 ```
 
-### 2.List down all the services in the cluster:
+### 2.List down all the services in the cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl get services
 NAME            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
@@ -772,7 +772,7 @@ nginx-service   NodePort    10.100.253.136   <none>        8082:30000/TCP   130m
 result, port 30000 is opened on the node, and it is mapped to port 8082 of the service. This is reflected 
 as 8082:30000/TCP.
 
-### 3.To get the IP address in the minikube of my local-cluster:
+### 3.To get the IP address in the minikube of my local-cluster.
 
 ```
 ubuntu@balasenapathi:~$ minikube ip -p local-cluster
