@@ -241,7 +241,7 @@ nginx-deployment-785c55b987-wkw6d   1/1     Running   0          115s
 ### Using kubectl exec to enter one of the pods and trying to access the service internally.
 ```
 ubuntu@balasenapathi:~$ kubectl exec -it nginx-deployment-785c55b987-nxzr8 -- /bin/bash
-root@nginx-deployment-785c55b987-nxzr8:/# curl 10.103.232.64:8082
+/# curl 10.103.232.64:8082
 <!DOCTYPE html>
 <html>
 <head>
@@ -277,7 +277,7 @@ the cluster. As the name suggests, these services are restricted to the cluster.
 access with the name of the Service
 ```
 ubuntu@balasenapathi:~$ kubectl exec -it nginx-deployment-785c55b987-nxzr8 -- /bin/bash
-root@nginx-deployment-785c55b987-nxzr8:/# curl nginx-service:8082
+/# curl nginx-service:8082
 <!DOCTYPE html>
 <html>
 <head>
@@ -334,7 +334,7 @@ Handling connection for 8083
 localhost:8083
 ```
 - You should see the following page:
-````
+```
 Welcome to nginx!
 If you see this page, the nginx web server is successfully installed and working. Further configuration is required.
 
@@ -344,6 +344,110 @@ Commercial support is available at nginx.com.
 Thank you for using nginx.
 ```
 **Note:** This shows that we can access the services by using port-forwarding.
+
+**Services Offers Load balancing:**
+
+### 9.Testing Load Balancing with Kubernetes Services
+
+Kubernetes Services provide load balancing to distribute traffic across multiple Pods. To verify that load
+balancing is working, we can generate some load by continuously accessing the Nginx service multiple times.
+
+### To get the list of all Pods Running in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-785c55b987-nxzr8   1/1     Running   0          12m
+nginx-deployment-785c55b987-wkw6d   1/1     Running   0          12m
+```
+### To get into the pod with sh:
+```
+ubuntu@balasenapathi:~$ kubectl exec -it nginx-deployment-785c55b987-nxzr8 -- sh 
+/ #
+```
+### Automating Load Testing with Shell Script
+
+To test load balancing by continuously accessing the service, you can use a shell script to automate the 
+process. This script will iterate 20 times, sending requests to the Nginx service to observe how the load
+is distributed between the Pods.
+
+**Shell Script for Load Testing:**
+
+You can use the following shell script to automate the load testing:
+```
+i=1
+while [ "$i" -le 20 ]; do
+  curl nginx-service:8082
+  i=$(( i + 1 ))
+done
+```
+```
+ubuntu@balasenapathi:~$ kubectl exec -it nginx-deployment-785c55b987-nxzr8 -- sh
+/ # i=1
+/ # while [ "$i" -le 20 ]; do
+>   curl nginx-service:8082;
+>   i=$(( i + 1 ))
+> done 
+```
+### Verifying Load Balancing by Monitoring Pod Logs
+To confirm that load balancing is working, you can check the logs of the Pods to see if the requests are
+being distributed between them. This is done by monitoring the logs of both Pods while generating load.
+
+**Monitoring Pod Logs:**
+
+**Logs of Pod 1:** ['nginx-deployment-785c55b987-wkw6d']
+
+```
+ubuntu@balasenapathi:~$ kubectl logs nginx-deployment-785c55b987-wkw6d -f
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+/docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2023/09/06 21:13:17 [notice] 1#1: using the "epoll" event method
+2023/09/06 21:13:17 [notice] 1#1: nginx/1.25.2
+2023/09/06 21:13:17 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+2023/09/06 21:13:17 [notice] 1#1: OS: Linux 5.15.0-82-generic
+2023/09/06 21:13:17 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/09/06 21:13:17 [notice] 1#1: start worker processes
+2023/09/06 21:13:17 [notice] 1#1: start worker process 31
+2023/09/06 21:13:17 [notice] 1#1: start worker process 32
+10.244.1.2 - - [06/Sep/2023:21:18:16 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+```
+**Logs of Pod 2:** ['nginx-deployment-785c55b987-nxzr8']
+```
+ubuntu@balasenapathi:~$ kubectl logs nginx-deployment-785c55b987-nxzr8 -f
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+/docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2023/09/06 21:13:05 [notice] 1#1: using the "epoll" event method
+2023/09/06 21:13:05 [notice] 1#1: nginx/1.25.2
+2023/09/06 21:13:05 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+2023/09/06 21:13:05 [notice] 1#1: OS: Linux 5.15.0-82-generic
+2023/09/06 21:13:05 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/09/06 21:13:05 [notice] 1#1: start worker processes
+2023/09/06 21:13:05 [notice] 1#1: start worker process 30
+2023/09/06 21:13:05 [notice] 1#1: start worker process 31
+127.0.0.1 - - [06/Sep/2023:21:23:29 +0000] "GET / HTTP/1.1" 200 615 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" "-"
+127.0.0.1 - - [06/Sep/2023:21:23:30 +0000] "GET / HTTP/1.1" 304 0 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" "-"
+```
+**Note:** The -f flag is used to watch or stream the logs in real-time.
+
+If you observed previously, when we hit the service through the browser, the request was directed to pod2.
+However, when we use port-forwarding, the load balancing does not work; it simply selects one Pod and 
+continuously sends the requests to that Pod. This is why demonstrating load balancing from within the Pod
+is more effective than using port-forwarding.
+
+
 
 
 
