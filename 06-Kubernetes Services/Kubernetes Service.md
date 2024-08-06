@@ -870,12 +870,12 @@ spec:
 
 ![Kubernetes LoadBalancer Service](https://github.com/balusena/kubernetes-for-devops/blob/main/06-Kubernetes%20Services/loadbalancer_service.png)
 
-### 1.Apply the changes of the service in the kubernetes cluster:
+### 1.Apply the changes of the service in the kubernetes cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl apply -f nginx-service.yaml
 service/nginx-service created
 ```
-### 2.List down all the services in the cluster:
+### 2.List down all the services in the cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl get services
 NAME            TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
@@ -888,6 +888,8 @@ is set to `<pending>`. If your cluster is running on a cloud provider, you would
 `nodePort: 30000` and `targetPort: 8082` are visible. The LoadBalancer Service internally functions 
 like both a NodePort and a ClusterIP Service. In Minikube, you can access this LoadBalancer Service using
 the same `minikube service` command.
+
+### 3.Accessing the LoadBalancer Service.
 
 
 
