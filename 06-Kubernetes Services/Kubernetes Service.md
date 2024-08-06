@@ -870,7 +870,11 @@ spec:
 
 ![Kubernetes LoadBalancer Service](https://github.com/balusena/kubernetes-for-devops/blob/main/06-Kubernetes%20Services/loadbalancer_service.png)
 
-
+### 1.Apply the changes of the service in the kubernetes cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f nginx-service.yaml
+service/nginx-service created
+```
 
 
 
