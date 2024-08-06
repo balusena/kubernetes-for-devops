@@ -713,6 +713,46 @@ spec:
 This setup is particularly useful for scenarios involving sidecar containers, where auxiliary containers 
 (such as Prometheus exporters) run alongside the main application container within the same pod.
 
+**3.NodePort Service:**
+
+As the ClusterIP Service is not accessible from outside the cluster, we use the NodePort Service to expose
+our application to the public. This type of service exposes the pod on each node at a static port called 
+nodePort. We can access the NodePort Service from outside the cluster by requesting `nodeIP:nodePort` 
+(e.g., `192.168.58.2:30000`). Any request to our cluster on the given nodePort gets forwarded to the 
+service (`nginx-service`), which internally acts like a ClusterIP and forwards the request to the 
+appropriate pods.
+
+## Important Points
+- **NodePort Range**: The nodePort can range from 30000 to 32767.
+- **Automatic Port Assignment**: If the `nodePort` is not specified, Kubernetes automatically assigns a port that is not in use.
+- **Port Handling**: If `targetPort` is not specified, it defaults to the value of `port`.
+
+### nginx-service.yaml
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: NodePort
+  selector:
+    app: nginx
+  ports:
+    - port: 8082
+      targetPort: 80
+      nodePort: 30000
+```
+**In this configuration:**
+
+- 1.The service is of type NodePort, which means it will expose the service on a specific port on each node.
+
+- 2.The service listens on port 8082 and forwards requests to port 80 of the target pod.
+
+- 3.The nodePort field specifies the static port (30000) on each node's IP that the service is exposed on.
+
+![Kubernetes NodePort Service](https://github.com/balusena/kubernetes-for-devops/blob/main/06-Kubernetes%20Services/nodeport_service.png)
+
 
 
 
