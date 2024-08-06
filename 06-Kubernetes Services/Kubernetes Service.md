@@ -618,6 +618,23 @@ with the service endpoints change seamlessly.
 **Note:** We can add or delete the pods by using ReplicaSets or Deployments, we can simply change the
 replicas count or number in spec section in the yaml or manifest files and re-apply the services.
 
+**Option 1:** Scaling Using kubectl scale
+- To set the number of replicas to 3
+```
+ubuntu@balasenapathi:~$ kubectl scale deployment nginx-deployment --replicas=3
+deployment.apps/nginx-deployment scaled
+```
+**Option 2:** Editing the Deployment YAML
+- Edit the deployment YAML file directly to change the number of replicas:
+```
+ubuntu@balasenapathi:~$ kubectl edit deployment nginx-deployment
+Find the spec section and update the replicas field:
+spec:
+replicas: 3
+
+ubuntu@balasenapathi:~$ kubectl edit deployment nginx-deployment
+deployment.apps/nginx-deployment edited
+```
 ```
 ubuntu@balasenapathi:~$ kubectl get pods
 NAME                                READY   STATUS    RESTARTS   AGE
