@@ -916,7 +916,7 @@ the Kubernetes Service. The Service then directs these requests to the appropria
 the service type is LoadBalancer, all service types—ClusterIP, Multi-Port, NodePort, and 
 LoadBalancer—handle load balancing to some extent.
 
-**Summary:**
+## Summary:
 Kubernetes services manage network access to pods. ClusterIP provides internal access within the cluster. 
 NodePort exposes services on a static port across all nodes for external access. LoadBalancer integrates
 with cloud providers to expose services via an external load balancer. Multi-Port services handle multiple
