@@ -82,6 +82,12 @@ debugging purposes to access on our local machine; it's not publicly available.
 
 ![Kubernetes Services Workflow](https://github.com/balusena/kubernetes-for-devops/blob/main/06-Kubernetes%20Services/services_workflow.png)
 
+That's where Kubernetes Services come into the picture. The main objective of the services is to abstract 
+the pod IP address from the end user. When a service is created, an IP address is assigned to that service
+and this IP address doesn't change as long as the service exists. Users can call a single stable IP address
+instead of calling each pod individually, and the service forwards the request to the pods. Now, even if 
+the pod IP address changes, it doesn't matter, as the service takes care of routing to the appropriate pods.
+Services are not created on any node, unlike pods.
 
 
 
