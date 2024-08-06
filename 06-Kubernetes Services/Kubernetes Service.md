@@ -763,7 +763,7 @@ service/nginx-service created
 
 ### 2.List down all the services in the cluster:
 ```
-ubuntu@balasenapathi:~$  kubectl get services
+ubuntu@balasenapathi:~$ kubectl get services
 NAME            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
 kubernetes      ClusterIP   10.96.0.1        <none>        443/TCP          140m
 nginx-service   NodePort    10.100.253.136   <none>        8082:30000/TCP   130m
@@ -771,6 +771,86 @@ nginx-service   NodePort    10.100.253.136   <none>        8082:30000/TCP   130m
 **Note:** In this configuration, the type of the service has been changed from ClusterIP to NodePort. As a
 result, port 30000 is opened on the node, and it is mapped to port 8082 of the service. This is reflected 
 as 8082:30000/TCP.
+
+### 3.To get the IP address in the minikube of my local-cluster:
+
+```
+ubuntu@balasenapathi:~$ minikube ip -p local-cluster
+192.168.58.2
+```
+Now go to the web browser and access the nginx-service with the local-cluster IP and the node port that we
+have used (30000):
+```
+[192.168.58.2:30000]
+
+Welcome to nginx!
+If you see this page, the nginx web server is successfully installed and working. Further configuration is required.
+
+For online documentation and support please refer to nginx.org.
+Commercial support is available at nginx.com.
+
+Thank you for using nginx.
+```
+**Note:** As we can see, we can access our nginx with the nodeIP , i.e., 192.168.58.2:30000, as this is a NodePort Service.
+
+There is a shortcut for this; instead of getting the IP address and typing it in the browser, we can run 
+the following command:
+```
+ubuntu@balasenapathi:~$ minikube ip -p local-cluster
+192.168.58.2
+
+ubuntu@balasenapathi:~$ minikube service nginx-service -p local-cluster
+|-----------|---------------|-------------|---------------------------|
+| NAMESPACE |     NAME      | TARGET PORT |            URL            |
+|-----------|---------------|-------------|---------------------------|
+| default   | nginx-service |        8082 | http://192.168.58.2:30000 |
+|-----------|---------------|-------------|---------------------------|
+🎉  Opening service default/nginx-service in default browser...
+ubuntu@balasenapathi:~$ Opening in existing browser session.
+```
+```
+[192.168.58.2:30000]
+
+Welcome to nginx!
+If you see this page, the nginx web server is successfully installed and working. Further configuration is required.
+
+For online documentation and support please refer to nginx.org.
+Commercial support is available at nginx.com.
+
+Thank you for using nginx.
+```
+**Note:** The downside to this NodePort Service is that we are accessing this service with nodeIP, but 
+nodeIP may change (e.g., when we restart our node). Also, it is not secure as we are opening ports on 
+the node, so it is not advised to use NodePort Service in production. To overcome this, we use another 
+type of service called LoadBalancer Service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
