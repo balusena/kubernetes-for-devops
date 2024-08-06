@@ -648,7 +648,7 @@ kubernetes      192.168.58.2:8443             11m
 nginx-service   10.244.2.2:80,10.244.2.3:80   86s
 ```
 ```
-ubuntu-dsbda@ubuntudsbda-virtual-machine:~$ kubectl describe service/nginx-service
+ubuntu@balasenapathi:~$ kubectl describe service/nginx-service
 Name:              nginx-service
 Namespace:         default
 Labels:            <none>
@@ -755,6 +755,22 @@ spec:
 
 ![Kubernetes NodePort Service](https://github.com/balusena/kubernetes-for-devops/blob/main/06-Kubernetes%20Services/nodeport_service.png)
 
+### 1.Apply the changes of the service in the kubernetes cluster:
+```
+ubuntu@balasenapathi:~$  kubectl apply -f nginx-service.yaml
+service/nginx-service created
+```
+
+### 2.List down all the services in the cluster:
+```
+ubuntu@balasenapathi:~$  kubectl get services
+NAME            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+kubernetes      ClusterIP   10.96.0.1        <none>        443/TCP          140m
+nginx-service   NodePort    10.100.253.136   <none>        8082:30000/TCP   130m
+```
+**Note:** In this configuration, the type of the service has been changed from ClusterIP to NodePort. As a
+result, port 30000 is opened on the node, and it is mapped to port 8082 of the service. This is reflected 
+as 8082:30000/TCP.
 
 
 
