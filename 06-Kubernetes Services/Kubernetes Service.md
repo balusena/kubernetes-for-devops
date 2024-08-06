@@ -824,6 +824,54 @@ nodeIP may change (e.g., when we restart our node). Also, it is not secure as we
 the node, so it is not advised to use NodePort Service in production. To overcome this, we use another 
 type of service called LoadBalancer Service.
 
+**4.LoadBalancer Service:**
+
+A LoadBalancer Service exposes the pods externally using cloud providers like AWS, Azure, or GCP. This 
+type of service acts like a combination of ClusterIP and NodePort internally. The LoadBalancer is the 
+preferred solution for exposing a cluster to the wider internet.
+
+To convert a service into a LoadBalancer Service, you simply need to set the `type` to `LoadBalancer` in
+your service definition. Kubernetes will then request the cloud provider hosting the cluster to set up a 
+LoadBalancer that points to the external node IPs on a specific NodePort. If the cloud provider does not 
+support LoadBalancers, Kubernetes will fall back to using a NodePort.
+
+For example, in Minikube, which does not support external LoadBalancers, the LoadBalancer Service will 
+function similarly to a NodePort Service.
+
+### nginx-service.yaml
+
+**Note:** Use this yaml file to configure the LoadBalancer Services in Kubernetes Cluster.
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: nginx
+  ports:
+    - port: 8082
+      targetPort: 80
+      nodePort: 30000
+```
+**In this configuration:**
+
+- type: LoadBalancer specifies that the service should be exposed via a LoadBalancer.
+
+- port: 8082 is the port that the LoadBalancer listens on.
+
+- targetPort: 80 is the port on the pod that the LoadBalancer forwards traffic to.
+
+- nodePort: 30000 is the port on each node that the LoadBalancer uses (this field is optional and may be omitted if not needed).
+
+**Note:** In Minikube, the LoadBalancer will not create an external LoadBalancer but will instead behave like a NodePort Service.
+
+![Kubernetes LoadBalancer Service](https://github.com/balusena/kubernetes-for-devops/blob/main/06-Kubernetes%20Services/loadbalancer_service.png)
+
+
+
 
 
 
