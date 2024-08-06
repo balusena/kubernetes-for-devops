@@ -615,6 +615,9 @@ Events:            <none>
 When a pod is added or deleted with the label that we have given in the service,the IP addresses associated
 with the service endpoints change seamlessly.
 
+**Note:** We can add or delete the pods by using ReplicaSets or Deployments, we can simply change the
+replicas count or number in spec section in the yaml or manifest files and apply the services.
+
 ```
 ubuntu@balasenapathi:~$ kubectl get pods
 NAME                                READY   STATUS    RESTARTS   AGE
