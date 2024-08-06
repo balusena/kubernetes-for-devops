@@ -447,6 +447,144 @@ However, when we use port-forwarding, the load balancing does not work; it simpl
 continuously sends the requests to that Pod. This is why demonstrating load balancing from within the Pod
 is more effective than using port-forwarding.
 
+### Running the Shell Script
+
+To verify load distribution, we can run the shell script to access the `nginx-service` continuously. 
+Here's how you can do it:
+
+1.**Access the Pod**:
+
+```
+ubuntu@balasenapathi:~$ kubectl exec -it nginx-deployment-785c55b987-nxzr8 -- sh
+/ #
+```
+
+2.**Run the Shell Script**:
+
+```
+/ # i=1
+/ # while [ "$i" -le 20 ]; do
+>   curl nginx-service:8082;
+>   i=$(( i + 1 ))
+> done
+```
+
+3.**Script Output**:
+
+After running the script, you should see the following output, which indicates that the `nginx-service` was
+accessed 20 times:
+
+```
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to nginx!</title>
+    <style>
+        html { color-scheme: light dark; }
+        body { width: 35em; margin: 0 auto; font-family: Tahoma, Verdana, Arial, sans-serif; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to nginx!</h1>
+    <p>If you see this page, the nginx web server is successfully installed and working. Further configuration is required.</p>
+
+    <p>For online documentation and support please refer to
+        <a href="http://nginx.org/">nginx.org</a>.<br/>
+        Commercial support is available at
+        <a href="http://nginx.com/">nginx.com</a>.
+    </p>
+
+    <p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+```
+- The output will repeat for each request made by the script.
+
+**Note:** The script has successfully hit the `nginx-service` 20 times.
+
+### Pod Logs and Load Balancing Verification
+
+**Pod 1 Logs:**
+```
+ubuntu@balasenapathi:~$ kubectl logs nginx-deployment-785c55b987-wkw6d -f
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+/docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2023/09/06 21:13:17 [notice] 1#1: using the "epoll" event method
+2023/09/06 21:13:17 [notice] 1#1: nginx/1.25.2
+2023/09/06 21:13:17 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+2023/09/06 21:13:17 [notice] 1#1: OS: Linux 5.15.0-82-generic
+2023/09/06 21:13:17 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/09/06 21:13:17 [notice] 1#1: start worker processes
+2023/09/06 21:13:17 [notice] 1#1: start worker process 31
+2023/09/06 21:13:17 [notice] 1#1: start worker process 32
+10.244.1.2 - - [06/Sep/2023:21:18:16 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.2 - - [06/Sep/2023:21:59:44 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.2 - - [06/Sep/2023:21:59:44 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.2 - - [06/Sep/2023:21:59:44 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.2 - - [06/Sep/2023:21:59:44 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.2 - - [06/Sep/2023:21:59:44 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.2 - - [06/Sep/2023:21:59:44 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+```
+**Pod 2 Logs:**
+```
+ubuntu@balasenapathi:~$ kubectl logs nginx-deployment-785c55b987-nxzr8 -f
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+/docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2023/09/06 21:13:05 [notice] 1#1: using the "epoll" event method
+2023/09/06 21:13:05 [notice] 1#1: nginx/1.25.2
+2023/09/06 21:13:05 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10)
+2023/09/06 21:13:05 [notice] 1#1: OS: Linux 5.15.0-82-generic
+2023/09/06 21:13:05 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/09/06 21:13:05 [notice] 1#1: start worker processes
+2023/09/06 21:13:05 [notice] 1#1: start worker process 30
+2023/09/06 21:13:05 [notice] 1#1: start worker process 31
+127.0.0.1 - - [06/Sep/2023:21:23:29 +0000] "GET / HTTP/1.1" 200 615 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" "-"
+127.0.0.1 - - [06/Sep/2023:21:23:30 +0000] "GET / HTTP/1.1" 304 0 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" "-"
+10.244.1.1 - - [06/Sep/2023:21:59:43 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.1 - - [06/Sep/2023:21:59:43 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.1 - - [06/Sep/2023:21:59:43 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.1 - - [06/Sep/2023:21:59:43 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.1 - - [06/Sep/2023:21:59:44 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.1 - - [06/Sep/2023:21:59:44 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.1 - - [06/Sep/2023:21:59:44 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.1 - - [06/Sep/2023:21:59:44 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.1 - - [06/Sep/2023:21:59:44 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.1 - - [06/Sep/2023:21:59:44 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.1 - - [06/Sep/2023:21:59:44 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.1 - - [06/Sep/2023:21:59:44 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-"
+10.244.1.1 - - [06/Sep/2023:21:59:44 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.2.1" "-
+```
+**Note:** The logs from both pods show multiple requests being processed, indicating that the load is 
+being distributed between the pods. This confirms that load balancing is functioning as expected.
+
+### 10.Pods Associated with Services
+
+To see what pods are associated with the services.
+
+```
+ubuntu@balasenapathi:~$ kubectl get endpoints
+NAME            ENDPOINTS                     AGE
+kubernetes      192.168.58.2:8443             2d4h
+nginx-service   10.244.1.2:80,10.244.1.3:80   151m
+```
+**Note:** Whenever a service is created, an endpoint object with the same name as the service 
+(e.g., "nginx-service") is also created. As shown, two pods are associated with this service: 
+- 1 Pod IP and Port Number ===> 10.244.1.2:80 
+- 2 Pod IP and Port Number ===> 10.244.1.3:80
 
 
 
