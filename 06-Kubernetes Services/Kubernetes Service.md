@@ -890,6 +890,27 @@ like both a NodePort and a ClusterIP Service. In Minikube, you can access this L
 the same `minikube service` command.
 
 ### 3.Accessing the LoadBalancer Service.
+```
+ubuntu@balasenapathi:~$ minikube service nginx-service -p local-cluster
+|-----------|---------------|-------------|---------------------------|
+| NAMESPACE |     NAME      | TARGET PORT |            URL            |
+|-----------|---------------|-------------|---------------------------|
+| default   | nginx-service |        8082 | http://192.168.58.2:30000 |
+|-----------|---------------|-------------|---------------------------|
+🎉  Opening service default/nginx-service in default browser...
+ubuntu@balasenapathi:~$ Opening in existing browser session.
+[192.168.58.2:30000]
+
+Welcome to nginx!
+If you see this page, the nginx web server is successfully installed and working. Further configuration is required.
+
+For online documentation and support please refer to nginx.org.
+Commercial support is available at nginx.com.
+
+Thank you for using nginx.
+```
+
+
 
 
 
