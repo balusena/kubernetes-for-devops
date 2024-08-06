@@ -875,7 +875,13 @@ spec:
 ubuntu@balasenapathi:~$ kubectl apply -f nginx-service.yaml
 service/nginx-service created
 ```
-
+### 2.List down all the services in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get services
+NAME            TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+kubernetes      ClusterIP      10.96.0.1        <none>        443/TCP          3h36m
+nginx-service   LoadBalancer   10.100.253.136   <pending>     8082:30000/TCP   3h26m
+```
 
 
 
