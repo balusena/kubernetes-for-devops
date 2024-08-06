@@ -704,6 +704,14 @@ spec:
 
 ![Kubernetes Multi-Port Service](https://github.com/balusena/kubernetes-for-devops/blob/main/06-Kubernetes%20Services/multiport_service.png)
 
+**With this configuration:**
+
+- 1.The service listens on port 8082 and forwards requests to port 80 of the target container.
+
+- 2.The service listens on port 8081 and forwards requests to port 8080 of the target container.
+
+This setup is particularly useful for scenarios involving sidecar containers, where auxiliary containers 
+(such as Prometheus exporters) run alongside the main application container within the same pod.
 
 
 
