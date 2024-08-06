@@ -2,7 +2,7 @@
 Kubernetes services provide a way to expose a set of Pods as a network service. Services abstract the
 underlying Pods, ensuring communication even as Pods are dynamically created or deleted.
 
-## Types of Services
+## 1.Types of Services
 
 ### 1.ClusterIP
 
@@ -36,7 +36,7 @@ service automatically creates both NodePort and ClusterIP services, routing traf
 This setup is beneficial for production environments where reliable, high-availability access to services 
 is required, as it efficiently manages and balances incoming traffic, ensuring scalability and resilience.
 
-## Benefits
+## 2.Benefits
 
 Services in Kubernetes enable reliable network access and service discovery by maintaining stable endpoints 
 while scaling and updating applications within a Kubernetes cluster. They abstract the underlying Pods, 
@@ -44,3 +44,26 @@ providing a stable interface for communication and ensuring consistent access ev
 dynamically scales. This abstraction simplifies the network configuration and enhances the security and 
 manageability of applications, ensuring that internal and external traffic is appropriately routed and 
 managed according to the service type.
+
+## 3.How Kubernetes Services Works.
+
+So far, we have seen deploying Nginx to Kubernetes using deployments, and we have also seen how to access 
+the deployed Nginx with port forwarding in the same cluster (local-cluster).
+```
+ubuntu@balasenapathi:~$ kubectl port-forward deployment.apps/nginx-deployment 8081:80
+Forwarding from 127.0.0.1:8081 -> 80
+Forwarding from [::1]:8081 -> 80
+```
+**Note:** This is used for debugging purposes. But how do we access it from the production environment as 
+end users?
+
+We have our Nginx up and running with two replicas, meaning two pods. When a pod is created, a new cluster 
+private IP address is assigned to that pod. This is managed by the Kube Proxy Agent running on the node, as
+discussed in Kubernetes architecture. These pods are created in a separate network, and we cannot reach these
+pods from outside the cluster; we can only access them from within the cluster.
+
+Let's say we want to connect to a service running in a pod from another pod. We can connect to it using the 
+IP address of the pod, but we cannot access the same service from outside the cluster using the same 
+IP address. Even within the cluster, we cannot rely on the IP address of the pod. Let us see why.
+
+
