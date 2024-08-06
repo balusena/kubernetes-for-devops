@@ -99,7 +99,7 @@ especially under high traffic conditions.
 
 **2.Service discovery:** Services make it easy for pods to find and communicate with each other,simplifying
 the development of distributed systems.Kubernetes provides DNS names for services,allowing applications to
-use service names instead of hardcoding IP addresses. his automatic service discovery mechanism facilitates
+use service names instead of hard coding IP addresses.This automatic service discovery mechanism facilitates
 smoother interactions between microservices,enabling developers to build scalable and modular applications
 without worrying about dynamic IP address changes.
 
@@ -108,6 +108,15 @@ downtime, ensuring continuous availability. Kubernetes supports rolling updates 
 allowing new versions of applications to be deployed without affecting the running instances. This means
 that users experience uninterrupted service while updates or maintenance tasks are performed in the 
 background, thus improving the overall user experience and system reliability.
+
+**Use case-2:**
+Now we have two pods of the same application, which is Nginx. In real-time scenarios, we may have many 
+replicas of the same application. In that case, when we make a request, to which pod does our request go?
+Services take care of load balancing. This means that the service provides load balancing when you have 
+pod replicas; it picks a pod randomly and forwards the request to it. So, we don't need to worry about 
+load balancing when we have multiple pods running the same application. Services also offer other 
+advantages like service discovery and zero downtime deployments.
+
 
 
 
