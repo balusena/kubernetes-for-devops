@@ -119,10 +119,10 @@ advantages like service discovery and zero downtime deployments.
 
 ### The different Service types in Kubernetes are:
 
-1.ClusterIP Service
-2.Multi-Port Service
-3.NodePort Service
-4.LoadBalancer Service
+- 1.ClusterIP Service
+- 2.Multi-Port Service
+- 3.NodePort Service
+- 4.LoadBalancer Service
 
 ### 1.To get the apiVersion of services in kubernetes
 ```
