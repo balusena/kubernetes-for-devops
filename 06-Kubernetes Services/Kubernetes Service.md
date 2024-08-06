@@ -89,7 +89,7 @@ instead of calling each pod individually, and the service forwards the request t
 the pod IP address changes, it doesn't matter, as the service takes care of routing to the appropriate pods.
 Services are not created on any node, unlike pods.
 
-**Other advantages of Kubernetes Services:
+**Other advantages of Kubernetes Services:**
 
 **1.Load balancing:** Services distribute network traffic across multiple pods to ensure no single pod 
 becomes a bottleneck. By spreading the load, Kubernetes Services enhance the reliability and performance 
