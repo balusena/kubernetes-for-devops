@@ -145,9 +145,9 @@ spec:
     - port: 8082
       targetPort: 80
 ```
-Note:
-1.Port on which Service will receive the request ---> 8082
-2.targetPort on which the container is running   ---> 80
+**Note:**
+- 1.Port on which Service will receive the request ---> 8082
+- 2.targetPort on which the container is running   ---> 80
 
 **ClusterIP-Service:**
 A `ClusterIP` service exposes the ports on an IP Address that is internal to the cluster. This means the IP
