@@ -302,12 +302,51 @@ Commercial support is available at
 </body>
 </html>
 ```
-
 **Note:** We got the response by using the name of the service ====> "curl nginx-service:8082"
 
 **This shows that we can access the ClusterIP Services in two ways:**
 - 1.Using the IP Address           ===> "curl 10.103.232.64:8082"
 - 2.Using the Name of the Service  ===> "curl nginx-service:8082"
+
+***Accessing Services Using Port-Forwarding:**
+
+There might be cases where we want to debug our `ClusterIP` service and need to access it from our local 
+machine. We can achieve this by using port-forwarding on services, similar to how we do it on Pods and 
+Deployments.
+
+### 7.Port-Forwarding a Service
+Use the following command to port-forward the `nginx-service` from port `8082` to port `8083` on your 
+local machine:
+
+```
+ubuntu@balasenapathi:~$ kubectl port-forward service/nginx-service 8083:8082
+Forwarding from 127.0.0.1:8083 -> 80
+Forwarding from [::1]:8083 -> 80
+Handling connection for 8083
+Handling connection for 8083
+```
+**Note:** By this command, we are port-forwarding the services that are running on port 8082 to port 8083.
+
+### 8.Verifying in a Web Browser
+
+- Now, go to your web browser and check the following URL: 
+```
+localhost:8083
+```
+- You should see the following page:
+````
+Welcome to nginx!
+If you see this page, the nginx web server is successfully installed and working. Further configuration is required.
+
+For online documentation and support please refer to nginx.org.
+Commercial support is available at nginx.com.
+
+Thank you for using nginx.
+```
+**Note:** This shows that we can access the services by using port-forwarding.
+
+
+
 
 
 
