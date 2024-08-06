@@ -236,6 +236,8 @@ NAME                                READY   STATUS    RESTARTS   AGE
 nginx-deployment-785c55b987-nxzr8   1/1     Running   0          2m22s
 nginx-deployment-785c55b987-wkw6d   1/1     Running   0          115s
 ```
+**Accessing ClusterIP Service using IP address of the service:**
+
 ### Using kubectl exec to enter one of the pods and trying to access the service internally.
 ```
 ubuntu@balasenapathi:~$ kubectl exec -it nginx-deployment-785c55b987-nxzr8 -- /bin/bash
@@ -268,6 +270,45 @@ Commercial support is available at
 service/container using the ClusterIP service. This demonstrates that ClusterIP services cannot be 
 accessed from outside of the cluster, but these services can be used to access from all the pods in 
 the cluster. As the name suggests, these services are restricted to the cluster.
+
+**Accessing ClusterIP Service using name of the service:**
+
+**Note:**We can also access the ClusterIP Service not only with the IP Address of the Service we can also 
+access with the name of the Service
+```
+ubuntu@balasenapathi:~$ kubectl exec -it nginx-deployment-785c55b987-nxzr8 -- /bin/bash
+root@nginx-deployment-785c55b987-nxzr8:/# curl nginx-service:8082
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+```
+
+**Note:** We got the response by using the name of the service ====> "curl nginx-service:8082"
+
+**This shows that we can access the ClusterIP Services in two ways:**
+- 1.Using the IP Address           ===> "curl 10.103.232.64:8082"
+- 2.Using the Name of the Service  ===> "curl nginx-service:8082"
+
 
 
 
