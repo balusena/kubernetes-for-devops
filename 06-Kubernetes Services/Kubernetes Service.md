@@ -57,6 +57,7 @@ Forwarding from [::1]:8081 -> 80
 **Note:** This is used for debugging purposes. But how do we access it from the production environment as 
 end users?
 
+**Use case-1:**
 We have our Nginx up and running with two replicas, meaning two pods. When a pod is created, a new cluster 
 private IP address is assigned to that pod. This is managed by the Kube Proxy Agent running on the node, as
 discussed in Kubernetes architecture. These pods are created in a separate network, and we cannot reach these
@@ -64,6 +65,23 @@ pods from outside the cluster; we can only access them from within the cluster.
 
 Let's say we want to connect to a service running in a pod from another pod. We can connect to it using the 
 IP address of the pod, but we cannot access the same service from outside the cluster using the same 
-IP address. Even within the cluster, we cannot rely on the IP address of the pod. Let us see why.
+IP address. Even within the cluster, we cannot rely on the IP address of the pod. Let us see why?
+
+As we use deployments to create these pods, these pods are created and destroyed dynamically. If we decrease
+the replica set count, extra pods will be deleted; if we increase the replica set count, extra pods will be 
+created. Also, if we change the image version, all the pods get deleted and new pods get created. Whenever a
+pod is recreated, a new IP address is assigned to that pod.
+
+Pods are non-permanent resources, and this IP address keeps changing. Obviously, when we try to access with 
+the old IP address, it fails to connect. Therefore, we cannot rely on their IP addresses to communicate. If 
+we want to access the services running in a pod, it's a common use case to need access to the application on
+the internet or from other services, especially in a microservices world. Port forwarding is just for 
+debugging purposes to access on our local machine; it's not publicly available.
+
+**Kubernetes Services Workflow:**
+
+![Kubernetes Services Workflow](https://github.com/balusena/kubernetes-for-devops/blob/main/06-Kubernetes%20Services/services_workflow.png)
+
+
 
 
