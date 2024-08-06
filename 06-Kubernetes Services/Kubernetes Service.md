@@ -149,7 +149,7 @@ spec:
 - 1.Port on which Service will receive the request ---> 8082
 - 2.targetPort on which the container is running   ---> 80
 
-**ClusterIP-Service:**
+**1.ClusterIP-Service:**
 A `ClusterIP` service exposes the ports on an IP Address that is internal to the cluster. This means the IP
 Address cannot be accessed from outside of the cluster. This type of service is useful when you don't want
 to expose your application to the outside world but want all the pods inside the cluster (local-cluster) to
@@ -167,7 +167,7 @@ communicate through the `Service` instead of directly interacting with the Pods.
 Pods, the `Service` uses labels to know to which Pods it should forward the request. This works similarly
 to how Kubernetes deployments work.
 
-### Example Service YAML
+### cluster-ip-service.yaml
 
 ```
 apiVersion: v1
@@ -181,7 +181,7 @@ spec:
     - port: 8082
       targetPort: 80
 ```
-![Kubernetes Services Workflow](https://github.com/balusena/kubernetes-for-devops/blob/main/06-Kubernetes%20Services/clusterip_services.png)
+![Kubernetes ClusterIP Service](https://github.com/balusena/kubernetes-for-devops/blob/main/06-Kubernetes%20Services/clusterip_service.png)
 
 **Notes:**
 - In the spec section, you should provide labels with the selector attribute. Here, you should specify the
@@ -672,6 +672,39 @@ handle dynamic changes in the pod infrastructure seamlessly.
 - The Endpoints field shows the new pods associated with the nginx-service, which are:
 - 1 Pod IP and Port Number ===> 10.244.2.2:80
 - 2 Pod IP and Port Number ===> 10.244.2.3:80
+
+**2.Multi-Port Service:**
+
+If we have multiple containers in a pod and want to expose two containers through services, we can define
+multiple ports in a single service. As we can see, ports is an array. For multi-port services, the name is
+mandatory. Our service will accept requests on two ports as defined here: one on port 8081 and another on 
+port 8082. One container is running on port 80 and the second one is running on port 8080. Now, we can 
+access our service on port 8082, and the request goes to port 80 of the container. When we access our 
+service on port 8081, the request goes to port 8080 of the container. These multi-port services are very 
+helpful when we have sidecar containers, just like our Prometheus exporters.
+
+### multi-port-service.yaml
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: multi-port-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - name: proxy
+      port: 8082
+      targetPort: 80
+    - name: application
+      port: 8081
+      targetPort: 8080
+```
+
+![Kubernetes Multi-Port Service](https://github.com/balusena/kubernetes-for-devops/blob/main/06-Kubernetes%20Services/multiport_service.png)
+
+
 
 
 
