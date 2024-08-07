@@ -53,9 +53,18 @@ respective cloud services.
 # How Does Kubernetes Ingress work?
 
 If we are a beginner and trying to understand ingress, there is possible confusion on how it works.
-
 For example, We might think, hey, we created the ingress rules, but we are not sure how to map it to a 
 domain name or route the external traffic to internal deployments.
+
+To make use of the Ingress resource, Kubernetes requires an Ingress controller, which acts as the 
+implementation of the Ingress rules. There are several Ingress controllers available, each with its own 
+set of features and configuration options. Popular examples include NGINX Ingress Controller, Traefik, 
+HAProxy Ingress, and Istio Gateway.
+
+The Ingress controller runs as a pod in the Kubernetes cluster and listens for changes in the Ingress 
+resources. When a new Ingress object is created or modified, the controller dynamically updates its 
+configuration to reflect the desired routing rules. This dynamic nature allows for easy scaling and 
+reconfiguration of the Ingress controller based on the cluster’s needs.
 
 We need to be very clear about two key concepts to understand that.
 
