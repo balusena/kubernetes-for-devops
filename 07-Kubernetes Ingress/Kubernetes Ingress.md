@@ -390,9 +390,102 @@ Thank you for using nginx.
 ```
 **Note:** Now we are able to access the nginx application on custom domain i.e, nginx-demo.com from web browser. 
 
+### 13.Now extend this ingress to access our to-do ui and api applications:
 
+This is the configuration file which holds the deployment and service configuration for the ui and api applications:
+```
+ubuntu@balasenapathi:~$ nano todo-ui-api.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-api
+  template:
+    metadata:
+      name: todo-api-pod
+      labels:
+        app: todo-api
+    spec:
+      containers:
+        - name: todo-api
+          image: pavanelthepu/todo-api:1.0.2
+          ports:
+            - containerPort: 8082
+          env:
+            - name: "spring.data.mongodb.uri"
+              value: "mongodb+srv://root:321654@cluster0.p9jq2.mongodb.net/todo?retryWrites=true&w=majority"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-api-service
+spec:
+  selector:
+    app: todo-api
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8082
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-ui
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-ui
+  template:
+    metadata:
+      name: todo-ui-pod
+      labels:
+        app: todo-ui
+    spec:
+      containers:
+        - name: todo-ui
+          image: pavanelthepu/todo-ui:1.0.2
+          ports:
+            - containerPort: 80
+          env:
+            - name: "REACT_APP_BACKEND_SERVER_URL"
+              value: "http://todo.com/api"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-ui-service
+spec:
+  selector:
+    app: todo-ui
+  ports:
+    - name: http
+      port: 3001
+      targetPort: 80
+```
+**Note:**
 
+As we can see, we are pulling the todo-api image from Docker Hub and creating a deployment that creates 2 
+replicas of the API application. Additionally, we are creating the todo-api-service to access the API 
+application.
 
+Similarly, we are creating a deployment for the todo-ui application and a todo-ui-service to access the UI
+application.
+
+### 14.Apply the changes in the ingress-cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f todo-ui-api.yaml
+deployment.apps/todo-api created
+service/todo-api-service created
+deployment.apps/todo-ui created
+service/todo-ui-service created
+```
+**Note:** The todo-ui deploment,todo-ui-service and todo-api deployment,todo-api-service are created.
 
 
 
