@@ -50,4 +50,25 @@ functionality.
 These cloud-specific implementations often provide additional features and tighter integration with their
 respective cloud services.
 
+# How Does Kubernetes Ingress work?
+
+If we are a beginner and trying to understand ingress, there is possible confusion on how it works.
+
+For example, We might think, hey, we created the ingress rules, but we are not sure how to map it to a 
+domain name or route the external traffic to internal deployments.
+
+We need to be very clear about two key concepts to understand that.
+
+**1.Kubernetes Ingress Resource:** Kubernetes ingress resource is responsible for storing DNS routing rules
+in the cluster.
+
+**2.Kubernetes Ingress Controller:** Kubernetes ingress controllers (Nginx/HAProxy etc.) are responsible 
+for routing by accessing the DNS rules applied through ingress resources.
+
+![Kubernetes Resource Controller](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/kubernetes_resource_controller.png)
+
+
+
+
+
 
