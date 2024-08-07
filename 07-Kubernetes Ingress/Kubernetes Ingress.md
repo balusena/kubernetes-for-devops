@@ -682,6 +682,13 @@ http://todo-api.com/api/todos
 ```
 ![todo api host](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/todo_api_host.png)
 
+**Note:** We can see that we get our data from the database.
+
+This is called host-based routing, meaning based on the hosts we are routing the application into separate
+domain services like todo-ui.com and todo-api.com/api, etc.
+
+
+
 
 
 
