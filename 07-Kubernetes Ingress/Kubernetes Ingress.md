@@ -487,6 +487,21 @@ service/todo-ui-service created
 ```
 **Note:** The todo-ui deploment,todo-ui-service and todo-api deployment,todo-api-service are created.
 
+## Now we should access these two applications using ingress:
+
+- We will be accessing this application in two ways of routing:
+
+**1.Path-Based Routing/Mapping:**
+**2.Host-Based Routing/Mapping:**
+
+**Path-Based Routing in Kubernetes Ingress:** Path-based routing directs traffic based on the URL path of incoming requests, allowing
+different paths like "/(.*)" ,"/ui" and "/api" to be sent to distinct backend services. This approach is useful for managing various
+application endpoints within a single domain.
+
+**Host-Based Routing in Kubernetes Ingress:** Host-based routing routes traffic based on the hostname in the request, enabling multiple
+websites or applications to share the same IP and port but serve content based on distinct hostnames (e.g., "todo.ui.com" and
+"todo-api.com"). It's a powerful method for hosting multiple services on a single cluster while maintaining separation based on  
+the requested domain.
 
 
 
