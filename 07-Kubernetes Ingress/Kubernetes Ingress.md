@@ -584,7 +584,16 @@ http://todo.com
 ```
 ![todo api](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/todo_ui.png)
 
+**Note: The todo.com UI and API are loading and working**
+```
+http://todo.com/api/api/todos
+```
+![todo api](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/todo_api.png)
 
+**Note:** We can see that we get our data from the database.
+
+This is called path-based routing, meaning based on the path we are routing the application into different
+services like /ui and /api, etc.
 
 
 
