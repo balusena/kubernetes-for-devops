@@ -487,7 +487,7 @@ service/todo-ui-service created
 ```
 **Note:** The todo-ui deploment,todo-ui-service and todo-api deployment,todo-api-service are created.
 
-## Now we should access these two applications using ingress:
+## Now we will access these two applications using ingress:
 
 - We will be accessing this application in two ways of routing:
 
@@ -502,6 +502,42 @@ application endpoints within a single domain.
 websites or applications to share the same IP and port but serve content based on distinct hostnames (e.g., "todo.ui.com" and
 "todo-api.com"). It's a powerful method for hosting multiple services on a single cluster while maintaining separation based on  
 the requested domain.
+
+#1. Path-Based Routing/Mapping:
+Path-Based Routing in Kubernetes Ingress: Path-based routing directs traffic based on the URL path of 
+incoming requests, allowing different paths like /, /ui, and /api to be sent to distinct backend services.
+This approach is useful for managing various application endpoints within a single domain.
+
+### 1.Create the todo-ingress-path-based.yaml file 
+```
+ubuntu@balasenapathi:~$ nano todo-ingress-path-based.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todo-ingress-path-based
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+    - host: todo.com
+      http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: todo-ui-service
+                port:
+                  number: 3001
+          - path: /api/(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: todo-api-service
+                port:
+                  number: 8080
+```
+
 
 
 
