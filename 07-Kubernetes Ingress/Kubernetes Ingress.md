@@ -503,7 +503,7 @@ websites or applications to share the same IP and port but serve content based o
 "todo-api.com"). It's a powerful method for hosting multiple services on a single cluster while maintaining separation based on  
 the requested domain.
 
-#1. Path-Based Routing/Mapping:
+# 1. Path-Based Routing/Mapping:
 Path-Based Routing in Kubernetes Ingress: Path-based routing directs traffic based on the URL path of 
 incoming requests, allowing different paths like /, /ui, and /api to be sent to distinct backend services.
 This approach is useful for managing various application endpoints within a single domain.
@@ -582,21 +582,98 @@ Go to the browser and check whether you can access todo.com and todo.com/api/api
 ```
 http://todo.com
 ```
-![todo api](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/todo_ui.png)
+![todo api](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/todo_ui_path.png)
 
 **Note: The todo.com UI and API are loading and working**
 ```
 http://todo.com/api/api/todos
 ```
-![todo api](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/todo_api.png)
+![todo api](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/todo_api_path.png)
 
 **Note:** We can see that we get our data from the database.
 
 This is called path-based routing, meaning based on the path we are routing the application into different
 services like /ui and /api, etc.
 
+# 2.Host-Based Routing/Mapping:
+Host-Based Routing in Kubernetes Ingress: Host-based routing routes traffic based on the hostname in the 
+request, enabling multiple websites or applications to share the same IP and port but serve content based
+on distinct hostnames (e.g., todo-ui.com and todo-api.com). It's a powerful method for hosting multiple 
+services on a single cluster while maintaining separation based on the requested domain.
 
+Instead of accessing the UI and API on the same host with different paths, we can access this UI and API 
+on different hosts like:
 
+**UI ===> todo-ui.com**
+**API ===> todo-api.com**
+
+### 1.Create the file todo-ingress-host-based.yaml:
+```
+ubuntu@balasenapathi:~$ nano todo-ingress-host-based.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todo-ingress-host-based
+spec:
+  rules:
+    - host: todo-ui.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: todo-ui-service
+                port:
+                  number: 3001
+    - host: todo-api.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: todo-api-service
+                port:
+                  number: 8080
+```
+**Explanation:**
+
+Here we are assigning the UI application to todo-ui.com and the API application to todo-api.com, separately
+on different hosts within the same cluster. This setup uses the same IP and ports but different domain 
+names (todo-ui.com and todo-api.com), maintaining separation within a single cluster, i.e., our custom 
+created Minikube Ingress cluster.
+
+### 2.Apply the Ingress Configuration
+```
+ubuntu@balasenapathi:~$ kubectl apply -f todo-ingress-host-based.yaml
+ingress.networking.k8s.io/todo-ingress-host-based created
+```
+
+### 3.We can verify that it was created with:
+```
+ubuntu@balasenapathi:~$ kubectl get ingress
+NAME                      CLASS   HOSTS                      ADDRESS        PORTS   AGE
+nginx-ingress             nginx   nginx-demo.com             192.168.67.2   80      3h23m
+todo-ingress-host-based   nginx   todo-ui.com,todo-api.com   192.168.67.2   80      37s
+todo-ingress-path-based   nginx   todo.com                   192.168.67.2   80      65m
+```
+
+### 4.Map the Minikube IP Address to Our Hosts
+```
+ubuntu@balasenapathi:~$ sudo nano /etc/hosts
+192.168.67.2 todo-ui.com
+192.168.67.2 todo-api.com
+```
+**Note:** todo-ui.com and todo-api.com should resolve to 192.168.67.2, which is the Minikube IP address. 
+On cloud platforms, you would map the CNAME to the load balancer.
+
+### 5.Access the Applications in the Browser
+
+Go to the browser and check whether you can access todo-ui.com and todo-api.com/api/todos.
+```
+http://todo-ui.com/
+```
 
 
 
