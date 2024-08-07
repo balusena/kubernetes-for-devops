@@ -34,5 +34,7 @@ between the load balancer and the kubernetes service endpoint.
 Here is a very high-level view of ingress implementation.Later we will see a detailed architecture covering
 all the key concepts.
 
+![Kubernetes LoadBalancer](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/kubernetes_loadbalancer.png)
+
 
 
