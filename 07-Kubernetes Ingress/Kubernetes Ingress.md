@@ -537,6 +537,52 @@ spec:
                 port:
                   number: 8080
 ```
+**Explanation:**
+
+Here, todo-ingress-path-based will be accessed on the host todo.com. In the URL, we are adding a wildcard
+path /(.*) which means anything with todo.com/ should match this ingress rule. The pathType is 
+ImplementationSpecific, and when we try to access it, it should go to todo-ui-service which is running on 
+port 3001.
+
+Now, another ingress rule is added for the todo-api application. We access the API with the host todo.com 
+and the path /api/(.*), meaning anything with todo.com/api should match this ingress rule. The pathType is
+ImplementationSpecific, and when we try to access it, it should go to todo-api-service running on port 8080.
+
+**Note:** The annotation nginx.ingress.kubernetes.io/rewrite-target: /$1 captures any character in .* and 
+assigns it to the placeholder $1 which is used as a parameter for the rewrite-target annotation.
+
+For example, accessing todo.com/api/api/todos rewrites to todo.com/api/todos. The /api in the path is just
+an identifier for this rule and it internally rewrites the rule to another URL.
+
+### 2.Apply the Ingress Configuration.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f todo-ingress-path-based.yaml
+Warning: path /(.*) cannot be used with pathType Prefix
+Warning: path /api/(.*) cannot be used with pathType Prefix
+ingress.networking.k8s.io/todo-ingress-path-based created
+```
+### 3.We can verify that it was created with:
+```
+ubuntu@balasenapathi:~$ kubectl get ingress
+NAME                      CLASS   HOSTS            ADDRESS        PORTS   AGE
+nginx-ingress             nginx   nginx-demo.com   192.168.67.2   80      140m
+todo-ingress-path-based   nginx   todo.com         192.168.67.2   80      3m20s
+```
+### 4.Map the Minikube IP Address to todo.com
+```
+ubuntu@balasenapathi:~$ sudo nano /etc/hosts
+192.168.67.2 todo.com
+```
+**Note:** todo.com should resolve to 192.168.67.2, which is the Minikube IP address. On cloud platforms,
+you would map the CNAME to the load balancer.
+
+### 5.Access the Applications in the Browser.
+
+Go to the browser and check whether you can access todo.com and todo.com/api/api/todos.
+```
+http://todo.com
+```
+![todo api](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/todo_ui.png)
 
 
 
