@@ -13,3 +13,5 @@ The literal meaning: Ingress refers to the act of entering.
 
 It is the same in the Kubernetes world as well. Ingress means the traffic that enters the cluster and egress
 is the traffic that exits the cluster.
+
+![Kubernetes Ingress Egress](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/kubernetes_ingress_egress.png)
