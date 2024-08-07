@@ -15,3 +15,18 @@ It is the same in the Kubernetes world as well. Ingress means the traffic that e
 is the traffic that exits the cluster.
 
 ![Kubernetes Ingress Egress](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/kubernetes_ingress_egress.png)
+
+Ingress is a native Kubernetes resource like pods, deployments, etc. Using ingress, you can maintain the
+DNS routing configurations. The ingress controller does the actual routing by reading the routing rules
+from ingress objects stored in etcd.
+
+Let’s understand ingress with a high-level example.
+
+Without Kubernetes ingress, to expose an application to the outside world, you will add a service Type 
+Loadbalancer to the deployments. Here is how it looks. (I have shown the nodePort just to show the 
+traffic flow).
+
+![Kubernetes LoadBalancer](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/kubernetes_loadbalancer.png)
+
+
+
