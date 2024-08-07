@@ -36,5 +36,18 @@ all the key concepts.
 
 ![Kubernetes LoadBalancer](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/kubernetes_loadbalancer.png)
 
+**Note:** The AWS, Azure, GCP cloud ingress controller implementation differs a little.
+
+**AWS:** The AWS Load Balancer Controller integrates with the AWS Elastic Load Balancer (ELB) to provide 
+Ingress functionality. The ELB itself acts as the Ingress Controller.
+
+**Azure:** The Azure Application Gateway Ingress Controller integrates with the Azure Application Gateway,
+which handles the Ingress functions.
+
+**GCP:** The GCP Ingress Controller integrates with Google Cloud Load Balancer, managing the Ingress 
+functionality.
+
+These cloud-specific implementations often provide additional features and tighter integration with their
+respective cloud services.
 
 
