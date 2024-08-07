@@ -760,7 +760,7 @@ service/default-http-backend created
 This will create a default backend service and deployment. Any unmatched requests will be routed to this 
 backend, allowing you to serve custom error messages or handle default traffic appropriately.
 
-# Securing Application with HTTPS using TLS Certificates in Ingress
+## Securing Application with HTTPS using TLS Certificates in Ingress
 
 To secure your application with HTTPS using a TLS certificate in an Ingress resource, follow these steps.
 
