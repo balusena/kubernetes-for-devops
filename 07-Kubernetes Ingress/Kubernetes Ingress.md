@@ -109,7 +109,7 @@ scoped to specific namespaces. This isolation enables different teams or applica
 have their own dedicated Ingress configurations, preventing interference and maintaining security 
 boundaries.
 
-## 1.Create a new cluster in minikube with name ingress-cluster:
+## 1.Create a new cluster in minikube with name ingress-cluster.
 ```
 ubuntu@balasenapathi:~$  minikube start -p ingress-cluster --driver=docker
 😄  [ingress-cluster] minikube v1.31.1 on Ubuntu 20.04
@@ -134,7 +134,7 @@ ubuntu@balasenapathi:~$  minikube start -p ingress-cluster --driver=docker
 🏄  Done! kubectl is now configured to use "ingress-cluster" cluster and "default" namespace by default
 ```
 
-## 2.We are using this nginx-deployment file in new cluster for our deployment:
+## 2.We are using this nginx-deployment file in new cluster for our deployment.
 ```
 apiVersion: apps/v1
 kind: Deployment
@@ -172,7 +172,7 @@ nginx-deployment-7c4c499fd5-nflzm   1/1     Running   0          11s
 nginx-deployment-7c4c499fd5-rw4hx   1/1     Running   0          11s
 ```
 
-## 3.We are using below nginx-service file to create service in the cluster:
+## 3.We are using below nginx-service file to create service in the cluster.
 ```
 apiVersion: v1
 kind: Service
@@ -198,7 +198,7 @@ kubernetes      ClusterIP   10.96.0.1       <none>        443/TCP    4m
 nginx-service   ClusterIP   10.107.16.240   <none>        8082/TCP   12s
 ```
 
-## 5.To get the information about all pods,services,deploments,replicasets:
+## 5.To get the information about all pods,services,deploments,replicasets.
 ```
 ubuntu@balasenapathi:~$ kubectl get all
 NAME                                    READY   STATUS    RESTARTS   AGE
@@ -223,7 +223,7 @@ the ingress rules and now deploy an ingress-controller in our kubernetes cluster
 
 # Setting Up Kubernetes Ingress and Ingress controller
 
-## 1.Create a new cluster in minikube with name ingress-cluster:
+## 1.Create a new cluster in minikube with name ingress-cluster.
 ```
 ubuntu@balasenapathi:~$ minikube start -p ingress-cluster --driver=docker
 😄  [ingress-cluster] minikube v1.31.1 on Ubuntu 20.04
@@ -259,7 +259,7 @@ There are many third party implementations ingress-controllers like:
 But we have one implementation of ingress-controller which is maintained by kubernetes itself which is 
 nginx-ingress-controller
 
-## 2.To deploy nginx-ingress-controller in minikube:
+## 2.To deploy nginx-ingress-controller in minikube.
 ```
 ubuntu@balasenapathi:~$ minikube addons enable ingress -p ingress-cluster
 ❗  Executing "docker container inspect ingress-cluster --format={{.State.Status}}" took an unusually long time: 4.571829003s
@@ -273,7 +273,7 @@ You can view the list of minikube maintainers at: https://github.com/kubernetes/
 🌟  The 'ingress' addon is enabled
 ```
 
-## 3.To verify whether nginx-ingress-controller is enabled or not:
+## 3.To verify whether nginx-ingress-controller is enabled or not.
 ```
 ubuntu@balasenapathi:~$ kubectl get pods -n ingress-nginx
 NAME                                        READY   STATUS      RESTARTS   AGE
@@ -281,9 +281,119 @@ ingress-nginx-admission-create-bjgkn        0/1     Completed   0          4m12s
 ingress-nginx-admission-patch-fgwsx         0/1     Completed   0          4m12s
 ingress-nginx-controller-7799c6795f-g85mf   1/1     Running     0          4m10s
 ```
-
 **Note:** Here -n denotes the namespace, as we can see that ingress-nginx-controller pod is running just
 like other applications.
+
+## 4.ingress-controller is a pod and it gets exposed through a service.
+```
+ubuntu@balasenapathi:~$ kubectl get service -n ingress-nginx
+NAME                                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+ingress-nginx-controller             NodePort    10.108.13.27    <none>        80:31226/TCP,443:32390/TCP   9m57s
+ingress-nginx-controller-admission   ClusterIP   10.101.239.58   <none>        443/TCP                      9m57s
+```
+**Note:** As we can see that a NodePort Service is created for this nginx-ingress-controller,as we discussed loadbalancer
+is not supported on minikube thats the reason NodePort Service is created,if we are in cloud this should create a loadbalancer
+service instead of NodePort Service and this loadbalacer will act like a entrypoint to our cluster.
+
+**Ingress Rules:**
+
+- Note: Now we have our nginx-ingress-controller ready to process our ingress rules.
+
+To write ingress rule to access the nginx service and extend it to simple todo-ui application:
+
+## 5.To get the apiVersion of ingress in kubernetes.
+```
+ubuntu@balasenapathi:~$ kubectl api-resources | grep Ingress
+ingressclasses                                 networking.k8s.io/v1                   false        IngressClass
+ingresses                         ing          networking.k8s.io/v1                   true         Ingress
+```
+## 6.Create the Ingress Resource YAML File.
+
+- Ingress-Rule:
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+spec:
+  rules:
+    - host: nginx-demo.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-service
+                port:
+                  number: 8082
+```                  
+                  
+**Path Type:**
+
+**1.ImplementationSpecific:** The path type is decided by the ingress-controller
+
+**2.Exact:** The URL should match the exact path with case sensitivity
+
+**3.Prefix:** The URL should match the path split by the / 
+
+## 7.Apply the changes to the ingress-cluster to implement the ingress-rule.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f nginx-ingress.yaml
+ingress.networking.k8s.io/nginx-ingress created
+```
+
+## 8.We can verify that, it was created with apply nginx-ingress.yaml file.
+```
+ubuntu@balasenapathi:~$ kubectl get ingress
+NAME            CLASS   HOSTS            ADDRESS        PORTS   AGE
+nginx-ingress   nginx   nginx-demo.com   192.168.67.2   80      94s
+```
+**Note:** In general the ADDRESS will be the address of LoadBalancer
+
+## 9.Now go to the browser and check whether we can able to access the nginx-demo.com
+```
+[nginx-demo.com]
+
+This site can’t be reached Check if there is a typo in nginx-demo.com.
+DNS_PROBE_FINISHED_NXDOMAIN
+```
+**Note:** This is because nginx-demo.com is not a valid DNS(Domain_Name_Service),when we type in any DNS in the browser it should 
+resolve to some IP Address,nginx-demo.com should resolve to the minikube ip address.
+
+## 10.To we can get the minikube ip by using this.
+```
+ubuntu@balasenapathi:~$ minikube ip -p ingress-cluster
+192.168.67.2
+```
+## 11.Now we should map the minikube ip address to our nginx-demo.com in our machine,this can be done by editing below:
+```
+ubuntu@balasenapathi:~$ sudo nano /etc/hosts
+192.168.67.2 nginx-demo.com
+```
+**Note:** Here nginx-demo.com should resolve to 192.168.67.2 which is minikube IP address
+
+**Note:** But in cloud, we will map the CNAME to the LoadBalancer
+
+## 12.Now go to the browser and check whether we can able to access the nginx-demo.com
+```
+[nginx-demo.com]
+
+Welcome to nginx!
+If you see this page, the nginx web server is successfully installed and working. Further configuration is required.
+
+For online documentation and support please refer to nginx.org.
+Commercial support is available at nginx.com.
+
+Thank you for using nginx.
+```
+**Note:** Now we are able to access the nginx application on custom domain i.e, nginx-demo.com from web browser. 
+
+
+
+
+
 
 
 
