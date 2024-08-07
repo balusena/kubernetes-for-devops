@@ -109,6 +109,202 @@ scoped to specific namespaces. This isolation enables different teams or applica
 have their own dedicated Ingress configurations, preventing interference and maintaining security 
 boundaries.
 
+## 1.Create a new cluster in minikube with name ingress-cluster:
+```
+ubuntu@balasenapathi:~$  minikube start -p ingress-cluster --driver=docker
+😄  [ingress-cluster] minikube v1.31.1 on Ubuntu 20.04
+✨  Using the docker driver based on user configuration
+📌  Using Docker driver with root privileges
+👍  Starting control plane node ingress-cluster in cluster ingress-cluster
+🚜  Pulling base image ...
+🔥  Creating docker container (CPUs=2, Memory=2200MB) ...
+🎉  minikube 1.31.2 is available! Download it: https://github.com/kubernetes/minikube/releases/tag/v1.31.2
+💡  To disable this notice, run: 'minikube config set WantUpdateNotification false'
+
+🐳  Preparing Kubernetes v1.27.3 on Docker 24.0.4 ...
+▪ Generating certificates and keys ...
+▪ Booting up control plane ...
+▪ Configuring RBAC rules ...
+🔗  Configuring bridge CNI (Container Networking Interface) ...
+🔎  Verifying Kubernetes components...
+❗  Executing "docker container inspect ingress-cluster --format={{.State.Status}}" took an unusually long time: 18.000221506s
+💡  Restarting the docker service may improve performance.
+▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🌟  Enabled addons: storage-provisioner, default-storageclass
+🏄  Done! kubectl is now configured to use "ingress-cluster" cluster and "default" namespace by default
+```
+
+## 2.We are using this nginx-deployment file in new cluster for our deployment:
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  annotations:
+    kubernetes.io/change-cause: "Updating to alpine version"
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+```
+```
+ubuntu@balasenapathi:~$ kubectl apply -f nginx-deployment.yaml
+deployment.apps/nginx-deployment created
+```
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-7c4c499fd5-4n5jm   1/1     Running   0          11s
+nginx-deployment-7c4c499fd5-7skqs   1/1     Running   0          11s
+nginx-deployment-7c4c499fd5-nflzm   1/1     Running   0          11s
+nginx-deployment-7c4c499fd5-rw4hx   1/1     Running   0          11s
+```
+
+## 3.We are using below nginx-service file to create service in the cluster:
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: nginx
+  ports:
+    - port: 8082
+      targetPort: 80
+```
+```
+ubuntu@balasenapathi:~$ kubectl apply -f nginx-service.yaml
+service/nginx-service created
+```
+## 4.To get the information about all services running in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get services
+NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+kubernetes      ClusterIP   10.96.0.1       <none>        443/TCP    4m
+nginx-service   ClusterIP   10.107.16.240   <none>        8082/TCP   12s
+```
+
+## 5.To get the information about all pods,services,deploments,replicasets:
+```
+ubuntu@balasenapathi:~$ kubectl get all
+NAME                                    READY   STATUS    RESTARTS   AGE
+pod/nginx-deployment-7c4c499fd5-4n5jm   1/1     Running   0          2m29s
+pod/nginx-deployment-7c4c499fd5-7skqs   1/1     Running   0          2m29s
+pod/nginx-deployment-7c4c499fd5-nflzm   1/1     Running   0          2m29s
+pod/nginx-deployment-7c4c499fd5-rw4hx   1/1     Running   0          2m29s
+
+NAME                    TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/kubernetes      ClusterIP   10.96.0.1       <none>        443/TCP    4m59s
+service/nginx-service   ClusterIP   10.107.16.240   <none>        8082/TCP   71s
+
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx-deployment   4/4     4            4           2m29s
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-deployment-7c4c499fd5   4         4         4       2m29s
+```
+
+**Note:** Now let us accesses nginx with ingress as we discussed we need an ingress-controller to process
+the ingress rules and now deploy an ingress-controller in our kubernetes cluster.
+
+# Setting Up Kubernetes Ingress and Ingress controller
+
+## 1.Create a new cluster in minikube with name ingress-cluster:
+```
+ubuntu@balasenapathi:~$ minikube start -p ingress-cluster --driver=docker
+😄  [ingress-cluster] minikube v1.31.1 on Ubuntu 20.04
+✨  Using the docker driver based on user configuration
+📌  Using Docker driver with root privileges
+👍  Starting control plane node ingress-cluster in cluster ingress-cluster
+🚜  Pulling base image ...
+🔥  Creating docker container (CPUs=2, Memory=2200MB) ...
+🎉  minikube 1.31.2 is available! Download it: https://github.com/kubernetes/minikube/releases/tag/v1.31.2
+💡  To disable this notice, run: 'minikube config set WantUpdateNotification false'
+
+🐳  Preparing Kubernetes v1.27.3 on Docker 24.0.4 ...
+▪ Generating certificates and keys ...
+▪ Booting up control plane ...
+▪ Configuring RBAC rules ...
+🔗  Configuring bridge CNI (Container Networking Interface) ...
+🔎  Verifying Kubernetes components...
+❗  Executing "docker container inspect ingress-cluster --format={{.State.Status}}" took an unusually long time: 18.000221506s
+💡  Restarting the docker service may improve performance.
+▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🌟  Enabled addons: storage-provisioner, default-storageclass
+🏄  Done! kubectl is now configured to use "ingress-cluster" cluster and "default" namespace by default
+```
+
+**2.Setup the Ingress Controller:**
+
+There are many third party implementations ingress-controllers like:
+
+- 1.HA PROXY
+- 2.trafik
+- 3.Istio  etc.,
+
+But we have one implementation of ingress-controller which is maintained by kubernetes itself which is 
+nginx-ingress-controller
+
+## 2.To deploy nginx-ingress-controller in minikube:
+```
+ubuntu@balasenapathi:~$ minikube addons enable ingress -p ingress-cluster
+❗  Executing "docker container inspect ingress-cluster --format={{.State.Status}}" took an unusually long time: 4.571829003s
+💡  Restarting the docker service may improve performance.
+💡  ingress is an addon maintained by Kubernetes. For any concerns contact minikube on GitHub.
+You can view the list of minikube maintainers at: https://github.com/kubernetes/minikube/blob/master/OWNERS
+▪ Using image registry.k8s.io/ingress-nginx/kube-webhook-certgen:v20230407
+▪ Using image registry.k8s.io/ingress-nginx/controller:v1.8.1
+▪ Using image registry.k8s.io/ingress-nginx/kube-webhook-certgen:v20230407
+🔎  Verifying ingress addon...
+🌟  The 'ingress' addon is enabled
+```
+
+## 3.To verify whether nginx-ingress-controller is enabled or not:
+```
+ubuntu@balasenapathi:~$ kubectl get pods -n ingress-nginx
+NAME                                        READY   STATUS      RESTARTS   AGE
+ingress-nginx-admission-create-bjgkn        0/1     Completed   0          4m12s
+ingress-nginx-admission-patch-fgwsx         0/1     Completed   0          4m12s
+ingress-nginx-controller-7799c6795f-g85mf   1/1     Running     0          4m10s
+```
+
+**Note:** Here -n denotes the namespace, as we can see that ingress-nginx-controller pod is running just
+like other applications.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
