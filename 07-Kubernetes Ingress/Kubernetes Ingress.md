@@ -687,7 +687,173 @@ http://todo-api.com/api/todos
 This is called host-based routing, meaning based on the hosts we are routing the application into separate
 domain services like todo-ui.com and todo-api.com/api, etc.
 
+# 3. Default Backend:
+When we try to access this Ingress, if none of the paths match the URL, that request goes to the default
+HTTP backend service. This is helpful for custom error messages if none of the host or path matches the 
+HTTP request in the Ingress rules. The traffic is routed to this default backend to make this work. All 
+we need to do is to define a service with the name default-http-backend and connect it to the corresponding
+pods.
 
+### 1.To illustrate, let's describe the Ingress named nginx-ingress:
+```
+ubuntu@balasenapathi:~$ kubectl describe ingress nginx-ingress
+The output should look something like this:
+
+vbnet
+Copy code
+Name:             nginx-ingress
+Labels:           <none>
+Namespace:        default
+Address:          192.168.67.2
+Ingress Class:    nginx
+Default backend:  <default>
+Rules:
+Host            Path  Backends
+  ----            ----  --------
+nginx-demo.com  
+/   nginx-service:8082 (10.244.0.16:80,10.244.0.17:80,10.244.0.18:80 + 1 more...)
+Annotations:      <none>
+Events:           <none>
+```
+### 2.Example Configuration for Default Backend
+
+Create a file named default-backend.yaml:
+```
+ubuntu@balasenapathi:~$ nano default-backend.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: default-http-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: default-http-backend
+  template:
+    metadata:
+      labels:
+        app: default-http-backend
+    spec:
+      containers:
+      - name: default-http-backend
+        image: gcr.io/google_containers/defaultbackend:1.5
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: default-http-backend
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: default-http-backend
+```
+### 3.Apply the configuration:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f default-backend.yaml
+deployment.apps/default-http-backend created
+service/default-http-backend created
+```
+This will create a default backend service and deployment. Any unmatched requests will be routed to this 
+backend, allowing you to serve custom error messages or handle default traffic appropriately.
+
+# Securing Application with HTTPS using TLS Certificates in Ingress
+
+To secure your application with HTTPS using a TLS certificate in an Ingress resource, follow these steps.
+
+### Step 1: Generate a Self-Signed Certificate
+
+Run the following command to generate a self-signed certificate and private key using OpenSSL.
+
+```
+ubuntu@balasenapathi:~$ openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout tls.key -out tls.crt -subj "/CN=nginx-demo.com" -days 365
+Generating a RSA private key
+.++++
+...........................................................................................................................................
+++++
+writing new private key to 'tls.key'
+-----
+```
+**Note:** Now it generated a self-signed certificate.
+
+### Step 2: Create a Kubernetes Secret
+Use the generated certificate and key to create a Kubernetes secret.
+
+```
+ubuntu@balasenapathi:~$ kubectl create secret tls nginx-demo-com-tls --cert tls.crt --key tls.key
+secret/nginx-demo-com-tls created
+```
+**Note:** Now the secret is created.
+
+**Keep all the files [tls.key, tls.crt, tls.crs] in the same file where your nginx-ingress is located.**
+
+### Step 3: Update Ingress Resource with TLS Secret.
+
+Update your nginx-ingress.yaml file to include the TLS configuration:
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+spec:
+  tls:
+    - secretName: nginx-demo-com-tls
+      hosts:
+        - "nginx-demo.com"
+  rules:
+    - host: nginx-demo.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-service
+                port:
+                  number: 8082
+```
+
+### step 4: Apply the Changes.
+
+Apply the updated Ingress resource to the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f nginx-ingress.yaml
+ingress.networking.k8s.io/nginx-ingress configured
+```
+### Go tho browser and access your nginx-demo.com with https:
+```
+[https://nginx-demo.com/]
+
+Certificate Viewer: nginx-demo.com
+General
+Details
+Common Name (CN)	nginx-demo.com
+Organisation (O)	<Not part of certificate>
+Organisational Unit (OU)	<Not part of certificate>
+Common Name (CN)	nginx-demo.com
+Organisation (O)	<Not part of certificate>
+Organisational Unit (OU)	<Not part of certificate>
+Issued On	Saturday, 9 September 2023 at 00:01:25
+Expires On	Sunday, 8 September 2024 at 00:01:25
+SHA-256 fingerprint	29 E7 31 E3 24 B0 E7 7E E5 A5 4F 1A 6B 61 83 50
+39 FC 6A E4 D6 5E C4 CB 4B 53 E9 13 54 CA 48 99
+SHA-1 Fingerprint	6E DB 78 9B 92 E0 F5 70 F6 30 2B 3F E0 25 A6 DB
+82 95 88 26
+```
+**Note:** As this is a self-signed-certificate we need to trust this
+```
+Welcome to nginx!
+If you see this page, the nginx web server is successfully installed and working. Further configuration is required.
+
+For online documentation and support please refer to nginx.org.
+Commercial support is available at nginx.com.
+
+Thank you for using nginx.
+```
+![Ingress TLS SSL HTTPS](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/tls_ssl_https.png)
 
 
 
