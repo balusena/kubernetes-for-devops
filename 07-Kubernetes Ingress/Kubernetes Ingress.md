@@ -26,7 +26,7 @@ Without Kubernetes ingress, to expose an application to the outside world, we ha
 Loadbalancer to the deployments. Here is how it looks. (I have shown the nodePort just to show the 
 traffic flow).
 
-![Kubernetes LoadBalancer](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/kubernetes_loadbalancer.png)
+![Kubernetes NodePort](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/kubernetes_nodeport.png)
 
 In the same implementation, with ingress,there is a reverse proxy layer (Ingress controller implementation)
 between the load balancer and the kubernetes service endpoint.
