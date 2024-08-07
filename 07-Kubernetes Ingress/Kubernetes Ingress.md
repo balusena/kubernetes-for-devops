@@ -67,6 +67,17 @@ for routing by accessing the DNS rules applied through ingress resources.
 
 ![Kubernetes Ingress Resource Controller](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/kubernetes_ingress_resource_controller.png)
 
+# Ingress & Ingress Controller Architecture
+
+Here is the architecture diagram that explains the ingress & ingress controller setup on a kubernetes cluster.
+
+It shows ingress rules routing traffic to two payment & auth applications
+
+Now if we look at the architecture, it will make more sense and we will probably be able to understand how
+each ingress workflow works.
+
+![Kubernetes Ingress Ingress-Controller Architecture](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/kubernetes_ingress_ingress_controller_architecture.png)
+
 
 
 
