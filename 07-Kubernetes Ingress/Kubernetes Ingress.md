@@ -20,13 +20,19 @@ Ingress is a native Kubernetes resource like pods, deployments, etc. Using ingre
 DNS routing configurations. The ingress controller does the actual routing by reading the routing rules
 from ingress objects stored in etcd.
 
-Let’s understand ingress with a high-level example.
+understanding ingress with a high-level example.
 
-Without Kubernetes ingress, to expose an application to the outside world, you will add a service Type 
+Without Kubernetes ingress, to expose an application to the outside world, we have to add a service Type 
 Loadbalancer to the deployments. Here is how it looks. (I have shown the nodePort just to show the 
 traffic flow).
 
 ![Kubernetes LoadBalancer](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/kubernetes_loadbalancer.png)
+
+In the same implementation, with ingress,there is a reverse proxy layer (Ingress controller implementation)
+between the load balancer and the kubernetes service endpoint.
+
+Here is a very high-level view of ingress implementation.Later we will see a detailed architecture covering
+all the key concepts.
 
 
 
