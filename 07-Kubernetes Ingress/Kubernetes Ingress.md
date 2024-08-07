@@ -582,13 +582,13 @@ Go to the browser and check whether you can access todo.com and todo.com/api/api
 ```
 http://todo.com
 ```
-![todo api](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/todo_ui_path.png)
+![todo ui path](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/todo_ui_path.png)
 
 **Note: The todo.com UI and API are loading and working**
 ```
 http://todo.com/api/api/todos
 ```
-![todo api](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/todo_api_path.png)
+![todo api path](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/todo_api_path.png)
 
 **Note:** We can see that we get our data from the database.
 
@@ -674,6 +674,8 @@ Go to the browser and check whether you can access todo-ui.com and todo-api.com/
 ```
 http://todo-ui.com/
 ```
+![todo ui host](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/todo_ui_host.png)
+
 
 
 
