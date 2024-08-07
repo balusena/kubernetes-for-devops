@@ -676,6 +676,12 @@ http://todo-ui.com/
 ```
 ![todo ui host](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/todo_ui_host.png)
 
+**Note:** The todo-ui.com UI is loading and working.
+```
+http://todo-api.com/api/todos
+```
+![todo api host](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/todo_api_host.png)
+
 
 
 
