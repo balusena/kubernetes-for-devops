@@ -277,6 +277,389 @@ All resources currently exist in the default namespace because we did not specif
 their creation. To organize these resources into the appropriate namespaces, such as nginx and todo, 
 you'll need to update the resource definitions and apply them to the correct namespaces.
 
+### 13.Creating Resources in Their Respective Namespaces
+
+To create a resource in a specific namespace instead of the `default` namespace, you need to specify the 
+namespace in the `metadata` section of the resource definition.
+
+### 14.Create the `nginx-deployment.yaml` File
+```
+ubuntu@balasenapathi:~$ nano nginx-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: nginx
+  annotations:
+    kubernetes.io/change-cause: "Updating to alipine version"
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+```
+### 15.Apply the Changes to the Cluster
+```
+ubuntu@balasenapathi:~$ kubectl apply -f nginx-deployment.yaml
+deployment.apps/nginx-deployment created
+```
+**Note:**
+The nginx-deployment was created successfully in the nginx namespace. Even though there was an existing 
+nginx-deployment in the default namespace, it did not affect the new deployment because Kubernetes 
+resources are isolated by namespaces. A resource created or modified in one namespace does not affect 
+resources in other namespaces. This is why the deployment was created again rather than updated—the two 
+deployments are in different namespaces.
+
+### 16.Now get all the resources in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get all
+NAME                                    READY   STATUS    RESTARTS       AGE
+pod/nginx-deployment-7c4c499fd5-4n5jm   1/1     Running   1 (116m ago)   4d9h
+pod/nginx-deployment-7c4c499fd5-7skqs   1/1     Running   1 (116m ago)   4d9h
+pod/nginx-deployment-7c4c499fd5-nflzm   1/1     Running   1 (116m ago)   4d9h
+pod/nginx-deployment-7c4c499fd5-rw4hx   1/1     Running   1 (116m ago)   4d9h
+pod/todo-api-6665cbbf8d-r7pv2           1/1     Running   1 (116m ago)   4d7h
+pod/todo-api-6665cbbf8d-vdlk8           1/1     Running   1 (116m ago)   4d7h
+pod/todo-ui-64ccd9d555-24lv9            1/1     Running   1 (116m ago)   4d7h
+pod/todo-ui-64ccd9d555-8w7rl            1/1     Running   1 (116m ago)   4d7h
+
+NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/kubernetes         ClusterIP   10.96.0.1       <none>        443/TCP    4d9h
+service/nginx-service      ClusterIP   10.107.16.240   <none>        8082/TCP   4d9h
+service/todo-api-service   ClusterIP   10.104.42.224   <none>        8080/TCP   4d7h
+service/todo-ui-service    ClusterIP   10.100.26.224   <none>        3001/TCP   4d7h
+
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx-deployment   4/4     4            4           4d9h
+deployment.apps/todo-api           2/2     2            2           4d7h
+deployment.apps/todo-ui            2/2     2            2           4d7h
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-deployment-7c4c499fd5   4         4         4       4d9h
+replicaset.apps/todo-api-6665cbbf8d           2         2         2       4d7h
+replicaset.apps/todo-ui-64ccd9d555            2         2         2       4d7h
+```
+**Note:** We should have two deployments: one in the default namespace and another in the nginx namespace.
+The reason they are not both showing up here is that when we execute kubectl get all, it retrieves 
+resources only from the default namespace. To view resources from a different namespace, you need to 
+specify the namespace using the -n flag followed by the namespace name, e.g., nginx.
+
+### 17.To get all the resources from nginx namespace:
+```
+ubuntu@balasenapathi:~$ kubectl get all -n nginx            
+NAME                                    READY   STATUS    RESTARTS   AGE
+pod/nginx-deployment-7c4c499fd5-29r9z   1/1     Running   0          72m
+pod/nginx-deployment-7c4c499fd5-n5lzh   1/1     Running   0          72m
+pod/nginx-deployment-7c4c499fd5-pgwrg   1/1     Running   0          72m
+pod/nginx-deployment-7c4c499fd5-qq78x   1/1     Running   0          72m
+
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx-deployment   4/4     4            4           72m
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-deployment-7c4c499fd5   4         4         4       72m
+```
+
+### 18.If we want to get all the reources from all namespaces
+```
+ubuntu@balasenapathi:~$ kubectl get all --all-namespaces
+NAMESPACE       NAME                                            READY   STATUS      RESTARTS       AGE
+default         pod/nginx-deployment-7c4c499fd5-4n5jm           1/1     Running     1 (128m ago)   4d9h
+default         pod/nginx-deployment-7c4c499fd5-7skqs           1/1     Running     1 (128m ago)   4d9h
+default         pod/nginx-deployment-7c4c499fd5-nflzm           1/1     Running     1 (128m ago)   4d9h
+default         pod/nginx-deployment-7c4c499fd5-rw4hx           1/1     Running     1 (128m ago)   4d9h
+default         pod/todo-api-6665cbbf8d-r7pv2                   1/1     Running     1 (128m ago)   4d7h
+default         pod/todo-api-6665cbbf8d-vdlk8                   1/1     Running     1 (128m ago)   4d7h
+default         pod/todo-ui-64ccd9d555-24lv9                    1/1     Running     1 (128m ago)   4d7h
+default         pod/todo-ui-64ccd9d555-8w7rl                    1/1     Running     1 (128m ago)   4d7h
+ingress-nginx   pod/ingress-nginx-admission-create-bjgkn        0/1     Completed   0              5d1h
+ingress-nginx   pod/ingress-nginx-admission-patch-fgwsx         0/1     Completed   0              5d1h
+ingress-nginx   pod/ingress-nginx-controller-7799c6795f-g85mf   1/1     Running     2 (128m ago)   5d1h
+kube-system     pod/coredns-5d78c9869d-9rhzb                    1/1     Running     2 (128m ago)   5d2h
+kube-system     pod/etcd-ingress-cluster                        1/1     Running     2 (128m ago)   5d2h
+kube-system     pod/kube-apiserver-ingress-cluster              1/1     Running     2 (128m ago)   5d2h
+kube-system     pod/kube-controller-manager-ingress-cluster     1/1     Running     2 (128m ago)   5d2h
+kube-system     pod/kube-proxy-dgdpn                            1/1     Running     2 (128m ago)   5d2h
+kube-system     pod/kube-scheduler-ingress-cluster              1/1     Running     2 (128m ago)   5d2h
+kube-system     pod/storage-provisioner                         1/1     Running     7 (126m ago)   5d2h
+nginx           pod/nginx-deployment-7c4c499fd5-29r9z           1/1     Running     0              75m
+nginx           pod/nginx-deployment-7c4c499fd5-n5lzh           1/1     Running     0              75m
+nginx           pod/nginx-deployment-7c4c499fd5-pgwrg           1/1     Running     0              75m
+nginx           pod/nginx-deployment-7c4c499fd5-qq78x           1/1     Running     0              75m
+
+NAMESPACE       NAME                                         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+default         service/kubernetes                           ClusterIP   10.96.0.1       <none>        443/TCP                      4d9h
+default         service/nginx-service                        ClusterIP   10.107.16.240   <none>        8082/TCP                     4d9h
+default         service/todo-api-service                     ClusterIP   10.104.42.224   <none>        8080/TCP                     4d7h
+default         service/todo-ui-service                      ClusterIP   10.100.26.224   <none>        3001/TCP                     4d7h
+ingress-nginx   service/ingress-nginx-controller             NodePort    10.108.13.27    <none>        80:31226/TCP,443:32390/TCP   5d1h
+ingress-nginx   service/ingress-nginx-controller-admission   ClusterIP   10.101.239.58   <none>        443/TCP                      5d1h
+kube-system     service/kube-dns                             ClusterIP   10.96.0.10      <none>        53/UDP,53/TCP,9153/TCP       5d2h
+
+NAMESPACE     NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+kube-system   daemonset.apps/kube-proxy   1         1         1       1            1           kubernetes.io/os=linux   5d2h
+
+NAMESPACE       NAME                                       READY   UP-TO-DATE   AVAILABLE   AGE
+default         deployment.apps/nginx-deployment           4/4     4            4           4d9h
+default         deployment.apps/todo-api                   2/2     2            2           4d7h
+default         deployment.apps/todo-ui                    2/2     2            2           4d7h
+ingress-nginx   deployment.apps/ingress-nginx-controller   1/1     1            1           5d1h
+kube-system     deployment.apps/coredns                    1/1     1            1           5d2h
+nginx           deployment.apps/nginx-deployment           4/4     4            4           75m
+
+NAMESPACE       NAME                                                  DESIRED   CURRENT   READY   AGE
+default         replicaset.apps/nginx-deployment-7c4c499fd5           4         4         4       4d9h
+default         replicaset.apps/todo-api-6665cbbf8d                   2         2         2       4d7h
+default         replicaset.apps/todo-ui-64ccd9d555                    2         2         2       4d7h
+ingress-nginx   replicaset.apps/ingress-nginx-controller-7799c6795f   1         1         1       5d1h
+kube-system     replicaset.apps/coredns-5d78c9869d                    1         1         1       5d2h
+nginx           replicaset.apps/nginx-deployment-7c4c499fd5           4         4         4       75m
+
+NAMESPACE       NAME                                       COMPLETIONS   DURATION   AGE
+ingress-nginx   job.batch/ingress-nginx-admission-create   1/1           58s        5d1h
+ingress-nginx   job.batch/ingress-nginx-admission-patch    1/1           59s        5d1h
+```
+**Note:** We have two nginx deployments one is in default namespace and another is in nginx namespace
+
+- Note: We can also use.
+```
+ubuntu@balasenapathi:~$ kubectl get all -A
+```
+## Moving `nginx-service` to the `nginx` Namespace
+
+### 19.Create a file named `nginx-service.yaml`.
+```
+ubuntu@balasenapathi:~$ nano nginx-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  namespace: nginx
+spec:
+  selector:
+    app: nginx
+  ports:
+    - port: 8082
+      targetPort: 80
+```
+
+### 20Apply the configuration file to create the nginx-service in the nginx namespace.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f nginx-service.yaml
+service/nginx-service created
+```
+
+### 21.To verify that the nginx-service is created in the nginx namespace.
+```
+ubuntu@balasenapathi:~$ kubectl get all -n nginx
+NAME                                    READY   STATUS    RESTARTS   AGE
+pod/nginx-deployment-7c4c499fd5-29r9z   1/1     Running   0          83m
+pod/nginx-deployment-7c4c499fd5-n5lzh   1/1     Running   0          83m
+pod/nginx-deployment-7c4c499fd5-pgwrg   1/1     Running   0          83m
+pod/nginx-deployment-7c4c499fd5-qq78x   1/1     Running   0          83m
+
+NAME                    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/nginx-service   ClusterIP   10.101.212.181   <none>        8082/TCP   26s
+
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx-deployment   4/4     4            4           84m
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-deployment-7c4c499fd5   4         4         4       83m
+```
+**Note:**We can see that the nginx-service is created in the nginx namespace.
+
+If you are actively working on this nginx application, it can be cumbersome to specify the -n nginx flag
+for every command. By default, kubectl commands operate within the default namespace. To simplify this, 
+you can change the current active namespace using tools like kubens, or directly with kubectl.
+
+This command sets the current namespace to nginx, so you no longer need to specify -n nginx for subsequent kubectl commands
+```
+ubuntu@balasenapathi:~$ kubectl config set-context --current --namespace=nginx
+Context "ingress-cluster" modified.
+```
+
+### 22.Now we can listdown the resources without specifying the namespace:
+```
+ubuntu@balasenapathi:~$ kubectl get all
+NAME                                    READY   STATUS    RESTARTS   AGE
+pod/nginx-deployment-7c4c499fd5-29r9z   1/1     Running   0          106m
+pod/nginx-deployment-7c4c499fd5-n5lzh   1/1     Running   0          106m
+pod/nginx-deployment-7c4c499fd5-pgwrg   1/1     Running   0          106m
+pod/nginx-deployment-7c4c499fd5-qq78x   1/1     Running   0          106m
+
+NAME                    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/nginx-service   ClusterIP   10.101.212.181   <none>        8082/TCP   22m
+
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx-deployment   4/4     4            4           106m
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-deployment-7c4c499fd5   4         4         4       106m
+```
+**Note:** We got the resources from nginx namespace instead of Default namespace.Because our current 
+default namespace is set to nginx.
+
+## Moving `todo` Resources to the `todo` Namespace
+
+### 23.Create a file named `todo-ui-api.yaml`.
+```
+ubuntu@balasenapathi:~$ nano todo-ui-api.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-api
+  namespace: todo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-api
+  template:
+    metadata:
+      name: todo-api-pod
+      labels:
+        app: todo-api
+    spec:
+      containers:
+        - name: todo-api
+          image: balasenapathi/todo-api:1.0.2
+          ports:
+            - containerPort: 8082
+          env:
+            - name: "spring.data.mongodb.uri"
+              value: "mongodb+srv://root:321654@cluster0.p9jq2.mongodb.net/todo?retryWrites=true&w=majority"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-api-service
+  namespace: todo
+spec:
+  selector:
+    app: todo-api
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8082
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-ui
+  namespace: todo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-ui
+  template:
+    metadata:
+      name: todo-ui-pod
+      labels:
+        app: todo-ui
+    spec:
+      containers:
+        - name: todo-ui
+          image: balasenapathi/todo-ui:1.0.2
+          ports:
+            - containerPort: 80
+          env:
+            - name: "REACT_APP_BACKEND_SERVER_URL"
+              value: "http://todo.com/api"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-ui-service
+  namespace: todo
+spec:
+  selector:
+    app: todo-ui
+  ports:
+    - name: http
+      port: 3001
+      targetPort: 80
+```
+
+### 24.Apply the configuration file to create the todo resources in the todo namespace:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f todo-ui-api.yaml
+deployment.apps/todo-api created
+service/todo-api-service created
+deployment.apps/todo-ui created
+service/todo-ui-service created
+```
+**Note:** All our resources are created in todo namespace now.
+
+## Accessing Services Across Namespaces
+
+### 25.Viewing Resources
+
+First, list the resources to confirm the setup:
+
+```
+ubuntu@balasenapathi:~$ kubectl get all
+NAME                                    READY   STATUS    RESTARTS   AGE
+pod/nginx-deployment-7c4c499fd5-29r9z   1/1     Running   0          123m
+pod/nginx-deployment-7c4c499fd5-n5lzh   1/1     Running   0          123m
+pod/nginx-deployment-7c4c499fd5-pgwrg   1/1     Running   0          123m
+pod/nginx-deployment-7c4c499fd5-qq78x   1/1     Running   0          123m
+
+NAME                    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/nginx-service   ClusterIP   10.101.212.181   <none>        8082/TCP   39m
+
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx-deployment   4/4     4            4           123m
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-deployment-7c4c499fd5   4         4         4       123m
+```
+### 26.Accessing todo Service from nginx Pod
+Enter the nginx Pod:
+```
+ubuntu@balasenapathi:~$ kubectl exec -it pod/nginx-deployment-7c4c499fd5-29r9z -- sh
+/ # 
+```
+### 27.Attempt to Access the todo Service:
+```
+/ # curl todo-api-service:8080/api/todos
+curl: (6) Could not resolve host: todo-api-service
+```
+**Note:** The request fails because the nginx pod is in a different namespace from the todo service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
