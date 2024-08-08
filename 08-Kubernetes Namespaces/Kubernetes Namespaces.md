@@ -7,4 +7,4 @@ setting different policies for groups of users or teams. By default, Kubernetes 
 "kube-system," and "kube-public" namespaces, but custom namespaces can be created as needed for specific 
 workloads or projects.
 
-![Kubernetes Nmaespace]()
+![Kubernetes Nmaespace](https://github.com/balusena/kubernetes-for-devops/blob/main/08-Kubernetes%20Namespaces/kubernetes_namespaces.png)
