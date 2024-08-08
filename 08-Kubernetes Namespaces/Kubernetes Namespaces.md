@@ -19,3 +19,7 @@ resources like ConfigMaps, Secrets, etc., and multiple applications within the s
 multiple resources across various applications, there needs to be a way to organize them for various reasons.
 This organization can be achieved by using namespaces.
 
+Namespaces are a way to organize a cluster into virtual sub-clusters. We will create our resources in 
+these namespaces instead of placing everything in a single namespace. A cluster can support any number 
+of namespaces, and each namespace is logically separated from the others, but they can still communicate 
+with each other.
