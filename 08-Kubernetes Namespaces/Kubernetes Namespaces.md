@@ -91,3 +91,30 @@ The `kube-system` namespace is for objects created by the Kubernetes control pla
 In addition to these default namespaces, we can create custom namespaces, such as `todo`.
 
 ![Default Namespace](https://github.com/balusena/kubernetes-for-devops/blob/main/08-Kubernetes%20Namespaces/default_namespace.png)
+
+## Organizing Resources
+We have resources related to `nginx` and `todo` applications in the same namespace, and we also have 
+`nginx-ingress-controller` resources that we created in the ingress session.
+
+**Note:**
+Now, let's create two namespaces: `nginx` and `todo`. We will move all resources related to `nginx` to 
+the `nginx` namespace and all resources belonging to `todo-ui` and `todo-api` into the `todo` namespace.
+
+![Organizing Resources](https://github.com/balusena/kubernetes-for-devops/blob/main/08-Kubernetes%20Namespaces/organizing_resources.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
