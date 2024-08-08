@@ -503,6 +503,8 @@ websites or applications to share the same IP and port but serve content based o
 "todo-api.com"). It's a powerful method for hosting multiple services on a single cluster while maintaining separation based on  
 the requested domain.
 
+![Kubernetes Ingress Path Host](https://github.com/balusena/kubernetes-for-devops/blob/main/07-Kubernetes%20Ingress/kubernetes_ingress_path_host.png)
+
 # 1. Path-Based Routing/Mapping:
 Path-Based Routing in Kubernetes Ingress: Path-based routing directs traffic based on the URL path of 
 incoming requests, allowing different paths like /, /ui, and /api to be sent to distinct backend services.
