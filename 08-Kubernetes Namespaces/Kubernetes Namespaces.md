@@ -640,6 +640,40 @@ curl: (6) Could not resolve host: todo-api-service
 ```
 **Note:** The request fails because the nginx pod is in a different namespace from the todo service.
 
+### 28.Accessing the Service Using Fully Qualified Domain Name (FQDN):
+
+Services in Kubernetes can be accessed using a DNS pattern that includes the service name, namespace, and
+the .svc.cluster.local suffix.
+```
+/ # curl todo-api-service.todo.svc.cluster.local:8080/api/todos
+[{"id":"64fb404160cc1b77a0bba513","title":"SBMK","completed":false,"createdAt":"2023-09-08T15:39:45.944+00:00"}]
+```
+
+**Note:** As we can see, we received the todo items. We don’t need to include ".svc.cluster.local" in the 
+DNS name because Kubernetes DNS will automatically resolve the address. For example, you can use curl 
+todo-api-service.todo:8080/api/todos. If your resources are in the same namespace, you don’t even need
+to specify the namespace: simply use curl todo-api-service:8080/api/todos.
+
+**The DNS name can be simplified by omitting the .svc.cluster.local suffix:**
+```
+/ # curl todo-api-service.todo:8080/api/todos
+[{"id":"64fb404160cc1b77a0bba513","title":"SBMK","completed":false,"createdAt":"2023-09-08T15:39:45.944+00:00"}]
+```
+**Notes on Namespace Usage:**
+
+**1.Accessing Services:** To access services across different namespaces, use the format service-name.namespace.svc.cluster.local:port.
+
+**2.Default Namespace:** For fewer resources, using the default namespace might be sufficient.
+
+**3.Multiple Teams/Environments:** For multiple teams or environments (e.g., dev and prod), separate namespaces are recommended.
+
+**4.Role-Based Access Control (RBAC) and Resource Quotas:** For larger organizations, implement RBAC and resource quotas within namespaces.
+
+**5.Enterprise Setup:** Large enterprises may use multiple clusters for better isolation and management.
+
+**6.Deleting a Namespace:** Deleting a namespace will remove all resources within that namespace.
+
+
 
 
 
