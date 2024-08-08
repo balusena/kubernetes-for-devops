@@ -132,6 +132,165 @@ nginx             Active   70s
 It is always recommended to use configuration files instead of kubectl commands to create resources for 
 better tracking and maintenance.
 
+### 3.Creating Namespaces Using a Configuration File
+
+Just like any other Kubernetes resource, a namespace is also a Kubernetes resource and requires 
+`apiVersion`, `kind`, and `metadata` to be created. The `spec` field is optional for namespaces.
+
+### 4.Getting the `apiVersion` of Namespaces in Kubernetes
+```
+ubuntu@balasenapathi:~$ kubectl api-resources | grep namespace
+namespaces            ns           v1            false        Namespace
+```
+### 5.Creating a Namespace Using a Configuration File
+Create a configuration file named nginx-namespace.yaml.
+```
+ubuntu@balasenapathi:~$ nano nginx-namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx
+```
+### 6.Applying the Configuration to the Cluster
+```
+ubuntu@balasenapathi:~$ kubectl apply -f nginx-namespace.yaml
+Warning: resource namespaces/nginx is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by 
+kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl 
+apply. The missing annotation will be patched automatically.
+namespace/nginx configured
+```
+**Note:**
+You might receive a warning because the namespace nginx already exists. In such cases, you need to delete 
+the existing namespace first before applying the changes again.
+
+### 7.Deleting the Existing Namespace
+```
+ubuntu@balasenapathi:~$ kubectl delete namespace nginx
+namespace "nginx" deleted
+```
+### 8.Reapplying the Configuration
+```
+ubuntu@balasenapathi:~$ kubectl apply -f nginx-namespace.yaml
+namespace/nginx created
+```
+### 9.Creating the `todo` Namespace
+Create a Configuration File named `todo-namespace.yaml`.
+```
+ubuntu@balasenapathi:~$ nano todo-namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: todo
+```
+### 10.Apply the configuration file to create the todo namespace.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f todo-namespace.yaml
+namespace/todo created
+```
+### 11.Verify the Creation of the todo Namespace
+```
+ubuntu@balasenapathi:~$ kubectl get namespaces
+NAME              STATUS   AGE
+default           Active   5d1h
+ingress-nginx     Active   5d
+kube-node-lease   Active   5d1h
+kube-public       Active   5d1h
+kube-system       Active   5d1h
+nginx             Active   5m6s
+todo              Active   8s
+```
+**Note:**
+All resources created so far were placed in the default namespace because no specific namespace was 
+mentioned during their creation. This is why they all appear in the default namespace by default.
+
+### 12.Current Resources in the Cluster
+```
+ubuntu@balasenapathi:~$ kubectl get all
+NAME                                    READY   STATUS    RESTARTS      AGE
+pod/nginx-deployment-7c4c499fd5-4n5jm   1/1     Running   1 (39m ago)   4d8h
+pod/nginx-deployment-7c4c499fd5-7skqs   1/1     Running   1 (39m ago)   4d8h
+pod/nginx-deployment-7c4c499fd5-nflzm   1/1     Running   1 (39m ago)   4d8h
+pod/nginx-deployment-7c4c499fd5-rw4hx   1/1     Running   1 (39m ago)   4d8h
+pod/todo-api-6665cbbf8d-r7pv2           1/1     Running   1 (39m ago)   4d5h
+pod/todo-api-6665cbbf8d-vdlk8           1/1     Running   1 (39m ago)   4d5h
+pod/todo-ui-64ccd9d555-24lv9            1/1     Running   1 (39m ago)   4d5h
+pod/todo-ui-64ccd9d555-8w7rl            1/1     Running   1 (39m ago)   4d5h
+
+NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/kubernetes         ClusterIP   10.96.0.1       <none>        443/TCP    4d8h
+service/nginx-service      ClusterIP   10.107.16.240   <none>        8082/TCP   4d8h
+service/todo-api-service   ClusterIP   10.104.42.224   <none>        8080/TCP   4d5h
+service/todo-ui-service    ClusterIP   10.100.26.224   <none>        3001/TCP   4d5h
+
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx-deployment   4/4     4            4           4d8h
+deployment.apps/todo-api           2/2     2            2           4d5h
+deployment.apps/todo-ui            2/2     2            2           4d5h
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-deployment-7c4c499fd5   4         4         4       4d8h
+replicaset.apps/todo-api-6665cbbf8d           2         2         2       4d5h
+replicaset.apps/todo-ui-64ccd9d555            2         2         2       4d5h
+
+```
+**Note:** The above output consists of 
+
+```
+ubuntu@balasenapathi:~$ kubectl get all
+
+# 1.Pods
+
+NAME                                    READY   STATUS    RESTARTS      AGE
+pod/nginx-deployment-7c4c499fd5-4n5jm   1/1     Running   1 (39m ago)   4d8h
+pod/nginx-deployment-7c4c499fd5-7skqs   1/1     Running   1 (39m ago)   4d8h
+pod/nginx-deployment-7c4c499fd5-nflzm   1/1     Running   1 (39m ago)   4d8h
+pod/nginx-deployment-7c4c499fd5-rw4hx   1/1     Running   1 (39m ago)   4d8h
+pod/todo-api-6665cbbf8d-r7pv2           1/1     Running   1 (39m ago)   4d5h
+pod/todo-api-6665cbbf8d-vdlk8           1/1     Running   1 (39m ago)   4d5h
+pod/todo-ui-64ccd9d555-24lv9            1/1     Running   1 (39m ago)   4d5h
+pod/todo-ui-64ccd9d555-8w7rl            1/1     Running   1 (39m ago)   4d5h
+
+# 2.Services
+
+NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/kubernetes         ClusterIP   10.96.0.1       <none>        443/TCP    4d8h
+service/nginx-service      ClusterIP   10.107.16.240   <none>        8082/TCP   4d8h
+service/todo-api-service   ClusterIP   10.104.42.224   <none>        8080/TCP   4d5h
+service/todo-ui-service    ClusterIP   10.100.26.224   <none>        3001/TCP   4d5h
+
+# 3.Deployments
+
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx-deployment   4/4     4            4           4d8h
+deployment.apps/todo-api           2/2     2            2           4d5h
+deployment.apps/todo-ui            2/2     2            2           4d5h
+
+# 4.ReplicaSets
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-deployment-7c4c499fd5   4         4         4       4d8h
+replicaset.apps/todo-api-6665cbbf8d           2         2         2       4d5h
+replicaset.apps/todo-ui-64ccd9d555            2         2         2       4d5h
+```
+**Note:**
+All resources currently exist in the default namespace because we did not specify a namespace during 
+their creation. To organize these resources into the appropriate namespaces, such as nginx and todo, 
+you'll need to update the resource definitions and apply them to the correct namespaces.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
