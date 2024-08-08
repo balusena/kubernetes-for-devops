@@ -125,7 +125,7 @@ kube-system       Active   5d1h
 nginx             Active   70s
 ```
 **Note:**
-- You can see the four default namespaces: default, kube-node-lease, kube-public, and kube-system.
+- You can see the four default namespaces: **default**, **kube-node-lease**, **kube-public**, and **kube-system**.
 - The nginx namespace that we created is listed.
 - You can also see the ingress-nginx namespace, which was created when we installed the nginx-ingress-controller.
 
