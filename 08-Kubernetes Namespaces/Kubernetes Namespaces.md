@@ -57,3 +57,35 @@ resource quotas for CPU and memory utilization. This ensures that each project o
 resources it needs to operate efficiently.
 
 ![Resource Limits](https://github.com/balusena/kubernetes-for-devops/blob/main/08-Kubernetes%20Namespaces/resource_limits.png)
+
+**4.Default Namespaces:**
+
+When we create a Kubernetes cluster, we get four default namespaces:
+
+- **Default**: Used for resources when a namespace isn't explicitly specified.
+- **kube-node-lease**: Contains lease resources that send heartbeat signals from nodes.
+- **kube-public**: Used for public resources and is open to all users with read-only access.
+- **kube-system**: Reserved for objects created by the Kubernetes control plane.
+
+### Default Namespace
+By default, all resources created in the Kubernetes cluster are placed in the `default` namespace if no
+namespace is explicitly mentioned. For example, resources like `nginx-deployment`, `nginx-service`, and
+`nginx-ingress-rules` should be in the `default` namespace if we didn't specify a namespace during their
+creation.
+
+### kube-node-lease Namespace
+If a node goes down in a cluster, the Pods on that node are recreated on a different healthy node. 
+Kubernetes knows which node went down through lease objects in the `kube-node-lease` namespace. Every 
+node has an associated lease object that sends heartbeats to the control plane, helping the cluster
+monitor node availability and take action when failures are detected.
+
+### kube-public Namespace
+The `kube-public` namespace is used for public resources and is not recommended for regular use by users.
+This namespace is open to all users with read-only access and is reserved for cluster-wide usage when 
+resources need to be visible across the entire cluster.
+
+### kube-system Namespace
+The `kube-system` namespace is for objects created by the Kubernetes control plane.
+
+### Custom Namespaces
+In addition to these default namespaces, we can create custom namespaces, such as `todo`.
