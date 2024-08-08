@@ -89,3 +89,5 @@ The `kube-system` namespace is for objects created by the Kubernetes control pla
 
 ### Custom Namespaces
 In addition to these default namespaces, we can create custom namespaces, such as `todo`.
+
+![Default Namespace](https://github.com/balusena/kubernetes-for-devops/blob/main/08-Kubernetes%20Namespaces/default_namespace.png)
