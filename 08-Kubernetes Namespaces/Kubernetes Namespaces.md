@@ -96,13 +96,41 @@ In addition to these default namespaces, we can create custom namespaces, such a
 We have resources related to `nginx` and `todo` applications in the same namespace, and we also have 
 `nginx-ingress-controller` resources that we created in the ingress session.
 
-**Note:**
-Now, let's create two namespaces: `nginx` and `todo`. We will move all resources related to `nginx` to 
-the `nginx` namespace and all resources belonging to `todo-ui` and `todo-api` into the `todo` namespace.
-
 ![Organizing Resources](https://github.com/balusena/kubernetes-for-devops/blob/main/08-Kubernetes%20Namespaces/organizing_resources.png)
 
+**Note:**
+Now, let's create two namespaces: `nginx` and `todo`. We will move all resources related to `nginx` to
+the `nginx` namespace and all resources belonging to `todo-ui` and `todo-api` into the `todo` namespace.
 
+## Namespaces Can Be Created in Two Ways:
+
+- 1. Using `kubectl`
+- 2. Using a configuration file
+
+### 1.Creating a Namespace Using `kubectl`
+```
+ubuntu@balasenapathi:~$ kubectl create namespace nginx
+namespace/nginx created
+```
+
+### 2.Listing All Namespaces
+```
+ubuntu@balasenapathi:~$ kubectl get namespaces
+NAME              STATUS   AGE
+default           Active   5d1h
+ingress-nginx     Active   4d23h
+kube-node-lease   Active   5d1h
+kube-public       Active   5d1h
+kube-system       Active   5d1h
+nginx             Active   70s
+```
+**Note:**
+- You can see the four default namespaces: default, kube-node-lease, kube-public, and kube-system.
+- The nginx namespace that we created is listed.
+- You can also see the ingress-nginx namespace, which was created when we installed the nginx-ingress-controller.
+
+It is always recommended to use configuration files instead of kubectl commands to create resources for 
+better tracking and maintenance.
 
 
 
