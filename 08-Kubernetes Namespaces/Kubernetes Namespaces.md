@@ -37,6 +37,9 @@ With separate namespaces, we can use the same name for different resources in di
 way, teams can reuse the same resource names in different workspaces without any problems. Additionally, 
 any modifications made to one resource will not affect other resources.
 
+![Avoiding Conflict](https://github.com/balusena/kubernetes-for-devops/blob/main/08-Kubernetes%20Namespaces/avoding_conflict.png)
+
+
 
 
 
