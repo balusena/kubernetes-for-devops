@@ -39,7 +39,14 @@ any modifications made to one resource will not affect other resources.
 
 ![Avoiding Conflict](https://github.com/balusena/kubernetes-for-devops/blob/main/08-Kubernetes%20Namespaces/avoding_conflict.png)
 
+**2.Restricting Access:**
+Let's say employees with different roles, such as developers and admins, are using our Kubernetes cluster.
+We also have two different namespaces, dev and prod, within the same cluster. Everyone can create or modify
+resources in the dev namespace, but we should not grant that freedom in the prod namespace, as changes 
+could disrupt live applications. By limiting users and processes to specific namespaces, we can ensure that
+only authorized users have access to resources in a given namespace.
 
+![Restricting Access](https://github.com/balusena/kubernetes-for-devops/blob/main/08-Kubernetes%20Namespaces/restricting_access.png)
 
 
 
