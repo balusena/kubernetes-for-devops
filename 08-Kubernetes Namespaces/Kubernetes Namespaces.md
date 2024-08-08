@@ -48,16 +48,12 @@ only authorized users have access to resources in a given namespace.
 
 ![Restricting Access](https://github.com/balusena/kubernetes-for-devops/blob/main/08-Kubernetes%20Namespaces/restricting_access.png)
 
+**3.Resource Limits:**
+Namespaces also help in limiting resources for different applications. For example, let's say we have two 
+teams deploying their applications in the same namespace. Initially, both applications run smoothly, but 
+if app1 starts consuming excessive memory due to a memory leak, app2 may slow down because of the reduced 
+memory available. This issue can be avoided by running the two apps in different namespaces and defining 
+resource quotas for CPU and memory utilization. This ensures that each project or namespace has the 
+resources it needs to operate efficiently.
 
-
-
-
-
-
-
-
-
-
-
-
-
+![Resource Limits](https://github.com/balusena/kubernetes-for-devops/blob/main/08-Kubernetes%20Namespaces/resource_limits.png)
