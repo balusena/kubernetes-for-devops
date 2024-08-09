@@ -1008,10 +1008,20 @@ volumes can preserve data if a pod is restarted, they cannot prevent data loss i
 
 ![Kubernetes hostPath Drawback](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/hostpath_drawback.png)
 
-To address this issue, we can move the storage from the node to external storage solutions like AWS EBS. 
+To address this issue, we can move the storage from the node to external storage solutions like:
+
+- **AWS EBS (Elastic Block Store)
+- **Azure Managed Disks**
+- **Google Persistent Disks**
+- **NFS (Network File System)**
+- **HDFS (Hadoop Distributed File System)**
+
 This is where persistent volumes come into play. Unlike the ephemeral volumes we've discussed so far, 
-persistent volumes are not tied to any specific pod or node. They provide a more reliable way to store 
+persistent volumes are not tied to any specific pod or node. They provide a more reliable way to store
 data because they are independent of individual pods or nodes.
+
+
+
 
 
 
