@@ -407,6 +407,7 @@ AF=2 127.0.0.1:27017, 16): Connection refused
 E0914 18:48:07.856152   99681 portforward.go:394] error copying from local connection to remote stream: EOF
 error: lost connection to pod
 ```
+![MongoDB Refresh Data](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/data_refresh.png)
 **Note:**
 As we can see, the entire database has been deleted. The issue with this approach is that data is not 
 shared across containers, and when a container is deleted, the data associated with it is also lost.
