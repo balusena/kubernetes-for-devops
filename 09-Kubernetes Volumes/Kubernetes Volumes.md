@@ -1006,6 +1006,9 @@ on node1 using a hostPath volume cannot be accessed by a pod running on node2. I
 restarted, all data stored on that node is also lost, leading to data loss. Therefore, while hostPath 
 volumes can preserve data if a pod is restarted, they cannot prevent data loss if the node is deleted.
 
+**Note:** emptyDir and hostPath volumes are ephemeral, meaning their data is lost when pods or nodes are 
+deleted or restarted. They do not persist data beyond the lifecycle of the pod or node.
+
 ![Kubernetes hostPath Drawback](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/hostpath_drawback.png)
 
 To address this issue, we can move the storage from the node to external storage solutions like:
@@ -1019,6 +1022,7 @@ To address this issue, we can move the storage from the node to external storage
 This is where persistent volumes come into play. Unlike the ephemeral volumes we've discussed so far, 
 persistent volumes are not tied to any specific pod or node. They provide a more reliable way to store
 data because they are independent of individual pods or nodes.
+
 
 
 
