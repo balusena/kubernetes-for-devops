@@ -165,10 +165,64 @@ Handling connection for 32000
 Handling connection for 32000
 Handling connection for 32000
 ```
-**Note:** Our service is exposed now on 32000 port now try to access the deployed mongodb from mongo compass.
-"Mongo Compass is a client to connect to our MongoDB database"
+**Note:** Our MongoDB service is exposed on port 32000. Now, try to access the deployed MongoDB from 
+MongoDB Compass. MongoDB Compass is a client used to connect to your MongoDB database.
 
-After installing the mongodb compass in our system open the icon of mongo compass and authenticate and connect to it.
+After installing MongoDB Compass on your system, open the MongoDB Compass application and authenticate 
+to connect to your MongoDB instance.
+
+# MongoDB Compass Setup and Database Creation
+
+## Connecting to MongoDB Compass
+
+1. **Open MongoDB Compass**:
+   Launch the MongoDB Compass application on your system.
+
+2. **Create a New Connection**:
+    - **URI**: `mongodb://localhost:32000/`
+
+    - **Advanced Connection Options**:
+        - **Authentication Method**: `Username/Password`
+        - **Username**: `admin`
+        - **Password**: `password`
+        - Click on `[Connect]`
+
+## Creating a Simple Database
+
+1. **Go to Databases**:
+    - Click on `+ Create Database`.
+![MongoDB Compass](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/mongodb_compass.png)
+
+2. **Enter Database Details**:
+    - **Database Name**: `db`
+    - **Collection Name**: `todos`
+    - Click on `Create Database`.
+![MongoDB Database Creation](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/database_creation.png)
+
+3. **Add Data**:
+    - Select the `db.todos` collection.
+    - Click on `Insert to Collection db.todos`.
+    - **Insert Data**:
+     ```
+      {
+       "title": "Refer Docker Volumes"
+      }
+     ```
+![MongoDB Add Data](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/data_insertion.png)
+
+4. **Verify Inserted Data**:
+    - After inserting, the data should appear as:
+      ```
+      {
+        "_id": {
+          "$oid": "65021e644622154011f48d68"
+        },
+        "title": "Refer Docker Volumes"
+      }
+     ```
+![MongoDB Verify Data](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/data_verify.png)
+
+
 
 
 
