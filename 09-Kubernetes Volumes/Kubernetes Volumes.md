@@ -45,8 +45,6 @@ the containers within a pod.
 
 ## 2.Different types of volumes available in kubernetes with examples.
 
-# Kubernetes Volume Types
-
 ## 1.emptyDir
 - **Description:** An `emptyDir` volume is a temporary storage directory created when a pod is assigned to a node. It starts empty and is used by the containers within the pod.
 - **Lifecycle:** The data in an `emptyDir` volume is ephemeral and will be deleted when the pod is removed.
