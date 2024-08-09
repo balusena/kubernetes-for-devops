@@ -186,7 +186,8 @@ to connect to your MongoDB instance.
         - **Username**: `admin`
         - **Password**: `password`
         - Click on `[Connect]`
-![MongoDB Compass](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/mongodb_compass.png)
+
+   ![MongoDB Compass](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/mongodb_compass.png)
 
 ## Creating a Simple Database
 
@@ -197,30 +198,33 @@ to connect to your MongoDB instance.
     - **Database Name**: `db`
     - **Collection Name**: `todos`
     - Click on `Create Database`.
-![MongoDB Database Creation](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/database_creation.png)
+
+   ![MongoDB Database Creation](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/database_creation.png)
 
 3. **Add Data**:
     - Select the `db.todos` collection.
     - Click on `Insert to Collection db.todos`.
     - **Insert Data**:
-     ```
+      ```json
       {
-       "title": "Refer Docker Volumes"
+        "title": "Refer Docker Volumes"
       }
-     ```
-![MongoDB Add Data](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/data_insertion.png)
+      ```
+
+   ![MongoDB Add Data](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/data_insertion.png)
 
 4. **Verify Inserted Data**:
     - After inserting, the data should appear as:
-      ```
+      ```json
       {
         "_id": {
           "$oid": "62fa268ed6c84bf7704d1e5b"
         },
         "title": "Refer Docker Volumes"
       }
-     ```
-![MongoDB Verify Data](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/data_verify.png)
+      ```
+
+   ![MongoDB Verify Data](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/data_verify.png)
 
 
 
