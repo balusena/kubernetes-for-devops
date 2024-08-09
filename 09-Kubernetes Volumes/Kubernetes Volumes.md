@@ -256,15 +256,6 @@ Forwarding from [::1]:32000 -> 27017
 Handling connection for 32000
 Handling connection for 32000
 Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
 ```
 **Note:** Our MongoDB service is exposed on port 32000. Now, try to access the deployed MongoDB from 
 MongoDB Compass. MongoDB Compass is a client used to connect to your MongoDB database.
@@ -386,21 +377,6 @@ Forwarding from [::1]:32000 -> 27017
 Handling connection for 32000
 Handling connection for 32000
 Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
 E0914 18:48:07.841612   99681 portforward.go:409] an error occurred forwarding 32000 -> 27017: error forwarding port 27017 to pod
 e559886297a80542e63f0560bf3460d00229808f60f6da249f7ba50ee1aafca4, uid : exit status 1: 2023/09/14 13:18:07 socat[105426] E connect(5,
 AF=2 127.0.0.1:27017, 16): Connection refused
@@ -486,13 +462,6 @@ Forwarding from [::1]:32000 -> 27017
 Handling connection for 32000
 Handling connection for 32000
 Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
 ```
 ### 4.Creating a Simple Database in MongoDB
 
@@ -508,11 +477,11 @@ Handling connection for 32000
    - Select the `db.todos` collection.
    - Click on `Insert to Collection db.todos`.
    - **Insert Data**:
-   ```json
+   ```
    {
      "title": "Refer Docker Volumes"
    }
-
+   ```
 4. **Verify Inserted Data**:
    - After inserting, the data should appear as:
      ```
@@ -574,18 +543,6 @@ mongo-5dc459c68f-mr79x   1/1     Running   1 (34s ago)   15m
 ubuntu@balasenapathi:~$ kubectl port-forward svc/mongo-svc 32000:27017
 Forwarding from 127.0.0.1:32000 -> 27017
 Forwarding from [::1]:32000 -> 27017
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
 Handling connection for 32000
 Handling connection for 32000
 Handling connection for 32000
@@ -838,19 +795,6 @@ Forwarding from [::1]:32000 -> 27017
 Handling connection for 32000
 Handling connection for 32000
 Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
-Handling connection for 32000
 E0915 01:46:22.536568  168122 portforward.go:409] an error occurred forwarding 32000 -> 27017: error forwarding port 27017 to pod
 ec4f006b50d25b581a082fb3b94b779ef8146a3f485af78894a60e083e1bdf13, uid : container not running
 (ec4f006b50d25b581a082fb3b94b779ef8146a3f485af78894a60e083e1bdf13)
@@ -923,6 +867,151 @@ the data remains available because it is stored at the host level.
 
 ![Kubernetes hostPath Volume](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/hostpath.png)
 
+### 1.Create /data directory and give full permissions(rwx) in your host machine.
+```
+ubuntu@balasenapathi:~$ sudo mkdir -p /data
+ubuntu@balasenapathi:~$ sudo chmod 777 /data
+```
+
+### 2.Create the deployment file:
+```
+ubuntu@balasenapathi:~$ nano deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - image: mongo
+          name: mongo
+          args: ["--dbpath", "/data/db"]
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "admin"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: "password"
+          volumeMounts:
+            - mountPath: /data/db
+              name: mongo-volume      
+      volumes:
+        - name: mongo-volume
+          hostPath:
+            path: /data
+```
+### 3.Now apply the changes into the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f deployment.yaml
+deployment.apps/mongo configured
+```
+### 4.Now get the list of all pods:
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+mongo-76df5b9f6b-b5w2p   1/1     Running   0          37s
+```
+### 5.Now let us port-forward this service so that we can access mongodb from our machine:
+**Note:** We try to access it on 32000 port as the mongo service is running on 27017
+```
+ubuntu@balasenapathi:~$ kubectl port-forward svc/mongo-svc 32000:27017
+Forwarding from 127.0.0.1:32000 -> 27017
+Forwarding from [::1]:32000 -> 27017
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+```
+### 6.Creating a Simple Database in MongoDB
+
+1. **Go to Databases**:
+   - Click on `+ Create Database`.
+
+2. **Enter Database Details**:
+   - **Database Name**: `db`
+   - **Collection Name**: `todos`
+   - Click on `Create Database`.
+
+3. **Add Data**:
+   - Select the `db.todos` collection.
+   - Click on `Insert to Collection db.todos`.
+   - **Insert Data**:
+   ```
+   {
+     "title": "Refer Docker Volumes"
+   }
+   ```
+4. **Verify Inserted Data**:
+   - After inserting, the data should appear as:
+     ```
+     {
+       "_id": {
+         "$oid": "65037449d752a335b8da81a4"
+       },
+       "title": "Testing"
+     }
+     ```
+### 7.To get the list of pods:
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+mongo-76df5b9f6b-b5w2p   1/1     Running   0          7m52s
+```
+### 8.Now delete the pod:
+```
+ubuntu@balasenapathi:~$ kubectl delete pod mongo-76df5b9f6b-b5w2p
+pod "mongo-76df5b9f6b-b5w2p" deleted
+```
+### 9.To check the pods list:
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+mongo-76df5b9f6b-9ncfl   1/1     Running   0          10s
+```
+**Note:** The replica was created automatically when pod is deleted to maintain actual state.
+
+### 10.Now again do the port-forwarding:
+```
+ubuntu@balasenapathi:~$ kubectl port-forward svc/mongo-svc 32000:27017
+Forwarding from 127.0.0.1:32000 -> 27017
+Forwarding from [::1]:32000 -> 27017
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+E0915 02:33:55.118430  338393 portforward.go:409] an error occurred forwarding 32000 -> 27017: error forwarding port 27017 to pod
+18199cb5c48ca51c54e1db5af5244af2ca7fa10e77fe220874c9c7b2d6d7d670, uid : Error response from daemon: No such container:
+18199cb5c48ca51c54e1db5af5244af2ca7fa10e77fe220874c9c7b2d6d7d670
+error: lost connection to pod
+
+ubuntu@balasenapathi:~$ kubectl port-forward svc/mongo-svc 32000:27017
+Forwarding from 127.0.0.1:32000 -> 27017
+Forwarding from [::1]:32000 -> 27017
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+```
+**Note:** Now refresh the database to verify that the data remains available. By using the hostPath volume,
+we can ensure that data persists even if the pod is deleted or restarted. However, we still face the same
+issues we had earlier, such as "sharing data" and "persisting data" when multiple pods are present in the
+same cluster.
+
+Let's say we have multiple pods running an application across different nodes. In this case, data stored 
+on node1 using a hostPath volume cannot be accessed by a pod running on node2. If node1 is deleted or 
+restarted, all data stored on that node is also lost, leading to data loss. Therefore, while hostPath 
+volumes can preserve data if a pod is restarted, they cannot prevent data loss if the node is deleted.
+
+![Kubernetes hostPath Drawback](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/hostpath_drawback.png)
+
+To address this issue, we can move the storage from the node to external storage solutions like AWS EBS. 
+This is where persistent volumes come into play. Unlike the ephemeral volumes we've discussed so far, 
+persistent volumes are not tied to any specific pod or node. They provide a more reliable way to store 
+data because they are independent of individual pods or nodes.
 
 
 
