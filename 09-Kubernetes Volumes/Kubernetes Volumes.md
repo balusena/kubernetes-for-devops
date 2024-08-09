@@ -413,11 +413,22 @@ error: lost connection to pod
 As we can see, the entire database has been deleted. The issue with this approach is that data is not 
 shared across containers, and when a container is deleted, the data associated with it is also lost.
 
+**Solution:**
 The solution to this problem is to store the data at the pod level instead of the container level. 
 Kubernetes provides a volume type called emptyDir for this purpose. An emptyDir volume is created 
 when a pod is first assigned to a node and remains active as long as the pod is running on that node. 
 Containers within the pod can share the same data because it is stored at the pod level. Thus, even if 
 a container is restarted, the data remains available within the pod.
+
+**1.emptyDir:**
+Instead of storing data at the container level, we can store it at the pod level. In Kubernetes, there 
+is a type of volume called emptyDir, which allows us to store data at the pod level. An emptyDir volume 
+is created when a pod is first assigned to a node and remains active as long as the pod is running on 
+that node. This allows containers within the pod to share the same data since it is stored at the pod 
+level. Even if a container is restarted, the data will still be available in the pod.
+
+![Kubernetes emptyDir](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/emptydir.png)
+
 
 
 
