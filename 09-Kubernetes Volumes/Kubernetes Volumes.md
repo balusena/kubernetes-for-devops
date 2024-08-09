@@ -25,6 +25,24 @@ pods. These are the two main challenges we encounter when storing data in Kubern
 
 ![Problem Statement 2](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/ps-2.png)
 
+This is where Kubernetes Volumes come into the picture. With Kubernetes Volumes, we can solve the two problems mentioned above:
+
+- 1.Sharing data across pods.
+- 2.Persisting data even if a pod restarts or a node goes down.
+
+## 1.What are kubernetes Volumes?
+Kubernetes Volumes are storage abstractions that allow data to be shared and persisted across containers
+within a pod or even across pods. Unlike container storage, which is ephemeral and lost when the container 
+stops or restarts, Kubernetes Volumes provide a way to store data that outlasts the lifecycle of individual
+containers. Volumes can be backed by various storage types, such as local disks, network file systems, or
+cloud storage solutions. They enable data persistence, sharing among pods, and storage management in a 
+Kubernetes environment, ensuring that critical data is not lost even if pods or nodes fail.
+
+![Kubernetes Volumes](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/kubernetes_volumes.png)
+
+**Note:** In simple terms, a volume is a directory with some data in it, and this data is accessible to 
+the containers within a pod.
+
 
 
 
