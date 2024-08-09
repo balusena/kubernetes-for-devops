@@ -1038,6 +1038,10 @@ other Kubernetes resources. It acts as an abstract representation of storage and
 physical storage solutions such as AWS EBS, Azure Managed Disks, Google Persistent Disks, NFS (Network File System), 
 or HDFS (Hadoop Distributed File System).
 
+![Kubernetes Persistent Volumes](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/persistent_volumes.png)
+
+
+
 
 
 
