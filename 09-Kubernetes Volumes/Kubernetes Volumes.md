@@ -808,6 +808,124 @@ with that pod is also deleted, leading to data loss.
 
 ![Kubernetes emptyDir Drawback](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/emptydir_drawback.png)
 
+### 7.Now lets try to delete the pod:
+```
+ubuntu@balasenapathi:~$ kubectl delete pod mongo-5dc459c68f-mr79x
+pod "mongo-5dc459c68f-mr79x" deleted
+```
+### 8.Now get the list of all pods:
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+mongo-5dc459c68f-4b4xr   1/1     Running   0          30s
+```
+**Note:** We are using deployment, the old pod is deleted and new pod replica is created by the deployment file.
+
+### 9.Now list down the emptydir directory again:
+```
+ubuntu@balasenapathi:~$ minikube ssh
+docker@minikube:~$ sudo ls /var/lib/kubelet/pods/9bb53c02-9363-4a19-b9d3-470e36e6cf7b/volumes/kubernetes.io~empty-dir/mongo-volume
+ls: cannot access '/var/lib/kubelet/pods/9bb53c02-9363-4a19-b9d3-470e36e6cf7b/volumes/kubernetes.io~empty-dir/mongo-volume': No such
+file or directory
+```
+**Note:** We can see that the file doesn't exit meaning when a pod is deleted entire data associated with that pod is deleted from that node.
+
+### 10.Now check this from the mongo compass:
+```
+ubuntu@balasenapathi:~$ kubectl port-forward svc/mongo-svc 32000:27017
+Forwarding from 127.0.0.1:32000 -> 27017
+Forwarding from [::1]:32000 -> 27017
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+E0915 01:46:22.536568  168122 portforward.go:409] an error occurred forwarding 32000 -> 27017: error forwarding port 27017 to pod
+ec4f006b50d25b581a082fb3b94b779ef8146a3f485af78894a60e083e1bdf13, uid : container not running
+(ec4f006b50d25b581a082fb3b94b779ef8146a3f485af78894a60e083e1bdf13)
+error: lost connection to pod
+```
+**Note:** As we can see that the data is lost in the mongodb database after we refresh in mongo compas.
+
+### 11.# Verifying MongoDB Files in Minikube when pod is running without any RESTARTS.
+
+### 1. Listing Files in the `/data` Directory
+
+To check the contents of the `/data` directory on the Minikube node:
+```
+minikube ssh
+ls /data
+```
+### 2.To get into the pod and see the data in the mongodb database:
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+mongo-76df5b9f6b-2zpqr   1/1     Running   0          20m
+```
+### 3.Access the Pod
+Execute a shell inside the MongoDB pod:
+```
+ubuntu@balasenapathi:~$ kubectl exec -it mongo-76df5b9f6b-2zpqr -- /bin/bash
+root@mongo-76df5b9f6b-2zpqr:/# ls
+bin   data  docker-entrypoint-initdb.d	home	    lib    lib64   media  opt	root  sbin  sys  usr
+boot  dev   etc				js-yaml.js  lib32  libx32  mnt	  proc	run   srv   tmp  var
+```
+### 4.List Files in the /data Directory
+```
+root@mongo-76df5b9f6b-2zpqr:/# ls /data
+configdb  db
+```
+### 5.List MongoDB Files in the /data/db Directory
+```
+root@mongo-76df5b9f6b-2zpqr:/# ls /data/db
+WiredTiger	   _mdb_catalog.wt			collection-7-8225422951122198081.wt  index-5-8225422951122198081.wt  mongod.lock
+WiredTiger.lock    collection-0--677354594006740094.wt	diagnostic.data			     
+index-6-8225422951122198081.wt  sizeStorer.wt
+WiredTiger.turtle  collection-0-8225422951122198081.wt	index-1--677354594006740094.wt	     
+index-8-8225422951122198081.wt  storage.bson
+WiredTiger.wt	   collection-2-8225422951122198081.wt	index-1-8225422951122198081.wt	     index-9-8225422951122198081.wt
+WiredTigerHS.wt    collection-4-8225422951122198081.wt	index-3-8225422951122198081.wt	     journal
+```
+**Note:** These files are accessed before pod is deleted or restarted in emptyDir.
+
+**Solution:**
+The solution to this problem is to move the volume out of the pod, and this is where the `hostPath` volume
+comes into play. The `hostPath` volume allows a file or directory from the host file system to be mounted
+into the pod. This means that all the pods on the same node can share the data, and even if a pod is deleted
+and restarted for any reason, the data will still be available because it is stored on the node, not within
+the pod itself.
+
+To use a `hostPath` volume, simply replace `"emptyDir"` with `"hostPath:"` in the volume configuration. 
+Instead of leaving the curly braces `{}` empty, you should specify the folder path on the node where the 
+data should be stored using the `path:` field. For example, if you set `path: /data`, the data will be 
+stored in the `/data` directory on the node, and the same data will be mounted inside the container at the
+`/data/db` directory.
+
+This approach ensures that data persists across pod restarts and can be shared among multiple pods running
+on the same node.
+
+**2.hostPath:**
+Instead of storing data at the pod level, we can store it in a directory at the node level. This is where
+hostPath volumes come into play. A hostPath volume allows a file or directory from the host file system to
+be mounted into a pod. This way, all pods on the same node can share the data. Even if a pod is deleted, 
+the data remains available because it is stored at the host level.
+
+![Kubernetes hostPath Volume](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/hostpath.png)
+
+
+
+
 
 
 
