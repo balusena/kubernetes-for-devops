@@ -3,5 +3,10 @@ Containers are considered 'ephemeral,' meaning that when a container is deleted,
 it will be lost. However, we can persist the data even if the container is deleted by using Docker volumes,
 and the same concept applies to Kubernetes.
 
+![Container Pod](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/container_pod.png)
+
 When a pod is deleted, all the data associated with it is also deleted. Now, we will look at how to persist
 the data even if the pod is deleted, using Kubernetes Volumes.
+
+
+
