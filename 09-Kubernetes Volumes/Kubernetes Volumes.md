@@ -186,12 +186,12 @@ to connect to your MongoDB instance.
         - **Username**: `admin`
         - **Password**: `password`
         - Click on `[Connect]`
+![MongoDB Compass](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/mongodb_compass.png)
 
 ## Creating a Simple Database
 
 1. **Go to Databases**:
     - Click on `Create Database`.
-![MongoDB Compass](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/mongodb_compass.png)
 
 2. **Enter Database Details**:
     - **Database Name**: `db`
