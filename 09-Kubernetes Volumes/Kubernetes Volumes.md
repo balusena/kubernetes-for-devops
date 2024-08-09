@@ -16,7 +16,7 @@ maintain the desired state of three (3) replicas. However, this new pod will sta
 and any data previously written to the pod will be lost. This leads to data loss when a pod is deleted 
 or restarted.
 
-![Problem Statement 1](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/container_pod.png)
+![Problem Statement 1](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/ps-1.png)
 
 
 
