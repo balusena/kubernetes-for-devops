@@ -1023,6 +1023,13 @@ This is where persistent volumes come into play. Unlike the ephemeral volumes we
 persistent volumes are not tied to any specific pod or node. They provide a more reliable way to store
 data because they are independent of individual pods or nodes.
 
+**Kubernetes offers three components to persist data across pod restarts and node failures:**
+
+**1.Persistent Volumes**
+**2.Persistent VolumeClaims**
+**3.StorageClass**
+
+
 
 
 
