@@ -1025,9 +1025,9 @@ data because they are independent of individual pods or nodes.
 
 **Kubernetes offers three components to persist data across pod restarts and node failures:**
 
-**1.Persistent Volumes**
-**2.Persistent VolumeClaims**
-**3.StorageClass**
+- **1.Persistent Volumes**
+- **2.Persistent VolumeClaims**
+- **3.StorageClass**
 
 
 
