@@ -18,6 +18,12 @@ or restarted.
 
 ![Problem Statement 1](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/ps-1.png)
 
+**Problem Statement-2**
+When we have multiple replicas of the same application, how do they share the same data? By default, the
+data is stored in the container and is not accessible to other pods, meaning the data is not shared across
+pods. These are the two main challenges we encounter when storing data in Kubernetes.
+
+![Problem Statement 2](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/ps-2.png)
 
 
 
