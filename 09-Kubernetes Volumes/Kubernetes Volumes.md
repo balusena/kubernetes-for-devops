@@ -1159,6 +1159,120 @@ work with PVs indirectly through PVCs.
 
 ![Kubernetes Persistent Volumes Claims](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/persistent_volumes_claims.png)
 
+### 8.Now create a PersistentVolumesClaim that need to be used in the pod.
+```
+ubuntu@balasenapathi:~$ nano pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: ""
+```
+### 9.Now apply the changes into the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f pvc.yaml
+persistentvolumeclaim/mongo-pvc created
+```
+### 10.list down all the PersistentVolumeClaim in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get PersistentVolumeClaim
+NAME        STATUS   VOLUME     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+mongo-pvc   Bound    mongo-pv   5Gi        RWX                           89s
+
+ubuntu@balasenapathi:~$ kubectl get pvc
+NAME        STATUS   VOLUME     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+mongo-pvc   Bound    mongo-pv   5Gi        RWX                           98s
+```
+**Note:** "pvc" is the short form of PersistentVolumeClaim(PVC) and the status is Bound means this is 
+already attached to PersistentVolume and it is attached to volume mongo-pv.
+```
+ubuntu@balasenapathi:~$ kubectl get pv
+NAME       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM               STORAGECLASS   REASON   AGE
+mongo-pv   5Gi        RWX            Retain           Bound    default/mongo-pvc                           39m
+```
+**Note:** The status of the PersistentVolume(PV) also changes from available to bound because the newly 
+created PersistentVolumeClaim claimed the PersistentVolume.
+
+### 11.To use this PV and PVC, we need to make some changes in the deployment.yaml file which is required for our pod.
+```
+ubuntu@balasenapathi:~$ nano deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - image: mongo
+          name: mongo
+          args: ["--dbpath", "/data/db"]
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "admin"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: "password"
+          volumeMounts:
+            - mountPath: /home/ubuntu-dsbda/data/db
+              name: mongo-volume
+      volumes:
+        - name: mongo-volume
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+```
+**Note:** In the volumes section, we need to specify the PersistentVolumeClaim, with the claimName set to
+`mongo-pvc`. What we are doing here is linking the PersistentVolumeClaim in the deployment. Since this 
+PersistentVolumeClaim is bound to a PersistentVolume, that PersistentVolume will be used by the pods for 
+storage.
+
+### 12.Now apply the changes into the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f deployment.yaml
+deployment.apps/mongo configured
+```
+### 13.To list down all the pods in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+mongo-5f584499d5-8mrfc   1/1     Running   0          9s
+```
+**Note:** If we find any error in creating the PV,PVC,Deployment(POD) then delete all the resources and create them again.
+
+**Deleteing Resources:[PV, PVC, Deployment]** 
+```
+ubuntu@balasenapathi:~$ kubectl delete pv mongo-pv
+
+ubuntu-dsbda@ubuntudsbda-virtual-machine:~$ kubectl delete pvc mongo-pv
+
+ubuntu-dsbda@ubuntudsbda-virtual-machine:~$ kubectl delete -f deployment.yaml
+```
+
+**Creating Resources:[PV, PVC, Deployment]**
+```
+ubuntu@balasenapathi:~$ kubectl apply -f pv.yaml
+
+ubuntu@balasenapathi:~$ kubectl apply -f pvc.yaml
+
+ubuntu@balasenapathi:~$ kubectl apply -f deployment.yaml
+```
+**Note:** Once the pod is successfully created and running now again do the port-forwarding.
+
+
+
+
 
 
 
