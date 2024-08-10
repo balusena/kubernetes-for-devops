@@ -1299,7 +1299,7 @@ Here is a sample document to insert:
   "title": "Testing...!"
 }
 ```
-**Note:** We need to create the data in MongoDB as shown in above examples for emptyDir or hostpath Volumes.
+**Note:** We need to create the data in MongoDB in the same way as shown in the examples above for `emptyDir` or `hostPath` volumes.
 
 
 
