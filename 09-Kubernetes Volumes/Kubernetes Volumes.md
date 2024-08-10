@@ -1040,6 +1040,127 @@ or HDFS (Hadoop Distributed File System).
 
 ![Kubernetes Persistent Volumes](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/persistent_volumes.png)
 
+### 1.Create two directories in localhost machine i.e local_storage and Minikube.
+
+**Local Storage(host machine ubuntu) Directory:**
+
+- Create a directory called /home/ubuntu/storage in localhost and give permissions
+```
+ubuntu@balasenapathi:~$ sudo mkdir -p /home/ubuntu-dsbda/data/db
+[sudo] password for ubuntu:balasenapathi
+
+ubuntu@balasenapathi:~$sudo chown -R ubuntu:ubuntu /home/ubuntu/data/db
+```
+**Minikube cluster Storage Directory:**
+
+Create a directory called /home/docker/storage in minikube "local-cluster" and give permissions
+```
+ubuntu@balasenapathi:~$ minikube ssh -p local-cluster
+docker@minikube:~$ sudo mkdir -p /home/docker/storage/db
+docker@minikube:~$ sudo chown -R docker:docker /home/docker/storage/db
+```
+### 2.To get the api version of persistent volume:
+```
+ubuntu@balasenapathi:~$ kubectl api-resources | grep Persistent
+persistentvolumeclaims            pvc          v1          true         PersistentVolumeClaim
+persistentvolumes                 pv           v1          false        PersistentVolume
+```
+### 3.To create the pv.yaml file.
+```
+ubuntu@balasenapathi:~$ nano pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  local:
+    path: /home/docker/storage/db
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - local-cluster
+```
+### 4.Types of Persistent Volume Access Modes in Kubernetes
+Kubernetes Persistent Volumes (PVs) support different access modes, which determine how the volumes can be
+mounted and used by the nodes and pods in the cluster. Below are the key access modes:
+
+### 1.ReadWriteMany (RWX)
+- **Description**: This volume can be mounted as read-write by many nodes simultaneously.
+- **Use Case**: Ideal when you have multiple pods across different nodes that need to read and write to the same volume concurrently.
+
+### 2.ReadWriteOnce (RWO)
+- **Description**: This volume can be mounted as read-write by a single node at a time.
+- **Use Case**: Best suited for workloads where all pods that need access to the volume are running on the same node. If pods are distributed across different nodes, only one node can mount the volume in read-write mode.
+
+### 3.ReadOnlyMany (ROX)
+- **Description**: This volume can be mounted as read-only by many nodes simultaneously.
+- **Use Case**: Suitable for scenarios where you need to share data across multiple nodes, but the data should not be modified.
+
+### 4.ReadOnlyOnce (RO)
+- **Description**: This access mode is not standard in Kubernetes but can be interpreted as allowing a volume to be mounted as read-only by a single node.
+- **Use Case**: This mode is often confused with `ReadOnlyMany` but is more restrictive, only allowing one node to mount the volume as read-only.
+
+### 5.ReadWriteOncePod (RWOP)
+- **Description**: This volume can be mounted as read-write by a single pod across the whole cluster.
+- **Use Case**: Use this access mode when only one pod in the entire cluster needs exclusive read-write access to the volume. This is a stricter variant of `ReadWriteOnce`, providing isolation at the pod level instead of the node level.
+
+Kubernetes supports various types of Persistent Volumes (PVs) such as AWS EBS, Azure Disk, Azure File, and
+more. Since we are using Minikube, it's recommended to use the `local` volume type. While `hostPath` 
+volumes can also be used, they are limited to single-node clusters and are not suitable for multi-node 
+clusters. Kubernetes suggests using `local` volumes instead for scenarios that might require node-local 
+storage in a more scalable way.
+
+### 6.Now apply the changes to the local-cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f pv.yaml
+persistentvolume/mongo-pv created
+```
+### 7.To get the list of PersistentVolumes in our cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get PersistentVolumes
+NAME       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
+mongo-pv   5Gi        RWX            Retain           Available                                   92s
+
+ubuntu@balasenapathi:~$ kubectl get pv
+NAME       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
+mongo-pv   5Gi        RWX            Retain           Available                                   99s
+```
+**Note:** "pv" is the short form of PersistentVolumes, and status is available means this pv is ready to use.
+
+We have now created PersistentVolumes using a YAML manifest with the required storage capacity and access
+mode. In a Kubernetes cluster, you may have multiple PersistentVolumes available. But how do you use these
+PersistentVolumes for the MongoDB pod we have? This is where PersistentVolumeClaims come into the picture.
+
+**2.Persistent Volume Claims(PVCs)**
+A PersistentVolumeClaim (PVC) is another Kubernetes resource used to specify the storage requirements of a pod. When creating a pod, we
+cannot directly use PersistentVolumes (PVs). Instead, we define the access mode and storage capacity needed in the PVC.
+
+The PVC is a way of expressing our storage needs. When we create a PVC with specific access modes and storage capacity, Kubernetes
+searches for an appropriate available PersistentVolume (PV) within the cluster that matches those requirements. This automates the
+process of finding suitable storage resources.
+
+For example, if we specify a PVC with a request for 1 GiB of memory and the access mode "ReadWriteMany," Kubernetes will identify an
+available PV that meets these criteria and bind it to the PVC.
+
+Once the PVC is bound to a PV, we can reference this PVC in the pod's configuration. When the pod is created and declares a volume with
+this PVC, it effectively attaches the bound PV to the pod.
+
+In summary, we use PVCs to define our storage needs, and Kubernetes handles the behind-the-scenes work of selecting and binding the
+appropriate PVs to meet those requirements. This abstraction simplifies the process of managing storage in Kubernetes, allowing us to
+work with PVs indirectly through PVCs.
+
+![Kubernetes Persistent Volumes Claims](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/persistent_volumes_claims.png)
+
+
+
 
 
 
