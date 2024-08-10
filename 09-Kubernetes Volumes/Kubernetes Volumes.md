@@ -1270,6 +1270,37 @@ ubuntu@balasenapathi:~$ kubectl apply -f deployment.yaml
 ```
 **Note:** Once the pod is successfully created and running now again do the port-forwarding.
 
+### 14.Port-Forward the Service
+**Note:** We will access it on port 32000 as the Mongo service is running on port 27017.
+```
+ubuntu@balasenapathi:~$ kubectl port-forward svc/mongo-svc 32000:27017
+Forwarding from 127.0.0.1:32000 -> 27017
+Forwarding from [::1]:32000 -> 27017
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+```
+## Now go to MongoDB Compass and refresh the database
+
+**Note:** As you can see, the data has been deleted. This happened because the previous data was stored in
+a different volume, and we've now switched to a new PersistentVolume with a different storage location. 
+To restore the data, try creating the database again:
+
+- **Database**: `db`
+- **Collection**: `todos`
+
+Here is a sample document to insert:
+
+```
+{
+  "_id": {
+    "$oid": "650b189ff36d7bceec278871"
+  },
+  "title": "Testing...!"
+}
+```
+**Note:** We need to create the data in MongoDB as shown in above examples for emptyDir or hostpath Volumes.
+
 
 
 
