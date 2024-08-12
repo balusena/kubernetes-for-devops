@@ -16,4 +16,4 @@ StatefulSets are essential when applications require stable storage and networki
 consistent updates, providing the necessary infrastructure for reliable and predictable operations in 
 stateful environments.
 
-![Kubernetes StatefulSets](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/statefulset.png)
+![Kubernetes StatefulSets](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/statefulsets.png)
