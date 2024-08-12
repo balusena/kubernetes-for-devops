@@ -48,7 +48,7 @@ Let’s discuss some of the use cases of StatefulSet.
 
 ![Kubernetes StatefulSets Usecase](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/statefulsets_usecase.png)
 
-### Key Benefits of StatefulSet
+## Key Benefits of StatefulSet
 
 - **1.Ordered Scaling and Deployment**:
     - Ensures that dependent containers are created in a specific order during deployments and scaling.
@@ -65,3 +65,22 @@ Let’s discuss some of the use cases of StatefulSet.
 - **4.Unique Network Identifiers**:
     - StatefulSets allow the use of unique network identifiers, ensuring persistent network connectivity for each pod.
     - This eliminates concerns about IP changes during rescheduling, as each pod retains its stable network identity, ensuring seamless communication.
+
+# Limitations of Kubernetes StatefulSet
+
+While StatefulSets offer numerous advantages, they also come with some limitations. Here are the key limitations:
+
+- **1.Persistent Storage Handling**:
+    - Scaling up, scaling down, or deleting pods does not affect the underlying persistent storage. To ensure data safety, provisioned volumes will remain within Kubernetes, which could lead to unused storage if not managed properly.
+
+- **2.Storage Provisioning Requirement**:
+    - Storage for StatefulSets must always be provisioned using a PersistentVolume Provisioner, either based on a storage class or pre-provisioned. This adds complexity compared to stateless deployments, where storage is not a concern.
+
+- **3.Manual Headless Service Creation**:
+    - Users are required to manually create a headless service to provide network identity for StatefulSets. This is an additional step not required for other types of deployments like Deployments or DaemonSets.
+
+- **4.Pod Termination on StatefulSet Deletion**:
+    - StatefulSet does not guarantee the termination of existing pods when the StatefulSet is deleted. To avoid orphaned pods, it is recommended to scale the StatefulSet down to zero before deletion.
+
+- **5.Risks with Rolling Updates**:
+    - Performing rolling updates with the default pod management policy can lead to issues if a pod is faulty. In such cases, the update process may stall or cause disruptions in the application, requiring careful management and possibly manual intervention.
