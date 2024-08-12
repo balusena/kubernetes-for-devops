@@ -17,3 +17,17 @@ consistent updates, providing the necessary infrastructure for reliable and pred
 stateful environments.
 
 ![Kubernetes StatefulSets](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/statefulsets.png)
+
+StatefulSet is a controller in Kubernetes that allows users to manage pods the same as the deployments. It
+is mainly designed to use for stateful apps. In most cases, users ignore how their pods are scheduled. But
+many times, due to some requirements, users make sure that the pods are deployed in order with persistent 
+storage volume and a unique stable network identifier across restarts and rescheduled. In these cases, 
+StatefulSets can make your job easy.
+
+**StatefulSet Workflow:**
+Whenever StatefulSet creates a pod, it assigns an ordinal value and a stable network ID to the pod. Users
+can also create a VolumeClaimTemplate in the manifest file, and it will further create a persistent volume
+for each pod. When the StatefulSet deploys pods, they will get deployed in order from 0 to the last pod. 
+The next pod will only be created once the previous pod is ready and in running state. 
+
+![Kubernetes StatefulSets Workflow](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/statefulset_flowchart.png)
