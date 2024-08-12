@@ -1481,6 +1481,31 @@ spec:
       storage: 1Gi
   storageClassName: "demo-storage"
 ```
+### 6.To get all the pvs in the local-cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get pv
+NAME       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM               STORAGECLASS   REASON   AGE
+mongo-pv   1Gi        RWX            Retain           Bound    default/mongo-pvc                           3h43m
+```
+### 7.To apply the changes in the local-cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f pvc.yaml
+persistentvolumeclaim/mongo-pvc-sc created
+```
+**Note:** The expectation is that the new PV will be automatically created.
+
+### 8.To get the list of all PV's in the local-cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get pv
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                 STORAGECLASS   REASON   AGE
+mongo-pv                                   1Gi        RWX            Retain           Bound    default/mongo-pvc                             3h46m
+pvc-7be83b80-4d05-446d-8084-ca0fabeb5a26   1Gi        RWX            Delete           Bound    default/mongo-pvc-sc  demo-storage            2m35s
+```
+**Note:** As we can see, the PV is automatically created and its status is "Bound" because we specified 
+the `volumeBindingMode` as `Immediate`. As soon as the PVC is created, the PV is also created and bound 
+to it. The PV’s status is "Bound" to this PVC, and it was dynamically created using the `demo-storage` 
+class.
+
 
 
 
