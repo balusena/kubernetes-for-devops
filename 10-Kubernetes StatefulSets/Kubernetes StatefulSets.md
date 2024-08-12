@@ -186,3 +186,4 @@ By storing the state in the database and not in the Spring Boot application inst
 
 
 
+
