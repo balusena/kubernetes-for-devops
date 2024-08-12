@@ -1179,7 +1179,7 @@ spec:
 ubuntu@balasenapathi:~$ kubectl apply -f pvc.yaml
 persistentvolumeclaim/mongo-pvc created
 ```
-### 10.list down all the PersistentVolumeClaim in the cluster:
+### 10.List down all the PersistentVolumeClaim in the cluster:
 ```
 ubuntu@balasenapathi:~$ kubectl get PersistentVolumeClaim
 NAME        STATUS   VOLUME     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
@@ -1438,6 +1438,49 @@ reclaimPolicy: Delete
    - `reclaimPolicy` defines what should be done with the PV when the PVC is deleted.
    - When `Delete` is specified, the PV is deleted along with the PVC. However, note that only the PV resource is deleted, not the actual data on the storage; the storage itself must be deleted manually.
    - When `Retain` is specified, the PV is not deleted even if the PVC is deleted.
+
+### 3.Apply the changes in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f sc.yaml
+storageclass.storage.k8s.io/demo-storage created
+```
+### 4.To get all the StorageClasses in the local-cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get StorageClasses
+NAME                 PROVISIONER                RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+demo-storage         k8s.io/minikube-hostpath   Delete          Immediate           false                  76s
+standard (default)   k8s.io/minikube-hostpath   Delete          Immediate           false                  3d6h
+
+ubuntu@balasenapathi:~$ kubectl get sc
+NAME                 PROVISIONER                RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+demo-storage         k8s.io/minikube-hostpath   Delete          Immediate           false                  82s
+standard (default)   k8s.io/minikube-hostpath   Delete          Immediate           false                  3d6h
+```
+**Note:** sc is the short form of StorageClass.
+
+**Note:** A standard StorageClass is always created whenever a cluster is created, and this becomes the 
+default StorageClass. If we don't specify a StorageClass in the PVC, the default one will be used. This 
+is why we provide a blank StorageClass in the PVC YAML manifest file, which effectively disables dynamic 
+provisioning of PVs and ensures that only manually created PVs are used.
+
+- If we don't specify any `volumeBindingMode` in the StorageClass, the default value is `Immediate`.
+- If we don't specify any `reclaimPolicy` in the StorageClass, the default value is `Delete`.
+
+### 5.Now we have storageclass use it in the pvc.yaml:
+```
+ubuntu@balasenapathi:~$ nano pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc-sc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: "demo-storage"
+```
 
 
 
