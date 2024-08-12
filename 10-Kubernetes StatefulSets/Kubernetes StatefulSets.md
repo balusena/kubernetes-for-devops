@@ -165,7 +165,7 @@ By storing the state in the database and not in the Spring Boot application inst
 
 ### Problems Encountered When Deploying Stateful Applications with Multiple Replicas.
 
-#### **Problem-1:**
+#### **Problem Statement-1:**
 Previously we deployed a single replica of mongodb using deployment and we used PV to store its data now to
 achieve high availability we need to increase the number of replicas, when we use deployments all replicas
 use same PV,but in a distributed database if we use the same PV for all replicas all pods write to the same 
@@ -187,7 +187,23 @@ availability.
 
 ![Kubernetes Problem Statement 1](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/ps-1.png)
 
+#### **Problem Statement-2:**
+In a typical Master-Slave architecture, there are two types of nodes: one Master node and multiple Slave 
+nodes. The Master node handles both reads and writes, while the Slaves handle only reads. For efficient 
+and reliable replication, the Master should be up and running first. Next, Slave1 should come up, and the
+data from the Master should be copied to Slave1. After that, Slave2 should come up, and instead of 
+retrieving the data from the Master again, the data should be copied from Slave1. This approach reduces 
+the load on the Master. After this initial cloning process, all Slaves will continuously sync data from 
+the Master node.
 
+To achieve this initial cloning, the pods should start sequentially, ensuring that each pod copies data 
+from the previous replica. However, if we use Deployment resources to deploy this type of application,
+all the pods are created in parallel. In contrast, if we deploy the same application using StatefulSets,
+the pods are created one by one. For example, if we create three replicas, Pod1 will be created first, 
+followed by Pod2, and then Pod3. If the first pod fails for any reason, the second pod will not be created.
+Additionally, when we delete the StatefulSet, the last pod is deleted first, i.e., Pod3 in our case.
+
+![Kubernetes Problem Statement 2](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/ps-2.png)
 
 
 
