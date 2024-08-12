@@ -1396,6 +1396,51 @@ management.
 
 ![Kubernetes Storage Class](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/storage_class.png)
 
+### 1.To get the apiresources of storageclass:
+```
+ubuntu@balasenapathi:~$ kubectl api-resources | grep Storage
+csistoragecapacities                           storage.k8s.io/v1           true         CSIStorageCapacity
+storageclasses                    sc           storage.k8s.io/v1           false        StorageClass
+```
+**Note:** StorageClasses are not created in any namespaces those are available to the entire cluster.
+```
+ubuntu@balasenapathi:~$ kubectl api-resources | grep pvc
+persistentvolumeclaims            pvc          v1                          true         PersistentVolumeClaim
+```
+**Note:** PVC is namespaced meaning PVC should be available in the same namespace that our pod is running.
+```
+ubuntu@balasenapathi:~$ kubectl api-resources | grep pv
+persistentvolumeclaims            pvc          v1                          true         PersistentVolumeClaim
+persistentvolumes                 pv           v1                          false        PersistentVolume
+```
+**Note:** Unlike StorageClass, a PV is not namespaced and is available to the entire cluster. In short, 
+both SC and PV are available to the entire cluster, whereas PVC is only available within the same 
+namespace where the pod is running.
+
+### 2.Create the StorageClass manifest:
+```
+ubuntu@balasenapathi:~$ nano sc.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: demo-storage
+provisioner: k8s.io/minikube-hostpath
+volumeBindingMode: Immediate
+reclaimPolicy: Delete 
+```
+**Note:** For the provisioner, we can choose based on our requirements from options like cloud storage, NFS, local storage, etc. Here, we are using Kubernetes storage. The accepted values for `volumeBindingMode` are `Immediate` and `WaitForFirstConsumer`.
+
+- `volumeBindingMode` defines when a PV will be created:
+   - When `Immediate` is specified, the PV is created as soon as the PVC is created.
+   - When `WaitForFirstConsumer` is specified, the PV is not created until the PVC is used by a pod.
+
+- `reclaimPolicy` has accepted values of `Delete` and `Retain`:
+   - `reclaimPolicy` defines what should be done with the PV when the PVC is deleted.
+   - When `Delete` is specified, the PV is deleted along with the PVC. However, note that only the PV resource is deleted, not the actual data on the storage; the storage itself must be deleted manually.
+   - When `Retain` is specified, the PV is not deleted even if the PVC is deleted.
+
+
+
 
 
 
