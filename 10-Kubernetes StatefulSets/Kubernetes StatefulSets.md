@@ -123,7 +123,7 @@ state of the current request, and the next request depends on the state of the p
 application is called a stateful application because we are storing the state, in this case, the 
 authentication state.
 
-![Kubernetes StatefulSets Application](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/stateful_app.png)
+![Kubernetes Stateful Application](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/stateful_app.png)
 
 
 ### Stateless Applications
@@ -148,6 +148,20 @@ authentication state.
 | **Use Cases**             | Suitable for stateless applications like web servers or batch processing jobs where each instance operates independently.         |
 |---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
 ```
+**Usecase:**
+Let's say we have multiple instances of the same application with a load balancer in front.
+
+- **Scenario**: The first request goes to Instance1, where we set the authenticated flagship group. If the second request goes to Instance2, it might not give the correct result because the flag was not set on Instance2.
+
+- **Best Practice**: To address this issue, it is recommended to move the state to a database. Here’s how it works:
+  - When a login request is sent for the first time, a token is generated and saved in the database.
+  - The Spring Boot application expects this token for subsequent requests and validates it against the database.
+
+By storing the state in the database and not in the Spring Boot application instances, we ensure that no matter how many instances we have, we will get consistent results. This is because the application itself is stateless, while the database is stateful as it stores the state.
+
+- **Conclusion**: This approach ensures that the application remains stateless, and the database manages the state, providing a consistent experience across all instances.
+
+![Kubernetes Stateful Stateless](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/stateful_stateless.png)
 
 
 
