@@ -84,3 +84,83 @@ While StatefulSets offer numerous advantages, they also come with some limitatio
 
 - **5.Risks with Rolling Updates**:
     - Performing rolling updates with the default pod management policy can lead to issues if a pod is faulty. In such cases, the update process may stall or cause disruptions in the application, requiring careful management and possibly manual intervention.
+
+**Note:**
+In Kubernetes, we deployed MongoDB with a single replica using Deployments. However, to achieve high 
+availability and enhance overall performance and reliability, we should deploy multiple replicas, as 
+MongoDB is a stateful application. Regular Deployment resources cannot be used to deploy multiple replicas
+for such stateful applications.
+
+# Difference between StatefulSets vs Stateless applications.
+
+### StatefulSets vs. Stateless Applications
+### StatefulSets
+```
+### StatefulSets
+----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Aspect**                | **Details**                                                                                                                       |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Data Persistence**      | Requires persistent storage. Data is saved and remains accessible even after pod rescheduling or restarts.                        |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Network Identity**      | Each pod has a unique and stable network identifier, ensuring consistent communication with other components.                     |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Deployment and Scaling**| Pods are created, updated, and deleted in a specific order, crucial for applications needing strict sequence (e.g., databases).   |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Storage**               | Each pod is associated with its own persistent volume, ensuring data continuity across the pod's lifecycle.                       |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Pod Management**        | Pods have a stable, unique identity and their lifecycle, including persistent storage, is managed.                                |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Headless Service**      | Requires a headless service to provide stable network identities and enable direct communication between pods.                    |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Rolling Updates**       | Updates are controlled and managed in a specific order to maintain stability, with pods updated sequentially.                     |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Use Cases**             | Ideal for stateful applications like databases (e.g., MongoDB, Cassandra) where data and state must be preserved.                 |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+
+---
+
+### Stateless Applications
+----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Aspect**                | **Details**                                                                                                                       |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Data Persistence**      | Does not require persistent storage. Data is temporary and lost when the pod is terminated.                                       |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Network Identity**      | Pods have dynamic network identities; they can be replaced or rescheduled without affecting functionality.                        |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Deployment and Scaling**| Pods can be created, updated, or deleted in any order, making scaling flexible and straightforward.                               |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Storage**               | May use shared storage or none; data persistence is not required after pod termination.                                           |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Pod Management**        | Pods are managed independently; any pod can be replaced at any time without concern for state or identity.                        |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Headless Service**      | No need for a headless service; communication is managed through standard Kubernetes services.                                    |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Rolling Updates**       | Updates can be performed flexibly; pods are updated independently and can be replaced in any order.                               |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Use Cases**             | Suitable for stateless applications like web servers or batch processing jobs where each instance operates independently.         |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
