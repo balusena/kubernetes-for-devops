@@ -1376,6 +1376,28 @@ storage.bson
 WiredTiger.wt      collection-2--7659588674060780802.wt  index-1--7659588674060780802.wt       index-9--7659588674060780802.wt
 WiredTigerHS.wt    collection-4--7659588674060780802.wt  index-3--7659588674060780802.wt       journal
 ```
+**Note:** So far, we have discussed PV, PVC, and how Pods (deployments) use PVs. In a real-world scenario,
+Pods are created by developers, while PVs are typically created by administrators. However, constantly 
+asking an administrator to create PVs can delay our work. There needs to be a way for us to create PVs 
+dynamically when needed. This is where StorageClass comes into play.
+
+**3.StorageClass(SCs):**
+A StorageClass is another Kubernetes resource that allows us to specify how Persistent Volumes (PVs) should be dynamically created. In
+the `provisioner` field, we define the method for provisioning PVs. This configuration is essentially a one-time task. Once the
+StorageClass is created, it can automatically generate PVs when requested.
+
+When we create a Persistent Volume Claim (PVC) and specify the `storageClassName` in the PVC definition, the StorageClass comes into
+play. The StorageClass creates the appropriate PV based on the access mode and capacity specified in the PVC. This means we no longer
+need to manually create PVs; the StorageClass handles it for us.
+
+After a Persistent Volume is dynamically created and bound to the PVC, the PV becomes available for use by the associated pod. This
+simplifies the process of managing storage resources in Kubernetes, as the StorageClass automates much of the PV provisioning and
+management.
+
+![Kubernetes Storage Class](https://github.com/balusena/kubernetes-for-devops/blob/main/09-Kubernetes%20Volumes/storage_class.png)
+
+
+
 
 
 
