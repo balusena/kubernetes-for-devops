@@ -163,9 +163,29 @@ By storing the state in the database and not in the Spring Boot application inst
 
 ![Kubernetes Stateful Stateless](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/stateful_stateless.png)
 
+### Problems Encountered When Deploying Stateful Applications with Multiple Replicas.
 
+#### **Problem-1:**
+Previously we deployed a single replica of mongodb using deployment and we used PV to store its data now to
+achieve high availability we need to increase the number of replicas, when we use deployments all replicas
+use same PV,but in a distributed database if we use the same PV for all replicas all pods write to the same 
+database which leads to data inconsistency,so the solution to this problem is to have a way to use separate
+PV for each replica this can be achieved using statefulsets, in statefulsets we define the volumeclaim 
+template based on this template separate PVC are used for each pod which creates separate PV.
 
+Previously,we deployed a single replica of MongoDB using a Deployment and used a Persistent Volume (PV) to
+store its data. To achieve high availability, we need to increase the number of replicas. However, when 
+using Deployments, all replicas share the same PV. In a distributed database setup, if all replicas use 
+the same PV, all pods write to the same database, which can lead to data inconsistency.
 
+To address this issue, we need a way to use separate PVs for each replica. This can be achieved using 
+StatefulSets. In StatefulSets, we define a VolumeClaimTemplate. Based on this template, separate Persistent
+Volume Claims (PVCs) are created for each pod, which in turn creates separate PVs.
+
+By using StatefulSets, each MongoDB replica gets its own PVC and PV, ensuring data consistency and high 
+availability.
+
+![Kubernetes Problem Statement 1](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/ps-1.png)
 
 
 
