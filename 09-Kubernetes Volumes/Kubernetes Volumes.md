@@ -1280,7 +1280,7 @@ Handling connection for 32000
 Handling connection for 32000
 Handling connection for 32000
 ```
-## Now go to MongoDB Compass and refresh the database
+### 15.Now go to MongoDB Compass and refresh the database
 
 **Note:** As you can see, the data has been deleted. This happened because the previous data was stored in
 a different volume, and we've now switched to a new PersistentVolume with a different storage location. 
@@ -1301,6 +1301,81 @@ Here is a sample document to insert:
 ```
 **Note:** We need to create the data in MongoDB in the same way as shown in the examples above for `emptyDir` or `hostPath` volumes.
 
+### 16.Now try to delete the pod in the cluster:
+
+### 17.To get the list of all pods:
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+mongo-5f584499d5-8mrfc   1/1     Running   0          53m
+```
+### 18.Now delete the pod:
+```
+ubuntu@balasenapathi:~$ kubectl delete pod mongo-5f584499d5-8mrfc
+pod "mongo-5f584499d5-8mrfc" deleted
+```
+### 19.To get the list of all pods:
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+mongo-5f584499d5-6w8km   1/1     Running   0          12s
+```
+### 20.Again do the port-forwarding as the connection is lost:
+```
+ubuntu@balasenapathi:~$ kubectl port-forward svc/mongo-svc 32000:27017
+Forwarding from 127.0.0.1:32000 -> 27017
+Forwarding from [::1]:32000 -> 27017
+Handling connection for 32000
+
+E0920 22:14:35.236655  168523 portforward.go:409] an error occurred forwarding 32000 -> 27017: error forwarding port 27017 to pod
+99ba6b03e2b1a7b962b1ae2236c41902056bedef2cdf191fb38b8968d6ca329b, uid : container not running
+(99ba6b03e2b1a7b962b1ae2236c41902056bedef2cdf191fb38b8968d6ca329b)
+error: lost connection to pod
+
+ubuntu@balasenapathi:~$ kubectl port-forward svc/mongo-svc 32000:27017
+Forwarding from 127.0.0.1:32000 -> 27017
+Forwarding from [::1]:32000 -> 27017
+Handling connection for 32000
+Handling connection for 32000
+Handling connection for 32000
+```
+### 21.Now go to mongo compass and try to referesh the data as our pod is deleted:
+```
+{
+  "_id": {
+    "$oid": "650b28e4a8d55adb4bfb3733"
+  },
+  "title": "Testing...!"
+}
+```
+
+**Note:** The data remains persistent even after the pod is deleted because we are using a local 
+PersistentVolume. However, when the local-cluster in Minikube is deleted, the data is lost. Therefore, 
+it is always recommended to use cloud storage for data persistence.
+
+### 22.To see where the data is mounted in local-cluster with PV,PVC,Deployemnt manifests:
+```
+ubuntu@balasenapathi:~$ minikube ssh -p local-cluster
+
+docker@local-cluster:~$ sudo su
+
+root@local-cluster:/home/docker# ls
+storage
+
+root@local-cluster:/home/docker# cd /mnt
+
+root@local-cluster:/mnt# cd /data
+
+root@local-cluster:/data# ls
+WiredTiger         _mdb_catalog.wt                       collection-7--7659588674060780802.wt  index-5--7659588674060780802.wt  
+mongod.lock
+WiredTiger.lock    collection-0--3812902241862733169.wt  diagnostic.data                       index-6--7659588674060780802.wt  
+sizeStorer.wt
+WiredTiger.turtle  collection-0--7659588674060780802.wt  index-1--3812902241862733169.wt       index-8--7659588674060780802.wt  
+storage.bson
+WiredTiger.wt      collection-2--7659588674060780802.wt  index-1--7659588674060780802.wt       index-9--7659588674060780802.wt
+WiredTigerHS.wt    collection-4--7659588674060780802.wt  index-3--7659588674060780802.wt       journal
+```
 
 
 
