@@ -91,12 +91,10 @@ availability and enhance overall performance and reliability, we should deploy m
 MongoDB is a stateful application. Regular Deployment resources cannot be used to deploy multiple replicas
 for such stateful applications.
 
-# Difference between StatefulSets vs Stateless applications.
+### Stateful Applications vs Stateless Applications
 
-### StatefulSets vs. Stateless Applications
-### StatefulSets
+### Stateful Applications
 ```
-### StatefulSets
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Aspect**                | **Details**                                                                                                                       |
 |---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
@@ -116,10 +114,20 @@ for such stateful applications.
 |---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
 | **Use Cases**             | Ideal for stateful applications like databases (e.g., MongoDB, Cassandra) where data and state must be preserved.                 |
 |---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+```
+**Usecase:**
+Let's say we have a simple Spring Boot application that handles authentication. When a client sends a login
+request, we set an authenticated flag to true in memory. If the same client sends a subsequent request, we
+simply read this flag to determine if the user is already logged in or not. Essentially, we are storing the
+state of the current request, and the next request depends on the state of the previous one. This type of
+application is called a stateful application because we are storing the state, in this case, the 
+authentication state.
 
----
+![Kubernetes StatefulSets Application](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/stateful_app.png)
+
 
 ### Stateless Applications
+```
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Aspect**                | **Details**                                                                                                                       |
 |---------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
