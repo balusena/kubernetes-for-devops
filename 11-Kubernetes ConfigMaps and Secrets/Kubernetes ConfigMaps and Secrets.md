@@ -32,4 +32,4 @@ In summary, ConfigMaps empowers Kubernetes users to manage configuration data in
 scalable manner, ensuring that applications are easily adaptable to varying environments and operational 
 requirements.
 
-![Kubernetes ConfigMap]()
+![Kubernetes ConfigMap](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/configmap.png)
