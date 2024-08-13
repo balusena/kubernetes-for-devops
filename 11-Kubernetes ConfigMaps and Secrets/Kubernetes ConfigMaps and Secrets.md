@@ -310,6 +310,20 @@ In Kubernetes deployments, configuration data can be provided in several ways us
 
 ![Passing Arguments and Environment Variables](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/passing_arguments_env_variables.png)
 
+We have already explored a couple of methods (Passing Arguments and Environment Variables) for configuring
+data. However, hardcoding this data directly into the pod definition is not ideal, as it requires creating
+different pod definitions for each environment. To reuse the same pod definition across multiple 
+environments, it is better to define configuration data in a common place and reference that data from the
+pod description. Kubernetes provides two special types of volumes for this purpose:
+
+- **ConfigMap**
+- **Secrets**
+
+![Configuration Files](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/configuration_files.png)
+
+
+
+
 
 
 
