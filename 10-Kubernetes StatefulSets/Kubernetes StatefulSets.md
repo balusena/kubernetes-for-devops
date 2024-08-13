@@ -205,10 +205,42 @@ Additionally, when we delete the StatefulSet, the last pod is deleted first, i.e
 
 ![Kubernetes Problem Statement 2](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/ps-2.png)
 
+#### **Problem Statement-2:**
+As we discussed in Problem Statement 2, in a Master-Slave architecture, all nodes in the cluster must 
+communicate with each other for data replication. To facilitate this, a sticky identity is required so 
+that each pod can be consistently found within the cluster. A sticky identity means that each pod should 
+be accessible via a DNS name that does not change even if the pod restarts. If the DNS name changes when 
+the pod restarts, other replicas may not be able to find it. To achieve this, there must be a way to assign
+a constant name to all pods, ensuring that even if a pod restarts, it retains the same name. This is why 
+it is called a sticky identity—the name "sticks" to the pod.
 
+However, if we use regular Deployments, the pods receive a random name every time they are created, and if
+a pod is restarted for any reason, it gets a new name. In contrast, when we deploy the same application 
+using a StatefulSet, all pods receive a name that can be easily predicted. The naming convention of the 
+pods follows the pattern `statefulsetname-ordinalindex` (e.g., `mongo-0`, `mongo-1`, `mongo-2`, etc.). 
+Even if a pod restarts, it retains the same name.
 
+Not only does StatefulSet provide sticky identity, but it also offers sticky storage. Each pod in a 
+StatefulSet gets its own Persistent Volume (PV), and when a pod restarts, it reattaches to the same PV. 
+StatefulSet manages this process automatically, without any additional configuration.
 
+Furthermore, it’s not just about the pods having a fixed name and storage. As we discussed in the Services
+topic, we need a service to communicate with these pods. Typically, services act like load balancers, 
+meaning if we call the service, the request goes to a random pod. However, in this scenario, we need to 
+communicate with a specific pod—writes should go to the Master node, Slave1 should get data from the 
+Master, and Slave2 should get data from Slave1.
 
+To achieve this, Kubernetes provides a special service called a "Headless Service." When we specify 
+`clusterIP: None`, the service is considered a "Headless Service." Through this service, each pod gets
+its own DNS entry, e.g., `mongo-0.mongo.default.svc.cluster.local:27017`.
+
+- mongo-0 —> Pod name
+- mongo   —> Service name
+- default —> Namespace
+
+Now, when we try to access this DNS, the request is directed specifically to the `mongo-0` pod. Headless
+Services are very useful when we do not want to perform load balancing and need to connect directly to a
+single pod.
 
 
 
