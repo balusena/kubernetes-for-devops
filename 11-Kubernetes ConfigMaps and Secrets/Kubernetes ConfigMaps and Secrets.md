@@ -228,7 +228,16 @@ definition. Kubernetes will decode this data when it is used.
 
 ![Kubernetes Secrets Types](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/secret_types.png)
 
+### 2.Secret vs ConfigMap
+Although Secrets and ConfigMaps serve different purposes in Kubernetes, they share several similarities. 
+Both are stored in etcd and have a size limitation of 1MB. They have a similar lifecycle, from creation 
+to deletion, and they both use the data field to store information.
 
+However, the differences between Secrets and ConfigMaps are vital: 
+- Secrets are meant to store sensitive data and are encrypted in transit and at rest.
+- ConfigMaps are used for non-sensitive configuration data and are not encrypted.
+
+![Kubernetes ConfigMap Secrets](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/configmap_secrets.png)
 
 
 
