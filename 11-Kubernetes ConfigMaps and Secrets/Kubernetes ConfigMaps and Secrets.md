@@ -287,7 +287,6 @@ By adhering to these security best practices, you can ensure that your ConfigMap
 managed, and protected, and contribute to a more secure Kubernetes environment.
 
 ### Do Not Hradcode
-
 If we look at the MongoDB deployment or StatefulSet we've created, we configured properties like "username"
 and "password." This approach allows us to easily change these configurations without rebuilding the actual
 image. Now, we will learn how to pass the same configuration data to containers using ConfigMaps and Secrets.
@@ -298,6 +297,20 @@ values change. All we need to do is pass those values from outside. This way, we
 for different environments like DEV, QA, UAT, PRE-PROD, and PROD.
 
 ![Do Not Hradcode](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/dont_hardcode.png)
+
+### Different Ways to Configure Data in YAML
+
+In Kubernetes deployments, configuration data can be provided in several ways using YAML files:
+
+1. **Passing Arguments**: Configuration data can be specified as command-line arguments within the YAML file for a container. This method involves adding `args` under the container spec, allowing dynamic values to be passed to the application at runtime.
+
+2. **Environment Variables**: Configuration data can be set as environment variables in the YAML file. By defining `env` under the container spec, you can pass environment-specific settings to the application, making it easy to adapt the configuration without modifying the application code or image.
+
+3. **Configuration Files**: Data can be provided through configuration files mounted as volumes in the YAML file. By defining `volumes` and `volumeMounts`, you can inject configuration files into the container, which the application can then read at startup.
+
+![Passing Arguments and Environment Variables](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/passing_arguments_env_variables.png)
+
+
 
 
 
