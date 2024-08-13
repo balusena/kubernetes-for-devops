@@ -226,7 +226,7 @@ data:
 **Note:** Remember that all secret data should be base64 encoded before being included in the Secret 
 definition. Kubernetes will decode this data when it is used.
 
-![Kubernetes ConfigMaps vs Secrets](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/configmaps_secrets.png)
+![Kubernetes Secrets Types](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/secret_types.png)
 
 
 
