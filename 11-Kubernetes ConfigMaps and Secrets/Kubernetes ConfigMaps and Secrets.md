@@ -159,3 +159,4 @@ code, similar to ConfigMaps. However, Secrets are specifically designed to handl
 more securely.
 
 ![Kubernetes Secrets](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/secrets.png)
+
