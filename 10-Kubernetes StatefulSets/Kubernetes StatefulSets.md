@@ -889,6 +889,155 @@ Check the status of the replica set to verify the current state of each node.
 
 All secondary nodes are synchronized with the primary node after the initial clone.
 
+# Creating and Verifying Data Replication in MongoDB Replica Sets
+
+**Step 1:** Create a Simple Database and Insert Data into the Primary Node
+
+First, log into the primary node and create a simple database with a collection. Insert a document into 
+the collection and verify the insertion.
+
+1. **Connect to the MongoDB shell on the primary node:**
+
+    ```bash
+    ubuntu@balasenapathi:~$ kubectl exec -it mongo-0 -- mongo
+    ```
+
+2. **Switch to the `test` database:**
+
+    ```bash
+    rs0:PRIMARY> use test
+    ```
+
+3. **Insert a document into the `todos` collection:**
+
+    ```bash
+    rs0:PRIMARY> db.todos.insert({"title":"Test"})
+    WriteResult({ "nInserted" : 1 })
+    ```
+
+4. **Verify the inserted document:**
+
+    ```bash
+    rs0:PRIMARY> db.todos.find()
+    { "_id" : ObjectId("651206cbf0530d8dc0720209"), "title" : "Test" }
+    ```
+
+5. **Exit the MongoDB shell:**
+
+    ```bash
+    rs0:PRIMARY> exit
+    bye
+    ```
+
+**Step 2:** Verify Data Replication in the First Secondary Node
+
+Log into the second node of the pod (mongo-1) and check if the data is replicated. By default, secondary 
+nodes do not allow read operations, so you need to enable read operations.
+
+1. **Connect to the MongoDB shell on the secondary node:**
+
+    ```bash
+    ubuntu@balasenapathi:~$ kubectl exec -it mongo-1 -- mongo
+    ```
+
+2. **Attempt to query the `todos` collection:**
+
+    ```bash
+    rs0:SECONDARY> db.todos.find()
+    Error: error: {
+        "operationTime" : Timestamp(1695680385, 1),
+        "ok" : 0,
+        "errmsg" : "not master and slaveOk=false",
+        "code" : 13435,
+        "codeName" : "NotMasterNoSlaveOk",
+        "$clusterTime" : {
+            "clusterTime" : Timestamp(1695680385, 1),
+            "signature" : {
+                "hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+                "keyId" : NumberLong(0)
+            }
+        }
+    }
+    ```
+
+3. **Enable read operations on the secondary node:**
+
+    ```bash
+    rs0:SECONDARY> rs.slaveOk()
+    ```
+
+4. **Retry querying the `todos` collection:**
+
+    ```bash
+    rs0:SECONDARY> db.todos.find()
+    { "_id" : ObjectId("651206cbf0530d8dc0720209"), "title" : "Test" }
+    ```
+
+5. **Exit the MongoDB shell:**
+
+    ```bash
+    rs0:SECONDARY> exit
+    bye
+    ```
+
+**Step 3:** Verify Data Replication in the Second Secondary Node
+
+Log into the third node of the pod (mongo-2) and check if the data is replicated.
+
+1. **Connect to the MongoDB shell on the second secondary node:**
+
+    ```bash
+    ubuntu@balasenapathi:~$ kubectl exec -it mongo-2 -- mongo
+    ```
+
+2. **Attempt to query the `todos` collection:**
+
+    ```bash
+    rs0:SECONDARY> db.todos.find()
+    Error: error: {
+        "operationTime" : Timestamp(1695681005, 1),
+        "ok" : 0,
+        "errmsg" : "not master and slaveOk=false",
+        "code" : 13435,
+        "codeName" : "NotMasterNoSlaveOk",
+        "$clusterTime" : {
+            "clusterTime" : Timestamp(1695681005, 1),
+            "signature" : {
+                "hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+                "keyId" : NumberLong(0)
+            }
+        }
+    }
+    ```
+
+3. **Enable read operations on the secondary node:**
+
+    ```bash
+    rs0:SECONDARY> rs.slaveOk()
+    ```
+
+4. **Retry querying the `todos` collection:**
+
+    ```bash
+    rs0:SECONDARY> db.todos.find()
+    { "_id" : ObjectId("651206cbf0530d8dc0720209"), "title" : "Test" }
+    ```
+
+5. **Exit the MongoDB shell:**
+
+    ```bash
+    rs0:SECONDARY> exit
+    bye
+    ```
+
+## Summary
+
+The steps above demonstrate how to create and insert data into a MongoDB replica set and verify that data
+replication works correctly across primary and secondary nodes. The data inserted into the primary node is
+successfully replicated to both secondary nodes, confirming that replication is functioning as expected.
+
+Data replication between nodes is facilitated by the MongoDB replica set and the headless service, which
+enables pods in the StatefulSet to communicate and synchronize data.
 
 
 
