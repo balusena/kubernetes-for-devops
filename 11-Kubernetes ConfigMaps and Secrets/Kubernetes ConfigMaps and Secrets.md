@@ -34,7 +34,7 @@ requirements.
 
 ![Kubernetes ConfigMap](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/configmap.png)
 
-## 2.Creating and Managing ConfigMaps:
+## 2.Creating and Managing ConfigMaps.
 **There are two ways of creating a config map:**
 
 - 1.The imperative way – without using a ConfigMap definition file.
@@ -44,7 +44,7 @@ requirements.
 The imperative way involves using kubectl commands to create a ConfigMap directly from the command line 
 without defining a ConfigMap YAML file.
 
-### 1.Creating a ConfigMap from Literal Values
+### 1.Creating a ConfigMap from Literal Values.
 You can create a ConfigMap from literal values using the kubectl create configmap command. 
 
 - This example creates a ConfigMap named my-config with two key-value pairs.
@@ -52,7 +52,7 @@ You can create a ConfigMap from literal values using the kubectl create configma
 ubuntu@balasenapathi:~$ kubectl create configmap my-config --from-literal=key1=value1 --from-literal=key2=value2
 configmap/my-config created
 ```
-### 2.Creating a ConfigMap from a File
+### 2.Creating a ConfigMap from a File.
 You can create a ConfigMap from a file using the --from-file option. 
 
 - This example creates a ConfigMap named my-config from a file called config.txt.
@@ -60,7 +60,7 @@ You can create a ConfigMap from a file using the --from-file option.
 ubuntu@balasenapathi:~$ kubectl create configmap my-config --from-file=config.txt
 configmap/my-config created
 ```
-### 3.Creating a ConfigMap from a Directory
+### 3.Creating a ConfigMap from a Directory.
 If you have multiple files in a directory and want to include all of them in a ConfigMap,you can use the --from-file option with a directory. 
 
 - This example creates a ConfigMap named my-config from all files in the ./config-dir directory.
@@ -72,7 +72,7 @@ configmap/my-config created
 The declarative way involves defining a ConfigMap in a YAML file and then applying it using kubectl. This
 method is more suited for managing configurations as code and versioning.
 
-### 1. creating a ConfigMap named app-config with key-value pairs using YAML.
+### 1.creating a ConfigMap named app-config with key-value pairs using YAML.
 ```
 apiVersion: v1
 kind: ConfigMap
@@ -86,7 +86,7 @@ data:
 ubuntu@balasenapathi:~$ kubectl apply -f configmap.yaml
 configmap/app-config configured
 ```
-**Using ConfigMaps in Pods:**
+**1.Using ConfigMaps in Pods:**
 
 ConfigMaps can be consumed in Kubernetes Pods as environment variables or mounted volumes.
 
@@ -117,7 +117,7 @@ spec:
 ubuntu@balasenapathi:~$ kubectl apply -f pod.yaml
 pod/app-pod created
 ```
-2. Using ConfigMaps as Mounted Volumes:
+**2.Using ConfigMaps as Mounted Volumes:**
 
 You can also mount a ConfigMap as a volume in a Pod to access its data as files.
 ```
@@ -238,6 +238,32 @@ However, the differences between Secrets and ConfigMaps are vital:
 - ConfigMaps are used for non-sensitive configuration data and are not encrypted.
 
 ![Kubernetes ConfigMaps Secrets](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/configmaps_secrets.png)
+
+### 3.Security and Best Practices for ConfigMaps and Secrets in Kubernetes.
+
+#### 1.ConfigMaps:
+
+- **1.Sensitive Data**: Avoid storing sensitive information like passwords, API keys, or tokens in ConfigMaps. Use Secrets for confidential data.
+
+- **2.Access Control**: Apply Role-Based Access Control (RBAC) to restrict who can create, update, or access ConfigMaps.
+
+- **3.Encryption**: Encrypt sensitive data before storing it in ConfigMaps, especially when dealing with temporary configurations.
+
+- **4.Limited Use**: Use ConfigMaps for non-sensitive configuration settings, environment variables, and other data that's safe to expose.
+
+- **5.Immutability**: Treat ConfigMaps as immutable; create new ConfigMaps for updates instead of modifying existing ones.
+
+#### 2.Secrets:
+
+- **1.Data Sensitivity**: Use Secrets specifically for sensitive data like passwords, API keys, certificates, and tokens.
+
+- **2.Encryption at Rest**: Enable encryption at rest for Secrets to protect data stored in etcd, Kubernetes' data store.
+
+- **3.API Access Control**: Limit access to Secrets using RBAC, ensuring only authorized users or applications can retrieve or modify them.
+
+- **4.Avoid Direct Access**: Avoid directly accessing Secrets from applications or containers; instead, use them as environment variables or mounted volumes.
+
+- **5.Secret Rotation**: Regularly rotate Secrets, such as changing passwords or renewing certificates, and ensure proper disposal of old Secrets.
 
 
 
