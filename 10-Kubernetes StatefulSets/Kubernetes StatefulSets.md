@@ -331,6 +331,8 @@ everything else remains the same as in the deployment.
 ubuntu@balasenapathi:~$ kubectl apply -f statefulset.yaml
 statefulset.apps/mongo created
 ```
+**1.Ordered Pods:**
+
 ### 6.To list the all the pods in the local-cluster:
 ```
 ubuntu@balasenapathi:~$ kubectl get pod -w
@@ -368,7 +370,7 @@ or use the `kubectl` command directly:
 ubuntu@balasenapathi:~$ kubectl scale sts mongo --replicas=7
 statefulset.apps/mongo scaled
 ```
-### 8.To list all the pods in the local-cluster:
+### 8.To list all the pods in the local-cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl get pods -w
 NAME      READY   STATUS              RESTARTS   AGE
@@ -399,6 +401,498 @@ mongo-6   1/1     Running             0          12s
 5th, 6th, and finally the 7th pod, all running in the local cluster. As discussed, the pod naming 
 convention in a StatefulSet is `"mongo-"` followed by an ordinal index value, which increments for each
 pod. Thus, the pod names are `"mongo-0", "mongo-1", "mongo-2", "mongo-3", "mongo-4", "mongo-5", "mongo-6"` respectively.
+
+### 9.Now lets try to sacledown and see what happens to the pods in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl scale sts mongo --replicas=3
+statefulset.apps/mongo scaled
+```
+### 10.To list all the pods in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get pods -w
+NAME      READY   STATUS        RESTARTS   AGE
+mongo-0   1/1     Running       0          26m
+mongo-1   1/1     Running       0          25m
+mongo-2   1/1     Running       0          24m
+mongo-3   1/1     Running       0          9m54s
+mongo-4   1/1     Running       0          9m41s
+mongo-5   1/1     Running       0          9m27s
+mongo-6   0/1     Terminating   0          9m15s
+mongo-6   0/1     Terminating   0          9m15s
+mongo-6   0/1     Terminating   0          9m15s
+mongo-6   0/1     Terminating   0          9m15s
+mongo-5   1/1     Terminating   0          9m27s
+mongo-5   0/1     Terminating   0          9m28s
+mongo-5   0/1     Terminating   0          9m29s
+mongo-5   0/1     Terminating   0          9m29s
+mongo-5   0/1     Terminating   0          9m29s
+mongo-4   1/1     Terminating   0          9m43s
+mongo-4   0/1     Terminating   0          9m44s
+mongo-4   0/1     Terminating   0          9m44s
+mongo-4   0/1     Terminating   0          9m44s
+mongo-4   0/1     Terminating   0          9m44s
+mongo-3   1/1     Terminating   0          9m57s
+mongo-3   0/1     Terminating   0          9m58s
+mongo-3   0/1     Terminating   0          9m58s
+mongo-3   0/1     Terminating   0          9m58s
+mongo-3   0/1     Terminating   0          9m58s
+```
+**Note:** As we observe the pods being deleted, the first pod to be deleted is the one with the highest 
+ordinal index value. In this case, `mongo-6` is deleted first, followed by `mongo-5`, then `mongo-4`,and
+finally `mongo-3`. Since we scaled down to `replicas=3`, the remaining three pods (`mongo-0`, `mongo-1`, 
+and `mongo-2`) continue to run.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME      READY   STATUS    RESTARTS   AGE
+mongo-0   1/1     Running   0          31m
+mongo-1   1/1     Running   0          30m
+mongo-2   1/1     Running   0          29m
+```
+**2.Sticky Identity:**
+
+### 1.Now try to delete the pod and see if the same name is given to the pod in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl delete pod mongo-0
+pod "mongo-0" deleted
+```
+### 2.To get the list of pods in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME      READY   STATUS    RESTARTS   AGE
+mongo-0   0/1     Running   0          3s
+mongo-1   1/1     Running   0          32m
+mongo-2   1/1     Running   0          32m
+```
+### 3.To get the list of pods in the local-cluster monitoring with watch (-w) flag.
+```
+ubuntu@balasenapathi:~$ kubectl get pods -w
+NAME      READY   STATUS    RESTARTS   AGE
+mongo-0   0/1     Running   0          8s
+mongo-1   1/1     Running   0          32m
+mongo-2   1/1     Running   0          32m
+mongo-0   0/1     Running   0          11s
+mongo-0   1/1     Running   0          12s
+```
+### 4.To get the list of pods in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME      READY   STATUS    RESTARTS   AGE
+mongo-0   1/1     Running   0          44s
+mongo-1   1/1     Running   0          33m
+mongo-2   1/1     Running   0          32m
+```
+**Note:** We can observe that the pod with the same name, `mongo-0`, was recreated 44 seconds ago in the 
+local cluster with the same name. This confirms that each pod is assigned a sticky identity.
+
+**3.Seperate PersistentVolumeClaims:**
+
+### 1.Now to confirm each pod is using separate persistentvolumeclaims in the local-cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get pvc
+NAME                   STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+mongo-volume-mongo-0   Bound    pvc-98e5c7b3-6f60-451a-af96-52e29229d473   1Gi        RWO            demo-storage   41m
+mongo-volume-mongo-1   Bound    pvc-b5d11796-89ac-4eaf-9765-efacc0f8c587   1Gi        RWO            demo-storage   40m
+mongo-volume-mongo-2   Bound    pvc-518855f0-cdf3-47a7-a34d-7c56a1f2968e   1Gi        RWO            demo-storage   39m
+mongo-volume-mongo-3   Bound    pvc-724cbed1-05ce-4628-8dcf-3130af13f141   1Gi        RWO            demo-storage   24m
+mongo-volume-mongo-4   Bound    pvc-808b9ba4-3d01-4eb3-865a-6ec259cb9011   1Gi        RWO            demo-storage   24m
+mongo-volume-mongo-5   Bound    pvc-73e4e697-72ae-4155-bbcf-ba0aa670b6e3   1Gi        RWO            demo-storage   24m
+mongo-volume-mongo-6   Bound    pvc-02eb6458-5482-4f08-9540-4ce2b9829d84   1Gi        RWO            demo-storage   24m
+```
+**Note:** There are 7 PersistentVolumeClaims (PVCs) created by the `demo-storage` StorageClass, and the 
+status of all these PVCs is "Bound" to separate PersistentVolumes (PVs). You might wonder why there are 
+7 PVCs in the local cluster when only 3 pods are running. This is because when we increased the number 
+of replicas to 7, 7 PVCs were created. However, PVCs are not deleted when pods are removed. Additionally,
+when the `mongo-0` pod is restarted, the same `mongo-0` PVC is used by that pod. This can be confirmed by
+describing the pod.
+
+### 2.To describe the mongo-0 pod and get full information.
+```
+ubuntu@balasenapathi:~$ kubectl describe pod mongo-0 | grep volume
+/data/db from mongo-volume (rw)
+mongo-volume:
+ClaimName:  mongo-volume-mongo-0
+Type:      ConfigMap (a volume populated by a ConfigMap)
+Type:                    Projected (a volume that contains injected data from multiple sources)
+```
+**Note:** Here, we can see that the ClaimName: mongo-volume-mongo-0 is used to create the deleted mongo-0
+pod again. This demonstrates the concept of sticky storage, where the same PVC is used when the pod is 
+recreated.
+
+**4.Headless Service:**
+
+**Note:** As discussed, to communicate with a specific pod, we need a "headless" service.
+
+### 1.Now, let's create a headless service in the local cluster.
+
+```
+ubuntu@balasenapathi:~$ nano headless-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  ports:
+    - name: mongo
+      port: 27017
+      targetPort: 27017
+  clusterIP: None
+  selector:
+    app: mongo
+```
+**Note:** Our mongo pods are running on ports 27017 and the label name is app: mongo
+
+### 2.Apply the changes in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f headless-service.yaml
+service/mongo created
+```
+### 3.To verify that the headless services are created in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get svc
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)     AGE
+kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP     110m
+mongo        ClusterIP   None         <none>        27017/TCP   100s
+```
+**Note:** In a headless service, the `clusterIP` is set to `None`. Note that headless services cannot be
+accessed directly from outside the cluster.
+
+### 4.Now let us create the MongoDB replica sets in the local cluster.
+
+With 3 pods, we can specify one pod as the Master Node and the others as Slave Nodes.Note that StatefulSets
+manage the pods but do not handle replication for us. We need to configure the replica sets manually by 
+accessing the pods.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME      READY   STATUS    RESTARTS   AGE
+mongo-0   1/1     Running   0          35m
+mongo-1   1/1     Running   0          67m
+mongo-2   1/1     Running   0          67m
+```
+### 5.To get into the mongo pod in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl exec -it mongo-0 -- mongo
+MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("f51c393c-d744-4888-aecf-3427a479cb9e") }
+MongoDB server version: 4.0.8
+Welcome to the MongoDB shell.
+For interactive help, type "help".
+For more comprehensive documentation, see
+http://docs.mongodb.org/
+Questions? Try the support group
+http://groups.google.com/group/mongodb-user
+Server has startup warnings:
+2023-09-25T18:43:24.440+0000 I STORAGE  [initandlisten]
+2023-09-25T18:43:24.441+0000 I STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger
+storage engine
+2023-09-25T18:43:24.441+0000 I STORAGE  [initandlisten] **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+2023-09-25T18:43:26.049+0000 I CONTROL  [initandlisten]
+2023-09-25T18:43:26.049+0000 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2023-09-25T18:43:26.049+0000 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2023-09-25T18:43:26.049+0000 I CONTROL  [initandlisten] ** WARNING: You are running this process as the root user, which is not
+recommended.
+2023-09-25T18:43:26.049+0000 I CONTROL  [initandlisten]
+---
+Enable MongoDB's free cloud-based monitoring service, which will then receive and display
+metrics about your deployment (disk utilization, CPU, operation statistics, etc).
+
+The monitoring data will be available on a MongoDB website with a unique URL accessible to you
+and anyone you share the URL with. MongoDB may use this information to make product
+improvements and to suggest MongoDB products and deployment options to you.
+
+To enable free monitoring, run the following command: db.enableFreeMonitoring()
+To permanently disable this reminder, run the following command: db.disableFreeMonitoring()
+---
+>
+```
+**Note:** Now we are in the mongo-0 pod in local-cluster.
+
+### 6.Initiating the MongoDB Replica Set
+
+According to the official MongoDB documentation, use the following command to initiate the replica set:
+```
+rs.initiate( {
+   _id : "rs0",
+   members: [
+      { _id: 0, host: "mongodb0.example.net:27017" },
+      { _id: 1, host: "mongodb1.example.net:27017" },
+      { _id: 2, host: "mongodb2.example.net:27017" }
+   ]
+})
+```
+**5.Our Custom replicaset with DNS:**
+```
+rs.initiate( {
+   _id : "rs0",
+   members: [
+      { _id: 0, host: "mongo-0.mongo.default.svc.cluster.local:27017" },
+      { _id: 1, host: "mongo-1.mongo.default.svc.cluster.local:27017" },
+      { _id: 2, host: "mongo-2.mongo.default.svc.cluster.local:27017" }
+   ]
+})
+```
+**Note:** The name of the replica set is `"rs0"`, as specified in our StatefulSet manifest file. 
+The DNS names for our 3 pods are:
+- `mongo-0`: `mongodb0.example.net:27017`
+- `mongo-1`: `mongodb1.example.net:27017`
+- `mongo-2`: `mongodb2.example.net:27017`
+
+### 1.Creating MongoDB Replica Sets in the Local Cluster
+
+**Step 1:** Execute the Command to Initiate the Replica Set
+```
+ubuntu@balasenapathi:~$ kubectl exec -it mongo-0 -- mongo
+MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("c6badafa-2063-4000-b789-18c200f371ed") }
+MongoDB server version: 4.0.8
+Server has startup warnings: 
+2023-09-25T21:46:21.032+0000 I STORAGE  [initandlisten] 
+2023-09-25T21:46:21.032+0000 I STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger 
+storage engine
+2023-09-25T21:46:21.032+0000 I STORAGE  [initandlisten] **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+2023-09-25T21:46:22.123+0000 I CONTROL  [initandlisten] 
+2023-09-25T21:46:22.124+0000 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2023-09-25T21:46:22.124+0000 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2023-09-25T21:46:22.124+0000 I CONTROL  [initandlisten] ** WARNING: You are running this process as the root user, which is not 
+recommended.
+2023-09-25T21:46:22.124+0000 I CONTROL  [initandlisten] 
+---
+Enable MongoDB's free cloud-based monitoring service, which will then receive and display
+metrics about your deployment (disk utilization, CPU, operation statistics, etc).
+
+The monitoring data will be available on a MongoDB website with a unique URL accessible to you
+and anyone you share the URL with. MongoDB may use this information to make product
+improvements and to suggest MongoDB products and deployment options to you.
+
+To enable free monitoring, run the following command: db.enableFreeMonitoring()
+To permanently disable this reminder, run the following command: db.disableFreeMonitoring()
+---
+
+> rs.initiate( {
+...    _id : "rs0",
+...    members: [
+...       { _id: 0, host: "mongo-0.mongo.default.svc.cluster.local:27017" },
+...       { _id: 1, host: "mongo-1.mongo.default.svc.cluster.local:27017" },
+...       { _id: 2, host: "mongo-2.mongo.default.svc.cluster.local:27017" }
+...    ]
+... })
+{
+	"ok" : 1,
+	"operationTime" : Timestamp(1695678772, 1),
+	"$clusterTime" : {
+		"clusterTime" : Timestamp(1695678772, 1),
+		"signature" : {
+			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+			"keyId" : NumberLong(0)
+		}
+	}
+}
+rs0:SECONDARY>
+```
+**Note:** Here, "rs0" is the replica set name specified in the StatefulSet. The hosts are:
+
+- mongo-0.mongo.default.svc.cluster.local:27017
+- mongo-1.mongo.default.svc.cluster.local:27017
+- mongo-2.mongo.default.svc.cluster.local:27017
+
+Where "mongo-0", "mongo-1", and "mongo-2" are pod names, "mongo" is the service name, and "default" is 
+the namespace. We can see that the replica set initiation returned "ok" : 1, indicating success.
+
+**Step 2:** Reconnect to the MongoDB Shell and Verify Replica Set Status
+
+- Exit the current session and reconnect to the mongo-0 pod.
+```
+> rs.initiate( {
+...    _id : "rs0",
+...    members: [
+...       { _id: 0, host: "mongo-0.mongo.default.svc.cluster.local:27017" },
+...       { _id: 1, host: "mongo-1.mongo.default.svc.cluster.local:27017" },
+...       { _id: 2, host: "mongo-2.mongo.default.svc.cluster.local:27017" }
+...    ]
+... })
+{
+"ok" : 1,
+"operationTime" : Timestamp(1695678772, 1),
+"$clusterTime" : {
+"clusterTime" : Timestamp(1695678772, 1),
+"signature" : {
+"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+"keyId" : NumberLong(0)
+}
+}
+}
+rs0:SECONDARY> exit
+bye
+```
+- Reconnect to the MongoDB shell.
+```
+ubuntu@balasenapathi:~$ kubectl exec -it mongo-0 -- mongo
+MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("19288f4c-402c-4d8c-9248-a2c8d85c23d5") }
+MongoDB server version: 4.0.8
+Server has startup warnings:
+2023-09-25T21:46:21.032+0000 I STORAGE  [initandlisten]
+2023-09-25T21:46:21.032+0000 I STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger
+storage engine
+2023-09-25T21:46:21.032+0000 I STORAGE  [initandlisten] **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+2023-09-25T21:46:22.123+0000 I CONTROL  [initandlisten]
+2023-09-25T21:46:22.124+0000 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2023-09-25T21:46:22.124+0000 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2023-09-25T21:46:22.124+0000 I CONTROL  [initandlisten] ** WARNING: You are running this process as the root user, which is not
+recommended.
+2023-09-25T21:46:22.124+0000 I CONTROL  [initandlisten]
+---
+Enable MongoDB's free cloud-based monitoring service, which will then receive and display
+metrics about your deployment (disk utilization, CPU, operation statistics, etc).
+
+The monitoring data will be available on a MongoDB website with a unique URL accessible to you
+and anyone you share the URL with. MongoDB may use this information to make product
+improvements and to suggest MongoDB products and deployment options to you.
+
+To enable free monitoring, run the following command: db.enableFreeMonitoring()
+To permanently disable this reminder, run the following command: db.disableFreeMonitoring()
+---
+
+rs0:PRIMARY>
+```
+**Note:** After the initial configuration, the node is now a PRIMARY node.
+
+**Step 3:** Verify Replica Set Status.
+
+Check the status of the replica set to verify the current state of each node.
+```
+> rs.status()
+{
+	"set" : "rs0",
+	"date" : ISODate("2023-09-25T22:05:37.139Z"),
+	"myState" : 1,
+	"term" : NumberLong(1),
+	"syncingTo" : "",
+	"syncSourceHost" : "",
+	"syncSourceId" : -1,
+	"heartbeatIntervalMillis" : NumberLong(2000),
+	"optimes" : {
+		"lastCommittedOpTime" : {
+			"ts" : Timestamp(1695679535, 1),
+			"t" : NumberLong(1)
+		},
+		"readConcernMajorityOpTime" : {
+			"ts" : Timestamp(1695679535, 1),
+			"t" : NumberLong(1)
+		},
+		"appliedOpTime" : {
+			"ts" : Timestamp(1695679535, 1),
+			"t" : NumberLong(1)
+		},
+		"durableOpTime" : {
+			"ts" : Timestamp(1695679535, 1),
+			"t" : NumberLong(1)
+		}
+	},
+	"lastStableCheckpointTimestamp" : Timestamp(1695679505, 1),
+	"members" : [
+		{
+			"_id" : 0,
+			"name" : "mongo-0.mongo.default.svc.cluster.local:27017",
+			"health" : 1,
+			"state" : 1,
+			"stateStr" : "PRIMARY",
+			"uptime" : 1157,
+			"optime" : {
+				"ts" : Timestamp(1695679535, 1),
+				"t" : NumberLong(1)
+			},
+			"optimeDate" : ISODate("2023-09-25T22:05:35Z"),
+			"syncingTo" : "",
+			"syncSourceHost" : "",
+			"syncSourceId" : -1,
+			"infoMessage" : "",
+			"electionTime" : Timestamp(1695678784, 1),
+			"electionDate" : ISODate("2023-09-25T21:53:04Z"),
+			"configVersion" : 1,
+			"self" : true,
+			"lastHeartbeatMessage" : ""
+		},
+		{
+			"_id" : 1,
+			"name" : "mongo-1.mongo.default.svc.cluster.local:27017",
+			"health" : 1,
+			"state" : 2,
+			"stateStr" : "SECONDARY",
+			"uptime" : 764,
+			"optime" : {
+				"ts" : Timestamp(1695679535, 1),
+				"t" : NumberLong(1)
+			},
+			"optimeDurable" : {
+				"ts" : Timestamp(1695679535, 1),
+				"t" : NumberLong(1)
+			},
+			"optimeDate" : ISODate("2023-09-25T22:05:35Z"),
+			"optimeDurableDate" : ISODate("2023-09-25T22:05:35Z"),
+			"lastHeartbeat" : ISODate("2023-09-25T22:05:36.658Z"),
+			"lastHeartbeatRecv" : ISODate("2023-09-25T22:05:36.687Z"),
+			"pingMs" : NumberLong(0),
+			"lastHeartbeatMessage" : "",
+			"syncingTo" : "mongo-0.mongo.default.svc.cluster.local:27017",
+			"syncSourceHost" : "mongo-0.mongo.default.svc.cluster.local:27017",
+			"syncSourceId" : 0,
+			"infoMessage" : "",
+			"configVersion" : 1
+		},
+		{
+			"_id" : 2,
+			"name" : "mongo-2.mongo.default.svc.cluster.local:27017",
+			"health" : 1,
+			"state" : 2,
+			"stateStr" : "SECONDARY",
+			"uptime" : 764,
+			"optime" : {
+				"ts" : Timestamp(1695679535, 1),
+				"t" : NumberLong(1)
+			},
+			"optimeDurable" : {
+				"ts" : Timestamp(1695679535, 1),
+				"t" : NumberLong(1)
+			},
+			"optimeDate" : ISODate("2023-09-25T22:05:35Z"),
+			"optimeDurableDate" : ISODate("2023-09-25T22:05:35Z"),
+			"lastHeartbeat" : ISODate("2023-09-25T22:05:36.660Z"),
+			"lastHeartbeatRecv" : ISODate("2023-09-25T22:05:36.692Z"),
+			"pingMs" : NumberLong(0),
+			"lastHeartbeatMessage" : "",
+			"syncingTo" : "mongo-0.mongo.default.svc.cluster.local:27017",
+			"syncSourceHost" : "mongo-0.mongo.default.svc.cluster.local:27017",
+			"syncSourceId" : 0,
+			"infoMessage" : "",
+			"configVersion" : 1
+		}
+	],
+	"ok" : 1,
+	"operationTime" : Timestamp(1695679535, 1),
+	"$clusterTime" : {
+		"clusterTime" : Timestamp(1695679535, 1),
+		"signature" : {
+			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+			"keyId" : NumberLong(0)
+		}
+	}
+}
+```
+**Note:** The rs.status() output shows.
+
+- "stateStr": "PRIMARY" for mongo-0
+- "stateStr": "SECONDARY" for mongo-1
+- "stateStr": "SECONDARY" for mongo-2
+
+All secondary nodes are synchronized with the primary node after the initial clone.
+
+
+
+
+
 
 
 
