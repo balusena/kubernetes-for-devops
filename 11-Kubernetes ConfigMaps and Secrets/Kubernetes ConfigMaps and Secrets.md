@@ -33,3 +33,129 @@ scalable manner, ensuring that applications are easily adaptable to varying envi
 requirements.
 
 ![Kubernetes ConfigMap](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/configmap.png)
+
+## 2.Creating and Managing ConfigMaps:
+**There are two ways of creating a config map:**
+
+- 1.The imperative way – without using a ConfigMap definition file.
+- 2.Declarative way by using a Configmap definition file.
+
+**1.Imperative Way:Creating a ConfigMap Without Using a Definition File.**
+The imperative way involves using kubectl commands to create a ConfigMap directly from the command line 
+without defining a ConfigMap YAML file.
+
+### 1.Creating a ConfigMap from Literal Values
+You can create a ConfigMap from literal values using the kubectl create configmap command. 
+
+- This example creates a ConfigMap named my-config with two key-value pairs.
+```
+ubuntu@balasenapathi:~$ kubectl create configmap my-config --from-literal=key1=value1 --from-literal=key2=value2
+configmap/my-config created
+```
+### 2.Creating a ConfigMap from a File
+You can create a ConfigMap from a file using the --from-file option. 
+
+- This example creates a ConfigMap named my-config from a file called config.txt.
+```
+ubuntu@balasenapathi:~$ kubectl create configmap my-config --from-file=config.txt
+configmap/my-config created
+```
+### 3.Creating a ConfigMap from a Directory
+If you have multiple files in a directory and want to include all of them in a ConfigMap,you can use the --from-file option with a directory. 
+
+- This example creates a ConfigMap named my-config from all files in the ./config-dir directory.
+```
+ubuntu@balasenapathi:~$ kubectl create configmap my-config --from-file=config-dir/
+configmap/my-config created
+```
+**2.Declarative Way:Creating a ConfigMap Using a Definition File.**
+The declarative way involves defining a ConfigMap in a YAML file and then applying it using kubectl. This
+method is more suited for managing configurations as code and versioning.
+
+### 1. creating a ConfigMap named app-config with key-value pairs using YAML.
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  DATABASE_URL: "mongodb://mongo.example.com:27017"
+  API_KEY: "your-api-key"
+```
+```
+ubuntu@balasenapathi:~$ kubectl apply -f configmap.yaml
+configmap/app-config configured
+```
+**Using ConfigMaps in Pods:**
+
+ConfigMaps can be consumed in Kubernetes Pods as environment variables or mounted volumes.
+
+### 2.Using ConfigMaps as Environment Variables.
+Here's how you can use the app-config ConfigMap as environment variables in a Pod:
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-pod
+spec:
+  containers:
+    - name: app-container
+      image: your-app-image
+      env:
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: DATABASE_URL
+        - name: API_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: API_KEY
+```
+```
+ubuntu@balasenapathi:~$ kubectl apply -f pod.yaml
+pod/app-pod created
+```
+2. Using ConfigMaps as Mounted Volumes:
+
+You can also mount a ConfigMap as a volume in a Pod to access its data as files.
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-pod
+spec:
+  containers:
+    - name: app-container
+      image: your-app-image
+      volumeMounts:
+        - name: config-volume
+          mountPath: /app/config
+  volumes:
+    - name: config-volume
+      configMap:
+        name: app-config
+```
+```
+ubuntu@balasenapathi:~$ kubectl apply -f pod.yaml
+pod/app-pod created
+```
+**Note:** In this example, the app-config ConfigMap will be available in the /app/config directory within the container.
+
+These approaches demonstrate how ConfigMaps can be consumed in Kubernetes Pods, providing configuration 
+data to your applications either as environment variables or as mounted files. This separation of 
+configuration from application code enhances flexibility, manageability, and reusability in a Kubernetes 
+environment.
+
+## 2.Secrets
+Secrets in Kubernetes is an object that is designed for securely managing sensitive information, such as 
+passwords, tokens, and certificates. With the help of secrets you don't need to put the confidential data
+in the application code. It also helps to ensure that sensitive information remains secure within a 
+Kubernetes cluster, following best practices for data handling and access control.
+
+Secrets provides an abstraction layer that allows you to separate sensitive data from your application 
+code, similar to ConfigMaps. However, Secrets are specifically designed to handle confidential information
+more securely.
+
+![Kubernetes Secrets](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/secrets.png)
