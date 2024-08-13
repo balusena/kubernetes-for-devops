@@ -205,7 +205,7 @@ Additionally, when we delete the StatefulSet, the last pod is deleted first, i.e
 
 ![Kubernetes Problem Statement 2](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/ps-2.png)
 
-#### **Problem Statement-2:**
+#### **Problem Statement-3:**
 As we discussed in Problem Statement 2, in a Master-Slave architecture, all nodes in the cluster must 
 communicate with each other for data replication. To facilitate this, a sticky identity is required so 
 that each pod can be consistently found within the cluster. A sticky identity means that each pod should 
@@ -243,6 +243,8 @@ e.g., `mongo-0.mongo.default.svc.cluster.local:27017`.
 Now, when we try to access this DNS, the request is directed specifically to the `mongo-0` pod. Headless
 Services are very useful when we do not want to perform load balancing and need to connect directly to a
 single pod.
+
+![Kubernetes Problem Statement 3](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/ps-3.png)
 
 
 
