@@ -232,7 +232,9 @@ Master, and Slave2 should get data from Slave1.
 
 To achieve this, Kubernetes provides a special service called a "Headless Service." When we specify 
 `clusterIP: None`, the service is considered a "Headless Service." Through this service, each pod gets
-its own DNS entry, e.g., `mongo-0.mongo.default.svc.cluster.local:27017`.
+its own DNS entry, 
+
+e.g., `mongo-0.mongo.default.svc.cluster.local:27017`.
 
 - mongo-0 —> Pod name
 - mongo   —> Service name
