@@ -237,7 +237,7 @@ However, the differences between Secrets and ConfigMaps are vital:
 - Secrets are meant to store sensitive data and are encrypted in transit and at rest.
 - ConfigMaps are used for non-sensitive configuration data and are not encrypted.
 
-![Kubernetes ConfigMap Secrets](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/configmap_secrets.png)
+![Kubernetes ConfigMaps Secrets](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/configmaps_secrets.png)
 
 
 
