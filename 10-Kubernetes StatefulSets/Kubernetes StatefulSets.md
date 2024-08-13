@@ -637,7 +637,7 @@ The DNS names for our 3 pods are:
 - `mongo-1`: `mongodb1.example.net:27017`
 - `mongo-2`: `mongodb2.example.net:27017`
 
-### 1.Creating MongoDB Replica Sets in the Local Cluster
+### 7.Creating MongoDB Replica Sets in the Local Cluster
 
 **Step 1:** Execute the Command to Initiate the Replica Set
 ```
@@ -889,7 +889,7 @@ Check the status of the replica set to verify the current state of each node.
 
 All secondary nodes are synchronized with the primary node after the initial clone.
 
-# Creating and Verifying Data Replication in MongoDB Replica Sets
+### 8.Creating and Verifying Data Replication in MongoDB Replica Sets
 
 **Step 1:** Create a Simple Database and Insert Data into the Primary Node
 
