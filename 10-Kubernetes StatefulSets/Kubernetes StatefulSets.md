@@ -246,6 +246,43 @@ single pod.
 
 ![Kubernetes Problem Statement 3](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/ps-3.png)
 
+# Deployment vs StatefulSets
+
+![Kubernetes Deployment vs StatefulSets](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/deployment_statefulset.png)
+
+### 1.To get the api-resources of statefulset:
+```
+ubuntu@balasenapathi:~$ kubectl api-resources | grep statefulset
+statefulsets            sts          apps/v1            true         StatefulSet
+```
+**Note:** Before creating statefulset.yaml we need to create mongo-configmap.yaml:
+
+### 2.create mongo-configmap.yaml
+```
+ubuntu@balasenapathi:~$ nano mongo-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: mongodb-config
+immutable: false
+data:
+  username: admin1
+  mongodb.conf: |
+    storage:
+      dbPath: /data/db
+    replication:
+        replSetName: "rs0" 
+```
+### 3.Apply the changes in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f mongo-configmap.yaml
+configmap/mongodb-config created         
+```       
+**Note:** Before to create statefulset.yaml we need to create mongo-secret.yaml:
+
+### 4.create mongo-secret.yaml
+```
+ubuntu@balasenapathi:~$ nano mongo-secret.yaml
 
 
 
