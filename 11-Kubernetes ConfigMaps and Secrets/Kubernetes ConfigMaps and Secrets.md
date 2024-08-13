@@ -286,6 +286,21 @@ However, the differences between Secrets and ConfigMaps are vital:
 By adhering to these security best practices, you can ensure that your ConfigMaps and Secrets are properly
 managed, and protected, and contribute to a more secure Kubernetes environment.
 
+If we look at the MongoDB deployment or StatefulSet we've created, we configured properties like "username"
+and "password." This approach allows us to easily change these configurations without rebuilding the actual
+image. Now, we will learn how to pass the same configuration data to containers using ConfigMaps and Secrets.
+
+### Do Not Hradcode
+Whenever we deploy any application, we shouldn't hardcode properties that change for each environment. 
+Instead, we should configure those properties so that we don't need to rebuild the image whenever these 
+values change. All we need to do is pass those values from outside. This way, we can reuse the same image
+for different environments like DEV, QA, UAT, PRE-PROD, and PROD.
+
+![Do Not Hradcode](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/dont_hardcode.png)
+
+
+
+
 
 
 
