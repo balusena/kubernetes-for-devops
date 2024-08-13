@@ -160,3 +160,85 @@ more securely.
 
 ![Kubernetes Secrets](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/secrets.png)
 
+### 1.Types of Secrets
+Kubernetes supports several types of Secrets to accommodate different use cases. Each type of Secret has a
+specific purpose and is used in different scenarios. Let’s go through some of these types.
+
+- **1.Opaque:**
+The Opaque is the default Secret type. You can use it to store arbitrary Secret data. These Secrets don’t 
+have any specific constraints imposed by Kubernetes.
+```
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+type: Opaque
+data:
+  username: YWRtaW4=  # base64 encoded 'admin'
+  password: MWYyZDFlMmU2N2Rm  # base64 encoded '1f2d1e2e67df'
+```
+
+- **2.kubernetes.io/service-account-token:**
+These are automatically created by Kubernetes and attached to service accounts. They’re used to authenticate
+applications that want to communicate with the Kubernetes API server. The data field for these Secrets 
+includes a token and a Kubernetes API server root certificate.
+
+- **3.kubernetes.io/dockercfg and kubernetes.io/dockerconfigjson:**
+These types of Secrets are used to hold Docker configuration information. The dockercfg Secret type is used
+for Docker’s legacy configfile format, and dockerconfigjson is used for Docker’s newer config.json format.
+They both contain the necessary credentials for pulling images from private Docker repositories.
+
+- **4.kubernetes.io/basic-auth:**
+This type of Secret can store credentials for basic authentication. It contains two fields: username and 
+password. These are often used when interacting with REST APIs that require basic authentication.
+```
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+type: kubernetes.io/basic-auth
+stringData:
+  username: admin
+  password: secret
+```
+
+- **5.kubernetes.io/ssh-auth:**
+These Secrets are used to hold SSH authentication credentials. They contain a single ssh-privatekey field
+for the private SSH key. This can be useful when you need to interact with a service that requires SSH 
+authentication.
+
+- **6.kubernetes.io/tls:**
+These are used to store a certificate and its corresponding private key. These are typically used for 
+TLS-enabled services. This type of Secret expects two fields: tls.crt and tls.key.
+```
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+type: kubernetes.io/tls
+data:
+  tls.crt: base64 encoded cert
+  tls.key: base64 encoded key
+```
+**Note:** Remember that all secret data should be base64 encoded before being included in the Secret 
+definition. Kubernetes will decode this data when it is used.
+
+![Kubernetes ConfigMaps vs Secrets](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/configmaps_secrets.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
