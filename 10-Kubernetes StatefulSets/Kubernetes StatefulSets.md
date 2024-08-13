@@ -250,39 +250,158 @@ single pod.
 
 ![Kubernetes Deployment vs StatefulSets](https://github.com/balusena/kubernetes-for-devops/blob/main/10-Kubernetes%20StatefulSets/deployment_statefulset.png)
 
-### 1.To get the api-resources of statefulset:
+### 1.To get the api-resources of statefulset.
 ```
 ubuntu@balasenapathi:~$ kubectl api-resources | grep statefulset
 statefulsets            sts          apps/v1            true         StatefulSet
 ```
-**Note:** Before creating statefulset.yaml we need to create mongo-configmap.yaml:
+**Note:** Before to create statefulset.yaml we need to create sc.yaml.
 
-### 2.create mongo-configmap.yaml
+### 2.create sc.yaml:
 ```
-ubuntu@balasenapathi:~$ nano mongo-configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata: 
-  name: mongodb-config
-immutable: false
-data:
-  username: admin1
-  mongodb.conf: |
-    storage:
-      dbPath: /data/db
-    replication:
-        replSetName: "rs0" 
+ubuntu@balasenapathi:~$ nano sc.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: demo-storage
+provisioner: k8s.io/minikube-hostpath
+volumeBindingMode: Immediate
+reclaimPolicy: Delete
 ```
-### 3.Apply the changes in the cluster.
+### 3.Apply the changes into the cluster.
 ```
-ubuntu@balasenapathi:~$ kubectl apply -f mongo-configmap.yaml
-configmap/mongodb-config created         
-```       
-**Note:** Before to create statefulset.yaml we need to create mongo-secret.yaml:
+ubuntu@balasenapathi:~$ kubectl apply -f sc.yaml
+secret/mongodb-secret created
+```                                                           
+### 4.Now create a statefulset.yaml file.
+```
+ubuntu@balasenapathi:~$ nano statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+spec:
+  selector:
+    matchLabels:
+      app: mongo
+  serviceName: "mongo"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:4.0.8
+          args: ["--dbpath", "/data/db"]
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "admin"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: "password"
+          command:
+            - mongod
+            - "--bind_ip_all"
+            - "--replSet"
+            - rs0
+          volumeMounts:
+            - name: mongo-volume
+              mountPath: /data/db
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-volume
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: demo-storage
+        resources:
+          requests:
+            storage: 1Gi
+```
+**Note:** This configuration is similar to the deployment with a few changes.In this setup, the number 
+of replicas is set to 3. Instead of specifying a PersistentVolumeClaim (PVC) directly, we are using 
+`volumeClaimTemplates`. This means we are providing a template for the PVC that will be created for each 
+pod. The volume will be named `mongo-volume` and will be mounted in the container at the path `/data/db`.
+The access mode is set to `ReadWriteOnce`, and the storage class we created is `demo-storage`, which will
+be used to create the PersistentVolume (PV). We are requesting 1GB of storage. Aside from these changes, 
+everything else remains the same as in the deployment.
 
-### 4.create mongo-secret.yaml
+### 5.Now apply the changes into the local-cluster.
 ```
-ubuntu@balasenapathi:~$ nano mongo-secret.yaml
+ubuntu@balasenapathi:~$ kubectl apply -f statefulset.yaml
+statefulset.apps/mongo created
+```
+### 6.To list the all the pods in the local-cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get pod -w
+NAME      READY   STATUS              RESTARTS   AGE
+mongo-0   0/1     ContainerCreating   0          8s
+mongo-0   0/1     Running             0          58s
+mongo-0   0/1     Running             0          64s
+mongo-0   1/1     Running             0          65s
+mongo-1   0/1     Pending             0          1s
+mongo-1   0/1     Pending             0          1s
+mongo-1   0/1     Pending             0          2s
+mongo-1   0/1     ContainerCreating   0          3s
+mongo-1   0/1     Running             0          15s
+mongo-1   0/1     Running             0          23s
+mongo-1   1/1     Running             0          24s
+mongo-2   0/1     Pending             0          0s
+mongo-2   0/1     Pending             0          0s
+mongo-2   0/1     Pending             0          1s
+mongo-2   0/1     ContainerCreating   0          1s
+mongo-2   0/1     Running             0          4s
+mongo-2   0/1     Running             0          12s
+mongo-2   1/1     Running             0          13s
+```
+**Note:** The `-w` flag is used to continuously watch the status changes during pod creation. Initially,
+the `mongo-0` pod enters the "ContainerCreating" state, followed by it transitioning to "Running." Next,
+the `mongo-1` pod is created, then moves to "Running." Finally, the `mongo-2` pod is created and also 
+transitions to "Running."
+
+### 7.Now try to scale up the StatefulSet and observe the behavior of the pods in the local cluster:
+
+**Note:** To scale up, you can either update the `replicas` field to `7` in the `statefulset.yaml` file 
+or use the `kubectl` command directly:
+
+```
+ubuntu@balasenapathi:~$ kubectl scale sts mongo --replicas=7
+statefulset.apps/mongo scaled
+```
+### 8.To list all the pods in the local-cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get pods -w
+NAME      READY   STATUS              RESTARTS   AGE
+mongo-0   1/1     Running             0          16m
+mongo-1   1/1     Running             0          15m
+mongo-2   1/1     Running             0          15m
+mongo-3   1/1     Running             0          16s
+mongo-4   0/1     ContainerCreating   0          3s
+mongo-4   0/1     Running             0          4s
+mongo-4   0/1     Running             0          13s
+mongo-4   1/1     Running             0          14s
+mongo-5   0/1     Pending             0          0s
+mongo-5   0/1     Pending             0          0s
+mongo-5   0/1     Pending             0          1s
+mongo-5   0/1     ContainerCreating   0          1s
+mongo-5   0/1     Running             0          4s
+mongo-5   0/1     Running             0          12s
+mongo-5   1/1     Running             0          12s
+mongo-6   0/1     Pending             0          0s
+mongo-6   0/1     Pending             0          0s
+mongo-6   0/1     Pending             0          1s
+mongo-6   0/1     ContainerCreating   0          1s
+mongo-6   0/1     Running             0          3s
+mongo-6   0/1     Running             0          12s
+mongo-6   1/1     Running             0          12s
+```
+**Note:** Initially, we see that three pods are running. Then, the 4th pod is created, followed by the 
+5th, 6th, and finally the 7th pod, all running in the local cluster. As discussed, the pod naming 
+convention in a StatefulSet is `"mongo-"` followed by an ordinal index value, which increments for each
+pod. Thus, the pod names are `"mongo-0", "mongo-1", "mongo-2", "mongo-3", "mongo-4", "mongo-5", "mongo-6"` respectively.
+
+
+
 
 
 
