@@ -29,3 +29,15 @@ Kubernetes treats the pod as healthy, regardless of whether the internal functio
 How do we handle scenarios where pods aren’t working correctly, but they aren’t being restarted either? 
 What if there was a way for us to signal to Kubernetes that a pod is no longer functioning as expected 
 and should be restarted? This is where Kubernetes probes come into play.
+
+# kubernetes Probes and types
+Kubernetes probes are mechanisms used to determine the health and readiness of a container running within 
+a pod.These probes help Kubernetes make decisions about when to restart a container,when to route traffic
+to it,or when to take it out of rotation for maintenance or updates. 
+
+**There are three types of probes in Kubernetes:**
+- 1.Liveness Probe
+- 2.Readiness Probe
+- 3.Startup Probe
+
+
