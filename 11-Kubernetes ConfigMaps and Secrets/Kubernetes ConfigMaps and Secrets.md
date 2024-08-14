@@ -241,7 +241,7 @@ However, the differences between Secrets and ConfigMaps are vital:
 
 ### 3.Security and Best Practices for ConfigMaps and Secrets in Kubernetes.
 
-#### 1.ConfigMaps:
+#### 1.ConfigMaps.
 
 - **1.Sensitive Data**: Avoid storing sensitive information like passwords, API keys, or tokens in ConfigMaps. Use Secrets for confidential data.
 
@@ -253,7 +253,7 @@ However, the differences between Secrets and ConfigMaps are vital:
 
 - **5.Immutability**: Treat ConfigMaps as immutable; create new ConfigMaps for updates instead of modifying existing ones.
 
-#### 2.Secrets:
+#### 2.Secrets.
 
 - **1.Data Sensitivity**: Use Secrets specifically for sensitive data like passwords, API keys, certificates, and tokens.
 
@@ -265,7 +265,7 @@ However, the differences between Secrets and ConfigMaps are vital:
 
 - **5.Secret Rotation**: Regularly rotate Secrets, such as changing passwords or renewing certificates, and ensure proper disposal of old Secrets.
 
-### 4.General Practices:
+### 4.General Practices.
 
 - **1.Secure Delivery**: When creating ConfigMaps or Secrets from files, use secure delivery mechanisms to prevent exposing data during transmission.
 
@@ -321,12 +321,12 @@ Kubernetes provides two special types of volumes for this purpose:
 
 ![Configuration Files](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/configuration_files.png)
 
-### 1.To get the api-resources of ConfigMap:
+### 1.To get the api-resources of ConfigMap.
 ```
 ubuntu@balasenapathi:~$ kubectl api-resources | grep configmap
 configmaps                cm           v1            true         ConfigMap
 ```
-### 2.Creating a ConfigMap in local-cluster:
+### 2.Creating a ConfigMap in local-cluster.
 ```
 ubuntu@balasenapathi:~$ nano mongo-configmap.yaml
 apiVersion: v1
@@ -373,12 +373,12 @@ volume or using a separate database or file service.
 use the immutable: true attribute. When set to true, the ConfigMap cannot be updated; it can only be 
 deleted or recreated. The default value is false, which means the ConfigMap can be edited.
 
-### 3.Applying the ConfigMap in local-cluster:
+### 3.Applying the ConfigMap in local-cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl apply -f mongo-configmap.yaml
 configmap/mongodb-config created
 ```
-### 4.Verify whether the ConfigMap is created in local-cluster:
+### 4.Verify whether the ConfigMap is created in local-cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl get configmap
 NAME               DATA   AGE
@@ -513,7 +513,7 @@ mounted correctly or not.
 ubuntu@balasenapathi:~$ kubectl exec -it mongo-0 -- bash
 root@mongo-0:/#
 ```
-### 8.Now list down the environmental variables:
+### 8.Now list down the environmental variables.
 ```
 ubuntu@balasenapathi:~$ kubectl exec -it mongo-0 -- bash
 root@mongo-0:/# env
