@@ -16,3 +16,4 @@ Any application can be in an unhealthy state due to various reasons like:
 
 In all these situations the pod will look like its running from the outside but internal functionality is
 broken because of these bugs
+after
