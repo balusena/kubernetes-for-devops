@@ -6,10 +6,10 @@ is functioning correctly and how we can customize this behavior using probes.
 
 # Reasons for any application to be unhealthy.
 Any application can be in an unhealthy state due to various reasons like:
-1.Bugs in the code
-2.Timeouts while communicating with external service.
-3.DataBase connection failure
-4.Out Of Memory issues
-5.etc
+- 1.Bugs in the code
+- 2.Timeouts while communicating with external service.
+- 3.DataBase connection failure
+- 4.Out Of Memory issues
+- 5.etc
 
 ![Reasons for unhealthy application](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/appllication_unhealthy.png)
