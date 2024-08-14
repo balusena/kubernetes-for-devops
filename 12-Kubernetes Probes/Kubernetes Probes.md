@@ -13,3 +13,6 @@ Any application can be in an unhealthy state due to various reasons like:
 - 5.etc
 
 ![Reasons for unhealthy application](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/appllication_unhealthy.png)
+
+In all these situations the pod will look like its running from the outside but internal functionality is
+broken because of these bugs
