@@ -326,7 +326,7 @@ Kubernetes provides two special types of volumes for this purpose:
 ubuntu@balasenapathi:~$ kubectl api-resources | grep configmap
 configmaps                cm           v1            true         ConfigMap
 ```
-#Creating a ConfigMap in local-cluster:
+### 2.Creating a ConfigMap in local-cluster:
 ```
 ubuntu@balasenapathi:~$ nano mongo-configmap.yaml
 apiVersion: v1
@@ -358,8 +358,10 @@ ConfigMap that specifies the dbpath and the replica set name for MongoDB. Since 
 and we want to preserve the new lines, we use the pipe symbol | to denote a literal block, like this:
 ```
 mongodb.conf: |
-  dbpath=/var/lib/mongodb
-  replSet=my-replicaset
+    storage:
+      dbPath: /data/configdb
+    replication:
+        replSetName: "rs0" 
 ```
 Important Notes:
 
@@ -370,6 +372,60 @@ volume or using a separate database or file service.
 **2.Immutable ConfigMaps:** For security reasons, if you don't want anyone to update a ConfigMap, you can
 use the immutable: true attribute. When set to true, the ConfigMap cannot be updated; it can only be 
 deleted or recreated. The default value is false, which means the ConfigMap can be edited.
+
+### 3.Applying the ConfigMap in local-cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f mongo-configmap.yaml
+configmap/mongodb-config created
+```
+### 4.Verify whether the ConfigMap is created in local-cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get configmap
+NAME               DATA   AGE
+kube-root-ca.crt   1      7h20m
+mongodb-config     3      2m3s
+
+ubuntu@balasenapathi:~$ kubectl get cm
+NAME               DATA   AGE
+kube-root-ca.crt   1      7h20m
+mongodb-config     3      112s
+```
+Note: cm is the short form of ConfigMap,as we can see we have ConfigMap with name "mongodb-config" with 3 keys,
+
+Now that we have a ConfigMap, let's see how to use it in our StatefulSet. We can use this config data as 
+environment variables. Previously, we hardcoded the "username" and "password". Instead of hardcoding, let's
+retrieve the data from the ConfigMap we created. Instead of using value, we should use valueFrom and
+specify configMapKeyRef. The key we are referencing from the ConfigMap is "username", and the ConfigMap 
+name is "mongodb-config". This is the ConfigMap we created, and the key refers to the "username: admin" 
+we defined in the ConfigMap file. We'll do the same for the password.
+
+Now, this container will use the configuration data from the ConfigMap. If we look at the ConfigMap, we 
+also defined a custom MongoDB configuration file. How can we use this configuration file in the StatefulSet?
+To use a custom configuration file, we should pass that file's path when starting MongoDB. Let's try to
+provide the configuration file as an argument in the command section as --config=/etc/mongo/mongodb.conf.
+
+But where is this file located, and how does the StatefulSet pull this file from the ConfigMap? For MongoDB
+to load this file, it must exist in the container. As a first step, we should create this file in the 
+container using volumes. Note that ConfigMaps and Secrets are special types of volumes. Let's mount the 
+special type of ConfigMap volume onto the container. First, we should declare the volumes. This volume 
+should be at the container level, specified in the volumes: section. Let's give the volume a name, such as
+name: mongodb-config, and the type of volume is configMap:. The name of the ConfigMap is name: mongodb-config.
+
+Since we have three keys in the ConfigMap file, we should specify which key should be used as a file. We 
+need mongodb.conf, and we can specify that with items:, which is an array. (Please note that if you don't
+declare the items array, all the keys from the ConfigMap will be used as files—in our case, username, 
+password, and mongodb.conf.) The key is key: mongodb.conf from the ConfigMap, and this is the name 
+path: mongodb.conf with which the file is created.
+
+Now that we have defined the volume, we should mount it into the container. Go to the volumeMounts: section
+and mount this with the name name: mongodb-config, and the mountPath is mountPath: /etc/mongo. Since we are
+already specifying the replica set name rs0 in the configuration file, we can remove this from the 
+StatefulSet command: section. Additionally, we can remove the dbPath from the args: section, i.e., 
+args: ["--dbpath", "/data/db"].
+
+
+
+
 
 
 
