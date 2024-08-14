@@ -321,6 +321,55 @@ Kubernetes provides two special types of volumes for this purpose:
 
 ![Configuration Files](https://github.com/balusena/kubernetes-for-devops/blob/main/11-Kubernetes%20ConfigMaps%20and%20Secrets/configuration_files.png)
 
+### 1.To get the api-resources of ConfigMap:
+```
+ubuntu@balasenapathi:~$ kubectl api-resources | grep configmap
+configmaps                cm           v1            true         ConfigMap
+```
+#Creating a ConfigMap in local-cluster:
+```
+ubuntu@balasenapathi:~$ nano mongo-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: mongodb-config
+immutable: false
+data:
+  username: admin
+  password: password
+  mongodb.conf: |
+    storage:
+      dbPath: /data/configdb
+    replication:
+        replSetName: "rs0" 
+```
+Unlike most configuration files that have a spec: section, a ConfigMap in Kubernetes has a data: section. 
+Instead of spec, we use the data field in a ConfigMap.
+
+The data: field accepts key-value pairs. For example, to configure MongoDB with a username of "admin" and 
+a password of "password", we would use the following key-value pairs:
+```
+data:
+  username: "admin"
+  password: "password"
+```
+In addition to string values, ConfigMaps can also define configuration files. Here, we'll create a simple
+ConfigMap that specifies the dbpath and the replica set name for MongoDB. Since this is a multiline string
+and we want to preserve the new lines, we use the pipe symbol | to denote a literal block, like this:
+```
+mongodb.conf: |
+  dbpath=/var/lib/mongodb
+  replSet=my-replicaset
+```
+Important Notes:
+
+**1.Size Limitation:** ConfigMaps are not designed to hold large chunks of data. The data stored in a 
+ConfigMap cannot exceed 1MB. If you need to store settings larger than this limit, consider mounting a 
+volume or using a separate database or file service.
+
+**2.Immutable ConfigMaps:** For security reasons, if you don't want anyone to update a ConfigMap, you can
+use the immutable: true attribute. When set to true, the ConfigMap cannot be updated; it can only be 
+deleted or recreated. The default value is false, which means the ConfigMap can be edited.
 
 
 
