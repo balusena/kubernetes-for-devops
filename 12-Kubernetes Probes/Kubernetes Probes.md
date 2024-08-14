@@ -11,3 +11,5 @@ Any application can be in an unhealthy state due to various reasons like:
 3.DataBase connection failure
 4.Out Of Memory issues
 5.etc
+
+![Reasons for unhealthy application](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/appllication_unhealthy.png)
