@@ -423,7 +423,555 @@ already specifying the replica set name rs0 in the configuration file, we can re
 StatefulSet command: section. Additionally, we can remove the dbPath from the args: section, i.e., 
 args: ["--dbpath", "/data/db"].
 
+### 5.create the statefulset.yaml
+```
+ubuntu@balasenapathi:~$ nano statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+spec:
+  selector:
+    matchLabels:
+      app: mongo
+  serviceName: "mongo"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:4.0.8
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: username
+                  name: mongodb-config
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: mongodb-config
+                  key: password
+          command:
+            - mongod
+            - "--bind_ip_all"
+            - "--replSet"
+            - "--config=/etc/mongo/mongodb.conf"
+          volumeMounts:
+            - name: mongo-volume
+              mountPath: /data/configdb
+            - name: mongodb-config
+              mountPath: /etc/mongo
+      volumes:
+        - name: mongodb-config
+          configMap:
+            name: mongodb-config
+            items:
+              - key: mongodb.conf
+                path: mongodb.conf
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-volume
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: demo-storage
+        resources:
+          requests:
+            storage: 1Gi
+```
+### 6.Now apply the statefulset.yaml changes in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f statefulset.yaml
+statefulset.apps/mongo configured
+```
+### 7.Now lets try to list the pods that are running in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get pods -w
+NAME      READY   STATUS              RESTARTS   AGE
+mongo-0   1/1     Running             0          6s
+mongo-1   0/1     ContainerCreating   0          1s
+mongo-1   1/1     Running             0          2s
+mongo-2   0/1     Pending             0          0s
+mongo-2   0/1     Pending             0          0s
+mongo-2   0/1     ContainerCreating   0          0s
+mongo-2   1/1     Running             0          2s
 
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME      READY   STATUS    RESTARTS   AGE
+mongo-0   1/1     Running   0          3m31s
+mongo-1   1/1     Running   0          3m26s
+mongo-2   1/1     Running   0          3m24s
+```
+**Note:** The configmap and the pod that uses this configmap must be in the same namespace.
+
+#Now let us get into the pod and see if the environmental variables from our configmap and also the configuration from the configmap are
+mounted correctly or not.
+```
+ubuntu@balasenapathi:~$ kubectl exec -it mongo-0 -- bash
+root@mongo-0:/#
+```
+### 8.Now list down the environmental variables:
+```
+ubuntu@balasenapathi:~$ kubectl exec -it mongo-0 -- bash
+root@mongo-0:/# env
+HOSTNAME=mongo-0
+MONGO_VERSION=4.0.8
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT=tcp://10.96.0.1:443
+TERM=xterm
+KUBERNETES_SERVICE_PORT=443
+KUBERNETES_SERVICE_HOST=10.96.0.1
+MONGO_PACKAGE=mongodb-org
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.
+7z=01;31:*.rz=01;31:*.cab=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+MONGO_REPO=repo.mongodb.org
+MONGO_INITDB_ROOT_PASSWORD=password
+JSYAML_VERSION=3.13.0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+GPG_KEYS=9DA31620334BD75D9DCB49F368818C72E52529D4
+PWD=/
+SHLVL=1
+HOME=/root
+MONGO_MAJOR=4.0
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_SERVICE_PORT_HTTPS=443
+MONGO_INITDB_ROOT_USERNAME=admin
+GOSU_VERSION=1.11
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+_=/usr/bin/env
+```
+**Note:**
+We can see the username and password enviromental variables "MONGO_INITDB_ROOT_USERNAME=admin","MONGO_INITDB_ROOT_PASSWORD=password"
+
+### 9.Now lets see the configuation file is mounted or not
+```
+ubuntu@balasenapathi:~$ kubectl exec -it mongo-0 -- bash
+root@mongo-0:/# cat /etc/mongo/mongodb.conf
+storage:
+dbPath: /data/configdb
+replication:
+replSetName: "rs0"
+```
+**Note:** As we can see, this is the configuration file that we provided in the ConfigMap and mounted into
+the container. This way, we can use the ConfigMap data in a pod. Please note that a ConfigMap doesn't 
+differentiate between single-line property values and multi-line file-like values. What matters is how 
+pods and other objects consume those values. We consume these values as environment variables, e.g.,
+```
+data:
+  username: "admin"
+  password: "password"
+```
+- And we consume these values as a file.
+```
+yaml
+Copy code
+storage:
+  dbPath: /data/db
+replication:
+  replSetName: "rs0"
+```
+In Kubernetes, ConfigMaps are used to manage configuration data that can be consumed by pods. ConfigMaps 
+can store data in two formats: as individual key-value pairs (single-line property values) or as file-like
+data (multi-line values).
+
+Now that we have decoupled the configuration from the pod manifest, this ConfigMap can be used by any 
+number of pods.If you want to change the data,all you need to do is update the ConfigMap,and it will be 
+reflected in all the pods that use this ConfigMap.
+
+### 10.Now lets update the configmap and see by Creating a ConfigMap in local-cluster.
+```
+ubuntu@balasenapathi:~$ nano mongo-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: mongodb-config
+immutable: false
+data:
+  username: admin1
+  password: password
+  mongodb.conf: |
+    storage:
+      dbPath: /data/db
+    replication:
+        replSetName: "rs0" 
+```
+### 11.Now apply the changes in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f mongo-configmap.yaml
+configmap/mongodb-config configured
+```
+### 12.Now get into the pod and see if the values are updated automatically.
+
+Let's list the file contents of mongodb.cong.
+```
+ubuntu@balasenapathi:~$ kubectl exec -it mongo-0 -- bash
+root@mongo-0:/# cat /etc/mongo/mongodb.conf
+storage:
+  dbPath: /data/db
+replication:
+    replSetName: "rs0"
+```
+**Note:** They have updated, we can see "dbPath: /data/db" from "dbPath: /data/configdb"
+
+### 13.Now lets check the environmental variables :
+```
+ubuntu@balasenapathi:~$ kubectl exec -it mongo-0 -- bash
+root@mongo-0:/# cat /etc/mongo/mongodb.conf
+storage:
+dbPath: /data/db
+replication:
+replSetName: "rs0"
+root@mongo-0:/# env
+HOSTNAME=mongo-0
+MONGO_VERSION=4.0.8
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT=tcp://10.96.0.1:443
+TERM=xterm
+KUBERNETES_SERVICE_PORT=443
+KUBERNETES_SERVICE_HOST=10.96.0.1
+MONGO_PACKAGE=mongodb-org
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.
+7z=01;31:*.rz=01;31:*.cab=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+MONGO_REPO=repo.mongodb.org
+MONGO_INITDB_ROOT_PASSWORD=password
+JSYAML_VERSION=3.13.0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+GPG_KEYS=9DA31620334BD75D9DCB49F368818C72E52529D4
+PWD=/
+SHLVL=1
+HOME=/root
+MONGO_MAJOR=4.0
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_SERVICE_PORT_HTTPS=443
+MONGO_INITDB_ROOT_USERNAME=admin
+GOSU_VERSION=1.11
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+_=/usr/bin/env
+```
+**Note:** The username has not been updated from admin to admin1; it is still MONGO_INITDB_ROOT_USERNAME=admin.
+
+This is because ConfigMaps consumed as volumes are updated automatically, but ConfigMaps consumed as 
+environment variables are not updated automatically and require a pod restart.
+
+### 14.Now lets restart a pod and see whether the environmental variables are updated after pod restart or not:
+
+- Now delete the mongo-0 pod.
+```
+ubuntu@balasenapathi:~$ kubectl delete pod mongo-0
+pod "mongo-0" deleted
+```
+- The pods gets automatically created bcz we are using statefulset.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME      READY   STATUS    RESTARTS   AGE
+mongo-0   1/1     Running   0          25s
+mongo-1   1/1     Running   0          70m
+mongo-2   1/1     Running   0          70m
+```
+### 15.Now list into the same mongo-0 pod and list down the environmental variables:
+```
+ubuntu@balasenapathi:~$ kubectl exec -it mongo-0 -- bash
+root@mongo-0:/# env
+HOSTNAME=mongo-0
+MONGO_VERSION=4.0.8
+KUBERNETES_PORT=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP_PORT=443
+TERM=xterm
+KUBERNETES_SERVICE_PORT=443
+KUBERNETES_SERVICE_HOST=10.96.0.1
+MONGO_PACKAGE=mongodb-org
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.
+7z=01;31:*.rz=01;31:*.cab=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+MONGO_REPO=repo.mongodb.org
+MONGO_INITDB_ROOT_PASSWORD=password
+JSYAML_VERSION=3.13.0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+GPG_KEYS=9DA31620334BD75D9DCB49F368818C72E52529D4
+PWD=/
+SHLVL=1
+HOME=/root
+MONGO_MAJOR=4.0
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_SERVICE_PORT_HTTPS=443
+MONGO_INITDB_ROOT_USERNAME=admin1
+GOSU_VERSION=1.11
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+_=/usr/bin/env
+```
+**Note:** Its updated and the username has changed from admin to admin1 "MONGO_INITDB_ROOT_USERNAME=admin1" after mongo-0 pod restarted.
+
+### 16.To see if the data is stored in the new path i.e /data/db in the container:
+```
+ubuntu@balasenapathi:~$ kubectl exec -it mongo-0 -- bash
+root@mongo-0:/# ls /data/db
+WiredTiger                            collection-15-8387574925976539953.wt  diagnostic.data                  
+index-23-8387574925976539953.wt
+WiredTiger.lock                       collection-17-8387574925976539953.wt  index-1-8387574925976539953.wt   
+index-3-8387574925976539953.wt
+WiredTiger.turtle                     collection-19-8387574925976539953.wt  index-10-8387574925976539953.wt  
+index-5-8387574925976539953.wt
+WiredTiger.wt                         collection-2-8387574925976539953.wt   index-12-8387574925976539953.wt  
+index-7-8387574925976539953.wt
+WiredTigerLAS.wt                      collection-22-8387574925976539953.wt  index-14-8387574925976539953.wt  journal
+_mdb_catalog.wt                       collection-4-8387574925976539953.wt   index-16-8387574925976539953.wt  mongod.lock
+collection-0-8387574925976539953.wt   collection-6-8387574925976539953.wt   index-18-8387574925976539953.wt  sizeStorer.wt
+collection-11-8387574925976539953.wt  collection-8-8387574925976539953.wt   index-20-8387574925976539953.wt  storage.bson
+collection-13-8387574925976539953.wt  collection-9-8387574925976539953.wt   index-21-8387574925976539953.wt
+```
+**Note:** We can see that the data is loaded in the newly updated location i.e, "/data/db"
+
+As we know, the password is confidential data, and there might be other sensitive information like API 
+keys and certificates that we don’t want everyone to see. To configure such confidential data, Kubernetes 
+provides another type of volume called Secrets. ConfigMaps and Secrets are almost the same in terms of how
+we create and use them; the key difference is that Secrets are secured, and the data in Secrets can be 
+encrypted in the etcd database.
+
+### 17.Creating a secret file in local-cluster.
+```
+ubuntu@balasenapathi:~$ nano mongo-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata: 
+  name: mongodb-secret
+immutable: false
+type: Opaque
+data:
+  password: cGFzc3dvcmQ=
+```
+**Note:** Please note that the data in the secret must be given as base64 encoded data.
+
+### 19.To encode a text from a command line
+```
+ubuntu@balasenapathi:~$ echo -n password | base64
+cGFzc3dvcmQ=
+```
+**Note:** we can give any number of keys we have given in configmap,kubernetes provides different types of secrets.
+
+You can refer this here ===> https://kubernetes.io/docs/concepts/configuration/secret/
+
+---> For arbitary user defined data we should use Opaque secret type
+---> For storing basic authentication credentials we should use  kubernetes.io/basic-auth
+
+### 20.To refer to this secret data from the pod we need to do some changes in statefulset.
+```
+ubuntu@balasenapathi:~$ nano statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+spec:
+  selector:
+    matchLabels:
+      app: mongo
+  serviceName: "mongo"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:4.0.8
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: username
+                  name: mongodb-config
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mongodb-secret
+          command:
+            - mongod
+            - "--bind_ip_all"
+            - "--replSet"
+            - "--config=/etc/mongo/mongodb.conf"
+          volumeMounts:
+            - name: mongo-volume
+              mountPath: /data/db
+            - name: mongodb-config
+              mountPath: /etc/mongo
+      volumes:
+        - name: mongodb-config
+          configMap:
+            name: mongodb-config
+            items:
+              - key: mongodb.conf
+                path: mongodb.conf
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-volume
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: demo-storage
+        resources:
+          requests:
+            storage: 1Gi
+```
+**Note:** In the env: section, make the following changes:
+
+- Change valueFrom: to valueFrom: secretKeyRef:
+- Change the key: from "password" to "password"
+- Change the name: from "mongodb-config" to "mongodb-secret"
+
+Now, this password will be read from the Secret.
+
+### 21.Now lets delete the password from the mongo-congigmap.yaml
+```
+ubuntu@balasenapathi:~$ nano mongo-configgmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: mongodb-config
+immutable: false
+data:
+  username: admin1
+  mongodb.conf: |
+    storage:
+      dbPath: /data/db
+    replication:
+        replSetName: "rs0"
+```
+### 22.Now apply the changes in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f mongo-configmap.yaml
+configmap/mongodb-config configured
+```
+```
+ubuntu@balasenapathi:~$ kubectl apply -f mongo-secret.yaml
+secret/mongodb-secret created
+```
+
+### 23.Now delete the statefulset.yaml and reapply the changes in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl delete -f statefulset.yaml
+statefulset.apps "mongo" deleted
+```
+```
+ubuntu@balasenapathi:~$ kubectl apply -f statefulset.yaml
+statefulset.apps/mongo created
+```
+### 24.Now get inside the mongo-0 pod in the local-cluster.
+**Note:**Ctrl+r is used for searching
+```
+ubuntu@balasenapathi:~$ kubectl exec -it mongo-0 -- bin/sh
+# env
+KUBERNETES_PORT=tcp://10.96.0.1:443
+KUBERNETES_SERVICE_PORT=443
+HOSTNAME=mongo-0
+HOME=/root
+GPG_KEYS=9DA31620334BD75D9DCB49F368818C72E52529D4
+TERM=xterm
+MONGO_INITDB_ROOT_PASSWORD=password
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+MONGO_PACKAGE=mongodb-org
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+MONGO_MAJOR=4.0
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+JSYAML_VERSION=3.13.0
+GOSU_VERSION=1.11
+MONGO_REPO=repo.mongodb.org
+KUBERNETES_SERVICE_HOST=10.96.0.1
+PWD=/
+MONGO_INITDB_ROOT_USERNAME=admin1
+MONGO_VERSION=4.0.8
+```
+**Note:** As we can see that the data is getting from the secret "MONGO_INITDB_ROOT_PASSWORD=password".
+
+### 25.Just like we updated the configmap we can update the secret too this can be done by.
+
+- To encode a text from a command line and encoding password with password123
+```
+ubuntu@balasenapathi:~$ echo -n password123 | base64
+cGFzc3dvcmQxMjM=
+```
+### 26.Changing a secret file in local-cluster.
+```
+ubuntu@balasenapathi:~$ nano mongo-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata: 
+  name: mongodb-secret
+immutable: false
+type: Opaque
+data:
+  password: cGFzc3dvcmQxMjM=
+```
+### 27.Now apply the changes in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f mongo-secret.yaml
+secret/mongodb-secret configured
+```
+### 28.Now delte the mongo-0 pod:
+```
+ubuntu@balasenapathi:~$ kubectl delete pod mongo-0
+pod "mongo-0" deleted
+```
+### 29.The pods gets automatically created bcz we are using statefulset.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME      READY   STATUS    RESTARTS   AGE
+mongo-0   1/1     Running   0          25s
+mongo-1   1/1     Running   0          70m
+mongo-2   1/1     Running   0          70m
+```
+### 30Now get into the mongo-0 pod and see the changes are reflected:
+```
+ubuntu@balasenapathi:~$ kubectl exec -it mongo-0 -- /bin/sh
+# env
+KUBERNETES_SERVICE_PORT=443
+KUBERNETES_PORT=tcp://10.96.0.1:443
+HOSTNAME=mongo-0
+HOME=/root
+GPG_KEYS=9DA31620334BD75D9DCB49F368818C72E52529D4
+TERM=xterm
+MONGO_INITDB_ROOT_PASSWORD=password123
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+MONGO_PACKAGE=mongodb-org
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+MONGO_MAJOR=4.0
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+JSYAML_VERSION=3.13.0
+GOSU_VERSION=1.11
+MONGO_REPO=repo.mongodb.org
+KUBERNETES_SERVICE_HOST=10.96.0.1
+PWD=/
+MONGO_INITDB_ROOT_USERNAME=admin1
+MONGO_VERSION=4.0.8
+```
+**Note:** We can see that the password has been changed from password to password123. Please note that we
+are encoding the data, not encrypting it. This means it can be easily decoded with echo -n. For example,
+this is base64 encoded data: cGFzc3dvcmQxMjM=. To decode it, you would use the command:
+```
+ubuntu@balasenapathi:~$ echo -n cGFzc3dvcmQxMjM= | base64 --decode
+password123
+```
+**Note:** password123 is the decoded data from the base64 encoded string cGFzc3dvcmQxMjM=.
+
+So we should make sure to restrict access to Secrets, as they can be easily read by getting into the pods,
+just like we read environment variables. We will discuss more about restricting access to Kubernetes 
+resources later.
+
+**Choosing between ConfigMap and Secret is very simple:**
+
+- 1.If you want to store non-sensitive, plain configuration data, use a ConfigMap.
+- 2.If you want to store any sensitive data, use a Secret.
+- 3.If a configuration includes both sensitive and non-sensitive data, you should use Secrets.
 
 
 
