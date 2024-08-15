@@ -122,6 +122,16 @@ spec:
 **Note:** We define probes at the container level, not at the pod level. If we understand how to define the liveness probe,
 other probes will be similar. This will instruct Kubernetes to check the liveness of our container.
 
+## Probing Mechanisms.
+Kubernetes provides three probing mechanisms to assess the health and readiness of containers within a pod:
+
+![Probing Mechanisms](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/probing_mechanisms.png)
+
+- 1.EXEC
+- 2.HTTP
+- 3.TCP
+
+
 
 ### 2.For our mongo deployment lets make a simple change in statefulset.yaml file and check if our conatiner is healthy or not.
 ```
