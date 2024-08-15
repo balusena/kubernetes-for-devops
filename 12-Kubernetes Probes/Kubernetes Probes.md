@@ -36,9 +36,14 @@ a pod.These probes help Kubernetes make decisions about when to restart a contai
 to it,or when to take it out of rotation for maintenance or updates. 
 
 **There are three types of probes in Kubernetes:**
+
 ![Probe_Types](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/probe_types.png)
 - 1.Liveness Probe
 - 2.Readiness Probe
 - 3.Startup Probe
 
+## 1.Liveness Probe
+**Purpose:** Determines if a container is still running. If the liveness probe fails, Kubernetes will restart the container.
+**Use Case:** Ensures that a container that has encountered a deadlock or is stuck in an irrecoverable state is automatically restarted.
+![Liveness Probe](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/liveness_probe.png)
 
