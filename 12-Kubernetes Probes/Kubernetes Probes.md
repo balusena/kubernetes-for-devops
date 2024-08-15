@@ -43,7 +43,8 @@ to it,or when to take it out of rotation for maintenance or updates.
 - 3.Startup Probe
 
 ## 1.Liveness Probe
-**Purpose:** Determines if a container is still running. If the liveness probe fails, Kubernetes will restart the container.
-**Use Case:** Ensures that a container that has encountered a deadlock or is stuck in an irrecoverable state is automatically restarted.
+- **Purpose:** Determines if a container is still running. If the liveness probe fails, Kubernetes will restart the container.
+
+- **Use Case:** Ensures that a container that has encountered a deadlock or is stuck in an irrecoverable state is automatically restarted.
 ![Liveness Probe](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/liveness_probe.png)
 
