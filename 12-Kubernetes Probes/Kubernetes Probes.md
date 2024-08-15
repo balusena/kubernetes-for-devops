@@ -131,7 +131,32 @@ Kubernetes provides three probing mechanisms to assess the health and readiness 
 - 2.HTTP
 - 3.TCP
 
+### 1.Exec
+In Kubernetes, when using an Exec Probe, the health of a container is determined by the exit code of the command executed inside the container:
 
+- Exit Code 0: The container is considered healthy.
+- Non-Zero Exit Code (e.g., 1): The container is considered unhealthy.
+
+### 2.HTTP
+In Kubernetes, the HTTP GET Probe mechanism works as follows:
+
+- HTTP Response Code in the 200-399 Range: Kubernetes considers the container to be healthy.
+- HTTP Response Code Outside the 200-399 Range: Kubernetes considers the container to be unhealthy.
+
+The probe makes an HTTP GET request to the specified URL within the container, and the container must respond with a 
+status code in the 200-399 range to be deemed healthy. Any other status code indicates an unhealthy state.
+
+## 3.TP
+In Kubernetes, the TCP Socket Probe mechanism works as follows:
+
+- Success: Kubernetes considers the container healthy if it can establish a TCP connection to the specified port on the container.
+- Failure: Kubernetes considers the container unhealthy if it cannot establish the TCP connection to the specified port.
+
+This probe simply attempts to connect to a given port on the container, and if the connection is successful, the container 
+is considered healthy. If the connection cannot be established, the container is considered unhealthy.
+
+You can also make gRPC health check requests to a port inside the container, and use the results to determine whether 
+the probe succeeded.
 
 ### 2.For our mongo deployment lets make a simple change in statefulset.yaml file and check if our conatiner is healthy or not.
 ```
