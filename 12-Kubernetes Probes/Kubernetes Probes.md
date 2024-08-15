@@ -36,9 +36,9 @@ a pod.These probes help Kubernetes make decisions about when to restart a contai
 to it,or when to take it out of rotation for maintenance or updates. 
 
 **There are three types of probes in Kubernetes:**
+![Probe_Types](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/probe_types.png)
 - 1.Liveness Probe
 - 2.Readiness Probe
 - 3.Startup Probe
 
-![Reasons for unhealthy application](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/probe_types.png)
 
