@@ -41,3 +41,4 @@ to it,or when to take it out of rotation for maintenance or updates.
 - 3.Startup Probe
 
 ![Reasons for unhealthy application](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/probe_types.png)
+
