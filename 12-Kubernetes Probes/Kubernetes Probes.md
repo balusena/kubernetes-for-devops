@@ -127,7 +127,7 @@ Kubernetes provides three probing mechanisms to assess the health and readiness 
 
 ![Probing Mechanisms](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/probing_mechanisms.png)
 
-- 1.EXEC
+- 1.Exec
 - 2.HTTP
 - 3.TCP
 
