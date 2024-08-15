@@ -146,7 +146,7 @@ In Kubernetes, the HTTP GET Probe mechanism works as follows:
 The probe makes an HTTP GET request to the specified URL within the container, and the container must respond with a 
 status code in the 200-399 range to be deemed healthy. Any other status code indicates an unhealthy state.
 
-## 3.TP
+## 3.TCP
 In Kubernetes, the TCP Socket Probe mechanism works as follows:
 
 - Success: Kubernetes considers the container healthy if it can establish a TCP connection to the specified port on the container.
@@ -402,4 +402,5 @@ So, as a summary, the liveness probe executes initially after a 1-second delay. 
 as a failure, and the container is restarted. This process will continue every 10 seconds.
 
 ## 2.Readiness Probe:
+
 
