@@ -254,6 +254,53 @@ restarts or other actions.
 
 ![Probing Customization](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/probing_customization.png)
 
+**These four parameters are:**
+
+- 1. initialDelaySeconds
+- 2. periodSeconds
+- 3. timeoutSeconds
+- 4. failureThreshold
+
+### 1.initialDelaySeconds:
+With initialDelaySeconds, we specify how long Kubernetes should wait after the container is started before executing the
+probe. Sometimes, our service may start a little late, and if we are aware of this, we can delay the probe execution by 
+setting this value. The default value is 0 seconds, which means the probe is executed immediately.
+
+### 2.periodSeconds:
+With periodSeconds, we can define how frequently the probe will be executed after the initial delay. This is very helpful
+if we want to check our pod periodically. The default value is 10 seconds, meaning the probe is executed every 10 seconds,
+and if it fails, the container is restarted.
+
+### 3.timeoutSeconds:
+With timeoutSeconds, each probe will time out and be marked as a failure after this many seconds. The default value is 
+1 second.
+
+### 4.failureThreshold
+With failureThreshold, we can instruct Kubernetes to retry the probe this many times after the first failure. The container
+will only be restarted if the probe fails a number of times equal to the failure threshold. The default value is 3, 
+meaning the probe is considered failed if it fails 3 times.
+
+### 5.successThreshold:
+With successThreshold, Kubernetes determines how many successful probes are needed to consider the container healthy 
+after a failure. The default value is 1, meaning one successful probe is sufficient.
+
+In summary, the liveness probe runs commands, fires HTTP calls, or checks ports defined by us to ensure the container is
+running as expected. If Kubernetes detects that the container is not functioning correctly, the kubelet restarts the container.
+
+**Note:** Give the below values in the statefulset.yaml to check the container health using livenessprobe.
+```
+livenessProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db1.adminCommand('ping')"
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 2
+```
 **Note:** We are intentionally using - "db1.adminCommand('ping')" in the exec section to test the container.
 
 ### 3.Now apply the changes in the local-cluster:
