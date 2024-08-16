@@ -823,3 +823,34 @@ Events:            <none>
 
 - **Use Case:** Ideal for ensuring that the application is fully started before allowing liveness and readiness probes to take over.
 ![Startup Probe](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/startup_probe.png)
+
+The startup probe provides a way to delay the execution of the liveness and readiness probes until a container is ready 
+to handle them. This means that the liveness and readiness probes are executed only if the startup probe succeeds. If a
+container fails its startup probe, the container is killed, and the pod's restart policy is followed.
+
+**We can set the restart policy in the pod's spec, which defines when the pod should be restarted:**
+
+- **Always:**
+- This is the default value.
+- The pod will always be restarted, regardless of how it exits.
+- Use this option to ensure the pod is always up and running, no matter the exit status.
+
+- **OnFailure:**
+- The pod will be restarted only if it exits with a non-zero status code.
+- This is useful when you want the pod to restart only on errors.
+
+- **Never:**
+
+- The pod will not be restarted, no matter how it exits.
+-This option is used when you do not want the pod to restart under any circumstances.
+
+**Note:** This restart policy is applied to every probe. To ensure the pod restarts when needed, set the restart policy 
+to the default value, "Always". Now, you can configure the startup probe in the same way as the liveness and readiness probes.
+
+A startup probe should be used when the application in our container may take a significant amount of time to reach its 
+normal operating state. If we don't add this probe, the liveness probe may fail, causing the pod to enter a restart loop.
+
+**Note:** For simplicity, we are using the same commands for all the probes. However, you can try using different commands
+for HTTP calls based on your application's health checks.
+
+          
