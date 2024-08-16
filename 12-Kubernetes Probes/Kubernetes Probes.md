@@ -303,7 +303,7 @@ livenessProbe:
 ```
 **Note:** We are intentionally using - "db1.adminCommand('ping')" in the exec section to test the container.
 
-### 3.Now apply the changes in the local-cluster:
+### 3.Now apply the changes in the local-cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl apply -f statefulset.yaml
 statefulset.apps/mongo configured
@@ -456,7 +456,7 @@ set it to db1 instead of db to cause the failure. The probe failed twice because
 as configured with "periodSeconds: 10". The pod will continue to restart and eventually enter a CrashLoopBackOff state 
 until we fix db1 to db.
 
-### 6.Correct the db1 to db in statefulset.yaml and apply the changes in local-cluster:
+### 6.Correct the db1 to db in statefulset.yaml and apply the changes in local-cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl apply -f statefulset.yaml
 statefulset.apps/mongo configured
@@ -489,4 +489,332 @@ whereas when the readiness probe fails, the pod is not restarted. Instead, it is
 service, so it will not receive any traffic. Once the readiness probe succeeds, the pod is added back to the service and
 begins receiving traffic as usual.
 
+**Note:** Similar to the liveness probe, we can add a readiness probe. In the statefulset.yaml file, we are running a 
+simple command in the spec section under the exec block to check if our container is healthy.
+
+```
+readinessProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db1.adminCommand('ping')"
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 2  
+```
+### 1.Use the statefulset to test the livenessprobe in local-cluster.
+```
+ubuntu@balasenapathi:~$ nano statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+spec:
+  selector:
+    matchLabels:
+      app: mongo
+  serviceName: "mongo"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:4.0.8
+          livenessProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 2
+          readinessProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db1.adminCommand('ping')"
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 2  
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: username
+                  name: mongodb-config
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mongodb-secret
+          command:
+            - mongod
+            - "--bind_ip_all"
+            - "--replSet"
+            - "--config=/etc/mongo/mongodb.conf"
+          volumeMounts:
+            - name: mongo-volume
+              mountPath: /data/db
+            - name: mongodb-config
+              mountPath: /etc/mongo
+      volumes:
+        - name: mongodb-config
+          configMap:
+            name: mongodb-config
+            items:
+              - key: mongodb.conf
+                path: mongodb.conf
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-volume
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: demo-storage
+        resources:
+          requests:
+            storage: 1Gi
+```
+### 2.Now apply the changes in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f statefulset.yaml
+statefulset.apps/mongo configured
+```
+### 3.To get the list of pods with a watch flag.
+```
+ubuntu@balasenapathi:~$ kubectl get pods -w
+NAME      READY   STATUS    RESTARTS   AGE
+mongo-0   1/1     Running   0          67m
+mongo-1   1/1     Running   0          67m
+mongo-2   0/1     Running   0          4s
+```
+**Note:** We can clearly observe mongo-2 0/1 this is because readinessprobe is failed this container is not reday to accept the traffic.
+
+### 4.We can check this by decribing the mongo-2 pod.
+```
+ubuntu@balasenapathi:~$ kubectl describe pod mongo-2
+Name:             mongo-2
+Namespace:        default
+Priority:         0
+Service Account:  default
+Node:             local-cluster/192.168.49.2
+Start Time:       Tue, 26 Sep 2023 22:45:21 +0530
+Labels:           app=mongo
+                  controller-revision-hash=mongo-74f9484d6d
+                  statefulset.kubernetes.io/pod-name=mongo-2
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.31
+IPs:
+  IP:           10.244.0.31
+Controlled By:  StatefulSet/mongo
+Containers:
+  mongo:
+    Container ID:  docker://31dba2b35ef73fb42d6783b6b12ad04c348fb10f547bf8b1bc41690ed449ca6c
+    Image:         mongo:4.0.8
+    Image ID:      docker-pullable://mongo@sha256:1dd59670959c3f774c5056e5179145ee9cc06f9003663e14fa44326426a4e6f7
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      mongod
+      --bind_ip_all
+      --replSet
+      --config=/etc/mongo/mongodb.conf
+    State:          Running
+      Started:      Tue, 26 Sep 2023 22:45:23 +0530
+    Ready:          False
+    Restart Count:  0
+    Liveness:       exec [mongo --eval db.adminCommand('ping')] delay=1s timeout=5s period=10s #success=1 #failure=2
+    Readiness:      exec [mongo --eval db1.adminCommand('ping')] delay=1s timeout=5s period=10s #success=1 #failure=2
+    Environment:
+      MONGO_INITDB_ROOT_USERNAME:  <set to the key 'username' of config map 'mongodb-config'>  Optional: false
+      MONGO_INITDB_ROOT_PASSWORD:  <set to the key 'password' in secret 'mongodb-secret'>      Optional: false
+    Mounts:
+      /data/db from mongo-volume (rw)
+      /etc/mongo from mongodb-config (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-w26r7 (ro)
+Conditions:
+  Type              Status
+  Initialized       True 
+  Ready             False 
+  ContainersReady   False 
+  PodScheduled      True 
+Volumes:
+  mongo-volume:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  mongo-volume-mongo-2
+    ReadOnly:   false
+  mongodb-config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      mongodb-config
+    Optional:  false
+  kube-api-access-w26r7:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age   From               Message
+  ----     ------     ----  ----               -------
+  Normal   Scheduled  3m5s  default-scheduler  Successfully assigned default/mongo-2 to local-cluster
+  Normal   Pulled     3m4s  kubelet            Container image "mongo:4.0.8" already present on machine
+  Normal   Created    3m4s  kubelet            Created container mongo
+  Normal   Started    3m3s  kubelet            Started container mongo
+  Warning  Unhealthy  3m2s  kubelet            Readiness probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+2023-09-26T17:15:24.796+0000 E QUERY    [js] Error: couldn't connect to server 127.0.0.1:27017, connection attempt failed: 
+SocketException: Error connecting to 127.0.0.1:27017 :: caused by :: Connection refused :
+connect@src/mongo/shell/mongo.js:343:13
+@(connect):2:6
+exception: connect failed
+  Warning  Unhealthy  3m  kubelet  Readiness probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+2023-09-26T17:15:26.157+0000 E QUERY    [js] Error: couldn't connect to server 127.0.0.1:27017, connection attempt failed: 
+SocketException: Error connecting to 127.0.0.1:27017 :: caused by :: Connection refused :
+connect@src/mongo/shell/mongo.js:343:13
+@(connect):2:6
+exception: connect failed
+  Warning  Unhealthy  2m54s  kubelet  Readiness probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("eab6e07b-e5e3-4b3d-8c74-be7962b34312") }
+MongoDB server version: 4.0.8
+2023-09-26T17:15:32.596+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+  Warning  Unhealthy  2m44s  kubelet  Readiness probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("31bca676-f28a-4fe2-a441-eed11886e997") }
+MongoDB server version: 4.0.8
+2023-09-26T17:15:42.301+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+  Warning  Unhealthy  2m34s  kubelet  Readiness probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("26efbe82-d82b-4262-806a-bd9c7fd2af1e") }
+MongoDB server version: 4.0.8
+2023-09-26T17:15:52.555+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+  Warning  Unhealthy  2m24s  kubelet  Readiness probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("b40e7ec5-6607-4c70-97a3-fb1b6c6e5c0e") }
+MongoDB server version: 4.0.8
+2023-09-26T17:16:02.567+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+  Warning  Unhealthy  2m14s  kubelet  Readiness probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("dda7c1ea-0a2b-4373-9bb3-b3b4d8735600") }
+MongoDB server version: 4.0.8
+2023-09-26T17:16:12.439+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+  Warning  Unhealthy  2m4s  kubelet  Readiness probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("d618e4e0-c6c5-4f57-aa1d-2b4281147e93") }
+MongoDB server version: 4.0.8
+2023-09-26T17:16:22.506+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+  Warning  Unhealthy  114s  kubelet  Readiness probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("17f73ecc-4a38-47e2-b36b-228fb29e78de") }
+MongoDB server version: 4.0.8
+2023-09-26T17:16:32.310+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+  Warning  Unhealthy  4s (x13 over 104s)  kubelet  (combined from similar events): Readiness probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("4a4f97f3-1069-4d05-9da0-df20b0b7ad2f") }
+MongoDB server version: 4.0.8
+2023-09-26T17:18:22.315+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+```
+**Note:** As we can see that the Readiness probe failed,this is because db1 is not defined.
+
+### 5.Now let us try to describe the service and see this mongo-2 pod's IP is deleted from the endpoints list or not:
+
+Now list down all the IP's of the pods:
+```
+ubuntu@balasenapathi:~$ kubectl get pods -owide
+NAME      READY   STATUS    RESTARTS   AGE    IP            NODE            NOMINATED NODE   READINESS GATES
+mongo-0   1/1     Running   0          75m    10.244.0.28   local-cluster   <none>           <none>
+mongo-1   1/1     Running   0          75m    10.244.0.29   local-cluster   <none>           <none>
+mongo-2   0/1     Running   0          8m1s   10.244.0.31   local-cluster   <none>           <none>
+```
+### 6.Now try to describe the service mongo:
+```
+ubuntu@balasenapathi:~$ kubectl describe svc mongo
+Name:              mongo
+Namespace:         default
+Labels:            <none>
+Annotations:       <none>
+Selector:          app=mongo
+Type:              ClusterIP
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                None
+IPs:               None
+Port:              mongo  27017/TCP
+TargetPort:        27017/TCP
+Endpoints:         10.244.0.28:27017,10.244.0.29:27017
+Session Affinity:  None
+Events:            <none>
+```
+Note: As we can see in the endpoints section, there are two IPs available, but the third pod's IP is missing. This is 
+because the readiness probe failed, so this pod was removed from the service.
+
+### 6.Now fix this redainessprobe and see that the pod is gain added back into the local-cluster:
+
+**Note:** In statefulset.yaml file remove the "db1.adminCommand('ping')" and place "db.adminCommand('ping')" in readinessprobe section.
+
+### 7.Now delete the changes in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl delete -f statefulset.yaml
+statefulset.apps/mongo deleted
+```
+### 8.Now apply the changes in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f statefulset.yaml
+statefulset.apps/mongo created
+```
+### 9.Now to list all the pods in a local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get pods -w
+NAME      READY   STATUS    RESTARTS   AGE
+mongo-0   1/1     Running   0          21s
+mongo-1   1/1     Running   0          17s
+mongo-2   1/1     Running   0          7s
+```
+**Note:** Now we can see all the pods are running and all the containers are reday.
+
+### 10.Now try to describe the service mongo and see all the three pods are available in local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl describe svc mongo
+Name:              mongo
+Namespace:         default
+Labels:            <none>
+Annotations:       <none>
+Selector:          app=mongo
+Type:              ClusterIP
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                None
+IPs:               None
+Port:              mongo  27017/TCP
+TargetPort:        27017/TCP
+Endpoints:         10.244.0.32:27017,10.244.0.33:27017,10.244.0.34:27017
+Session Affinity:  None
+Events:            <none>
+```
+**Note:** We can see all the 3 pods are available in service in local-cluster.
 
