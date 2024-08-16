@@ -480,3 +480,13 @@ as a failure, and the container is restarted. This process will continue every 1
 - **Use Case:** Useful when your application needs some time to warm up or load configurations before it can handle requests.
 
 ![Readiness Probe](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/readiness_probe.png)
+
+Kubernetes will remove the IP address of the pod from the endpoints of all the services it belongs to, and when the pod
+is not part of the service, it will not receive any traffic. This probe is very helpful in instructing Kubernetes that a
+running container should not receive any traffic until it is ready. This way, we can increase our success response rate.
+The difference between a liveness probe and a readiness probe is that when a liveness probe fails, the pod is restarted, 
+whereas when the readiness probe fails, the pod is not restarted. Instead, it is removed from the endpoint list of the 
+service, so it will not receive any traffic. Once the readiness probe succeeds, the pod is added back to the service and
+begins receiving traffic as usual.
+
+
