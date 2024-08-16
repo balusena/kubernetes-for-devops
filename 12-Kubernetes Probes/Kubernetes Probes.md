@@ -818,3 +818,8 @@ Events:            <none>
 ```
 **Note:** We can see all the 3 pods are available in service in local-cluster.
 
+## 3.Startup Probe:
+- **Purpose:** Determines if an application within a container has started. This probe is useful for applications that have slow start-up times.
+
+- **Use Case:** Ideal for ensuring that the application is fully started before allowing liveness and readiness probes to take over.
+![Startup Probe](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/startup_probe.png)
