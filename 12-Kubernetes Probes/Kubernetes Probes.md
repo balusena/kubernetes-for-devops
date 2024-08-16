@@ -75,7 +75,7 @@ spec:
               command:
                 - mongo
                 - --eval
-                - "db1.adminCommand('ping')"
+                - "db.adminCommand('ping')"
             initialDelaySeconds: 1
             periodSeconds: 10
             timeoutSeconds: 5
@@ -158,7 +158,21 @@ is considered healthy. If the connection cannot be established, the container is
 You can also make gRPC health check requests to a port inside the container, and use the results to determine whether 
 the probe succeeded.
 
-### 2.For our mongo deployment lets make a simple change in statefulset.yaml file and check if our conatiner is healthy or not.
+**Note:** In the statefulset.yaml file, we are running a simple command in "spec" under "exec" section to check if our 
+container is healthy.
+```
+spec:
+      containers:
+        - name: mongo
+          image: mongo:4.0.8
+          livenessProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db1.adminCommand('ping')" 
+```
+### 2.For our mongo deployment lets make a simple change in statefulset.yaml file and check if our container is healthy or not.
 ```
 ubuntu@balasenapathi:~$ nano statefulset.yaml
 apiVersion: apps/v1
@@ -228,6 +242,18 @@ spec:
           requests:
             storage: 1Gi
 ```
+As we discussed, to run a command, we should use the exec probing mechanism, where we can execute the ping command. 
+Essentially, this defines a liveness probe with the command to execute. However, how frequently Kubernetes runs this 
+command to check the container's health or how many times it should retry if the command fails can be further customized
+using four parameters.
+
+## Probing Customization.
+To customize Kubernetes probing, you can adjust four key parameters: initial delay, period, timeout, and failure threshold.
+These settings determine how frequently health checks occur, how long they wait, and how many failures trigger container
+restarts or other actions.
+
+![Probing Customization](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/probing_customization.png)
+
 **Note:** We are intentionally using - "db1.adminCommand('ping')" in the exec section to test the container.
 
 ### 3.Now apply the changes in the local-cluster:
