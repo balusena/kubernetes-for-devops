@@ -475,5 +475,8 @@ So, as a summary, the liveness probe executes initially after a 1-second delay. 
 as a failure, and the container is restarted. This process will continue every 10 seconds.
 
 ## 2.Readiness Probe:
+- **Purpose:** Determines if a container is ready to start accepting traffic. If the readiness probe fails, Kubernetes will stop sending requests to that container until it passes.
 
+- **Use Case:** Useful when your application needs some time to warm up or load configurations before it can handle requests.
 
+![Readiness Probe](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/readiness_probe.png)
