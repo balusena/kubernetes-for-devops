@@ -1103,18 +1103,20 @@ If it crashes again, the kubelet waits 10 seconds before restarting, and if it c
 20 seconds before the next restart. This delay increases exponentially with each restart attempt, up to a maximum of 
 300 seconds. Once the delay reaches the 300-second limit, the kubelet will continue restarting the container indefinitely
 every 5 minutes until the pod either stops crashing or is deleted.
-### 7.Now simply correct the error in startup probe:
-To delete the statefulset in the cluster.
+
+- **Now simply correct the error in startup probe:**
+
+### 7.To delete the statefulset in the cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl delete -f statefulset.yaml
 statefulset.apps "mongo" deleted
 ```
-To apply the statefulset in the cluster.
+### 8.To apply the statefulset in the cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl apply -f statefulset.yaml
 statefulset.apps/mongo created
 ```
-To get the list of pods running in the cluster.
+### 9.To get the list of pods running in the cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl get pods
 NAME      READY   STATUS    RESTARTS   AGE
@@ -1128,9 +1130,45 @@ A startup probe should be used when the application in our container might take 
 its normal operating state. If we don't add this probe, the liveness probe may fail, causing the pod to enter a restart 
 loop.
 
-### Probes Workflow:
+## Probes Workflow:
 - **How Startup, Liveness, and Readiness Probes Work Together:**
 ![Probes Workflow](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/probes_workflow.png)
+
+When a pod is scheduled, Kubernetes initially waits for the initialDelaySeconds specified and then runs the startup probe.
+If the startup probe fails, Kubernetes will retry the number of times specified by the failureThreshold. If it still fails
+on the last retry, the pod is killed and follows the pod's restart policy. If the startup probe succeeds, both the liveness
+and readiness probes are executed after their respective initial delays.
+
+If the liveness probe fails, Kubernetes will retry according to the failureThreshold. If the probe still fails after the
+last retry, the pod is restarted. If the probe succeeds, the pod continues running, and the liveness probe is executed 
+periodically as defined by the periodSeconds.
+
+If the readiness probe fails, Kubernetes will also retry based on the failureThreshold. If it continues to fail after 
+the last retry, the pod is removed from the service's load balancer. If the probe succeeds, the pod resumes receiving 
+traffic, and the readiness probe is executed periodically as defined by the periodSeconds.
+
+While probes are very helpful, it is important to be extra cautious when defining them by following best practices.
+
+## Best Practices:
+- **1.Ideal Frequency:**
+A probe that runs too frequently can waste resources and impact application performance, while a probe that runs too 
+infrequently may allow containers to remain in an unhealthy state for too long.
+
+- **2.Light Weight:**
+Probes should be as lightweight as possible to ensure checks are executed quickly. Avoid using expensive operations 
+within probes, as a probe that does heavy lifting can slow down the containers.
+
+- **3.Correct Restart Policy:**
+Probes are influenced by restart policies. Using the "Never" policy will keep the container in a failed state indefinitely.
+
+- **4.Use Only When Needed:**
+Simple containers that always terminate on failure don’t need a probe. Use probes only when necessary.
+
+- **5.Keep An Eye On Probes Regularly:**
+Whenever new features or fixes are added to the application, they can impact probe performance. Regularly monitor your 
+probes and make necessary adjustments.
+
+
 
 
           
