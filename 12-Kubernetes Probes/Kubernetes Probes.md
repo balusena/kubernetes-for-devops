@@ -830,27 +830,302 @@ container fails its startup probe, the container is killed, and the pod's restar
 
 **We can set the restart policy in the pod's spec, which defines when the pod should be restarted:**
 
-- **Always:**
+- **1.Always:**
 - This is the default value.
 - The pod will always be restarted, regardless of how it exits.
 - Use this option to ensure the pod is always up and running, no matter the exit status.
 
-- **OnFailure:**
+- **2.OnFailure:**
 - The pod will be restarted only if it exits with a non-zero status code.
 - This is useful when you want the pod to restart only on errors.
 
-- **Never:**
+- **3.Never:**
 
 - The pod will not be restarted, no matter how it exits.
 -This option is used when you do not want the pod to restart under any circumstances.
 
-**Note:** This restart policy is applied to every probe. To ensure the pod restarts when needed, set the restart policy 
-to the default value, "Always". Now, you can configure the startup probe in the same way as the liveness and readiness probes.
+**Note:** This restart policy applies to every probe. To ensure the pod restarts when necessary, set the restart policy 
+to the default value, "Always." You can configure the startup probe in the same way as the liveness and readiness probes.
+For simplicity, we are using the same commands for all the probes. However, you can experiment with different commands 
+for HTTP calls based on your application's specific health checks.
 
-A startup probe should be used when the application in our container may take a significant amount of time to reach its 
-normal operating state. If we don't add this probe, the liveness probe may fail, causing the pod to enter a restart loop.
+### 1.Use the statefulset to test the livenessprobe in local-cluster.
+```
+ubuntu@balasenapathi:~$ nano statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+spec:
+  selector:
+    matchLabels:
+      app: mongo
+  serviceName: "mongo"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:4.0.8
+          startupProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 2
+          livenessProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 2
+          readinessProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 2
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: username
+                  name: mongodb-config
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mongodb-secret
+          command:
+            - mongod
+            - "--bind_ip_all"
+            - --config=/etc/mongo/mongodb.conf
+          volumeMounts:
+            - name: mongo-volume
+              mountPath: /data/db
+            - name: mongodb-config
+              mountPath: /etc/mongo
+      volumes:
+        - name: mongodb-config
+          configMap:
+            name: mongodb-config
+            items:
+              - key: mongodb.conf
+                path: mongodb.conf
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-volume
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: demo-storage
+        resources:
+          requests:
+            storage: 1Gi
+```            
+### 2.Now delete the statefulset.yaml from cluster.
+```
+ubuntu@balasenapathi:~$ kubectl delete -f statefulset.yaml
+statefulset.apps "mongo" deleted
+```
+### 3.Now apply changes in the local-cluster.          
+```
+ubuntu-dsbda@ubuntudsbda-virtual-machine:~$ kubectl apply -f statefulset.yaml
+statefulset.apps/mongo created
+```
+### 4.Now list down all the pod in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME      READY   STATUS    RESTARTS      AGE
+mongo-0   0/1     Running   2 (11s ago)   52s
+```
+**Note:** We can see that the pod is running but it is not reday yet.
+### 5.To get the information about the pod.
+```
+ubuntu@balasenapathi:~$ kubectl describe pod mongo-0
+Name:             mongo-0
+Namespace:        default
+Priority:         0
+Service Account:  default
+Node:             local-cluster/192.168.49.2
+Start Time:       Tue, 26 Sep 2023 23:37:51 +0530
+Labels:           app=mongo
+                  controller-revision-hash=mongo-59b9566db4
+                  statefulset.kubernetes.io/pod-name=mongo-0
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.35
+IPs:
+  IP:           10.244.0.35
+Controlled By:  StatefulSet/mongo
+Containers:
+  mongo:
+    Container ID:  docker://4632a3f7ef1828ebb16ee31054ad79eedcc06cf3743c8e71825d7278c6c867ae
+    Image:         mongo:4.0.8
+    Image ID:      docker-pullable://mongo@sha256:1dd59670959c3f774c5056e5179145ee9cc06f9003663e14fa44326426a4e6f7
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      mongod
+      --bind_ip_all
+      --config=/etc/mongo/mongodb.conf
+    State:          Waiting
+      Reason:       CrashLoopBackOff
+    Last State:     Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Tue, 26 Sep 2023 23:39:13 +0530
+      Finished:     Tue, 26 Sep 2023 23:39:32 +0530
+    Ready:          False
+    Restart Count:  4
+    Liveness:       exec [mongo --eval db.adminCommand('ping')] delay=1s timeout=5s period=10s #success=1 #failure=2
+    Readiness:      exec [mongo --eval db.adminCommand('ping')] delay=1s timeout=5s period=10s #success=1 #failure=2
+    Startup:        exec [mongo --eval db1.adminCommand('ping')] delay=1s timeout=5s period=10s #success=1 #failure=2
+    Environment:
+      MONGO_INITDB_ROOT_USERNAME:  <set to the key 'username' of config map 'mongodb-config'>  Optional: false
+      MONGO_INITDB_ROOT_PASSWORD:  <set to the key 'password' in secret 'mongodb-secret'>      Optional: false
+    Mounts:
+      /data/db from mongo-volume (rw)
+      /etc/mongo from mongodb-config (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-69qfd (ro)
+Conditions:
+  Type              Status
+  Initialized       True 
+  Ready             False 
+  ContainersReady   False 
+  PodScheduled      True 
+Volumes:
+  mongo-volume:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  mongo-volume-mongo-0
+    ReadOnly:   false
+  mongodb-config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      mongodb-config
+    Optional:  false
+  kube-api-access-69qfd:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age    From               Message
+  ----     ------     ----   ----               -------
+  Normal   Scheduled  2m23s  default-scheduler  Successfully assigned default/mongo-0 to local-cluster
+  Warning  Unhealthy  2m13s  kubelet            Startup probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("25a50384-9713-4d8e-8eb5-525e58a795e3") }
+MongoDB server version: 4.0.8
+2023-09-26T18:08:01.817+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+  Warning  Unhealthy  2m3s  kubelet  Startup probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("1c9e19be-35e3-47bf-9ed1-f19eebac7857") }
+MongoDB server version: 4.0.8
+2023-09-26T18:08:11.780+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+  Warning  Unhealthy  113s  kubelet  Startup probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("044f0682-b69b-4610-b546-50a409b87c9f") }
+MongoDB server version: 4.0.8
+2023-09-26T18:08:21.770+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+  Warning  Unhealthy  103s  kubelet  Startup probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("96ebe9fa-d981-425b-995b-174d5e86e373") }
+MongoDB server version: 4.0.8
+2023-09-26T18:08:31.756+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+  Warning  Unhealthy  93s  kubelet  Startup probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("729019d0-c39e-4c03-b0a3-639a58174b46") }
+MongoDB server version: 4.0.8
+2023-09-26T18:08:41.744+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+  Warning  Unhealthy  83s  kubelet  Startup probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("cf83d37b-53c5-4a3b-95ac-25dbe5e176c4") }
+MongoDB server version: 4.0.8
+2023-09-26T18:08:51.757+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+  Normal   Started    82s (x4 over 2m21s)  kubelet  Started container mongo
+  Normal   Created    82s (x4 over 2m21s)  kubelet  Created container mongo
+  Warning  Unhealthy  73s                  kubelet  Startup probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("d5224c19-1cb1-42a1-bc12-1d5ec3721e98") }
+MongoDB server version: 4.0.8
+2023-09-26T18:09:01.774+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+  Normal   Killing    63s (x4 over 2m3s)  kubelet  Container mongo failed startup probe, will be restarted
+  Warning  Unhealthy  63s                 kubelet  Startup probe failed: MongoDB shell version v4.0.8
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("dfd7c003-e209-4e03-935e-e0bf47866cab") }
+MongoDB server version: 4.0.8
+2023-09-26T18:09:11.755+0000 E QUERY    [js] ReferenceError: db1 is not defined :
+@(shell eval):1:1
+  Normal  Pulled  62s (x5 over 2m22s)  kubelet  Container image "mongo:4.0.8" already present on machine
+```
+**Note:**We can see that the startup probe failed because db1 is not defined. Since the restartPolicy is set to the 
+default value of "Always," the pod is getting restarted.
 
-**Note:** For simplicity, we are using the same commands for all the probes. However, you can try using different commands
-for HTTP calls based on your application's health checks.
+### 6.Now list down all the pod in the local-cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME      READY   STATUS             RESTARTS      AGE
+mongo-0   0/1     CrashLoopBackOff   6 (55s ago)   5m36s
+```
+**Note:** The pod status has changed to CrashLoopBackOff. This means the pod is repeatedly crashing and entering a state
+called CrashLoopBackOff. This status doesn’t mean the kubelet has given up; rather, it indicates that the kubelet is 
+increasing the time interval between each restart attempt. After the first crash, the kubelet restarts the pod immediately.
+If it crashes again, the kubelet waits 10 seconds before restarting, and if it crashes again, the delay increases to 
+20 seconds before the next restart. This delay increases exponentially with each restart attempt, up to a maximum of 
+300 seconds. Once the delay reaches the 300-second limit, the kubelet will continue restarting the container indefinitely
+every 5 minutes until the pod either stops crashing or is deleted.
+### 7.Now simply correct the error in startup probe:
+To delete the statefulset in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl delete -f statefulset.yaml
+statefulset.apps "mongo" deleted
+```
+To apply the statefulset in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f statefulset.yaml
+statefulset.apps/mongo created
+```
+To get the list of pods running in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME      READY   STATUS    RESTARTS   AGE
+mongo-0   1/1     Running   0          45s
+mongo-1   1/1     Running   0          34s
+mongo-2   1/1     Running   0          23s
+```
+**Note:** We can see all the pods are running and the containers are reday.
+
+A startup probe should be used when the application in our container might take a significant amount of time to reach 
+its normal operating state. If we don't add this probe, the liveness probe may fail, causing the pod to enter a restart 
+loop.
 
           
