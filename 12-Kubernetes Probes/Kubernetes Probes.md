@@ -1128,4 +1128,9 @@ A startup probe should be used when the application in our container might take 
 its normal operating state. If we don't add this probe, the liveness probe may fail, causing the pod to enter a restart 
 loop.
 
+### Probes Workflow:
+- **How Startup, Liveness, and Readiness Probes Work Together:**
+![Probes Workflow](https://github.com/balusena/kubernetes-for-devops/blob/main/12-Kubernetes%20Probes/probes_workflow.png)
+
+
           
