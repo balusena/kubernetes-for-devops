@@ -73,6 +73,18 @@ distribution across all applications on the node.
 
 ![Kubernetes Limits](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/limits.png)
 
+In Kubernetes, we can instruct a container to limit its CPU and memory usage by setting limits in the resources section 
+of the pod specification.
+
+- **To summarize both Requests and Limits:**
+- Requests define the minimum resources required on a node to schedule a pod.
+- Limits set the maximum resources a pod can use. If neither requests nor limits are defined, Kubernetes may schedule 
+  all pods on the same node without considering resource constraints. This can lead to node overload, instability, and 
+  degraded application performance, as resource contention may cause throttling and potential pod termination due to 
+  insufficient memory.
+
+
+
 
 
 
