@@ -18,6 +18,11 @@ uses computing resources like CPU and memory wisely, performs well, and doesn't 
 - **4.Setting Minimum, Maximum, and Default Resources for Pods in a Namespace:** Achieved through LimitRange.
 - **5.Limiting Resources in a Namespace:** Managed using ResourceQuota.
 
+## Computing Resources:
+Every node has resources such as CPU, memory, and disk space. CPU and memory are referred to as compute resources. We 
+can request these compute resources from a node for later use.
+
+![Kubernetes Computing Resources CPU Memory](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/computing_resources_cpu_memory.png)
 
 
 
