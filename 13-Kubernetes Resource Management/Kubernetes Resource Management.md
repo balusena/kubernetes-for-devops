@@ -35,7 +35,7 @@ the scheduler allocate resources effectively and avoid contention among containe
 Let's say we have an application that requires a minimum of one CPU and 200 MB of memory to start. If this application 
 is deployed on a node where sufficient resources are not available, it may not start.
 
-![Kubernetes Requests 1](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/request_1.png)
+![Kubernetes Requests 1](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/requests_1.png)
 
 What if there is a way to instruct Kubernetes to deploy this application or pod onto a node that has the minimum required
 capacity? For every container, we can define the resources and request Kubernetes to deploy the application onto a node 
@@ -43,12 +43,12 @@ where the minimum CPU and memory are available by using resource requests. When 
 guarantee to schedule the pod on a node where the minimum capacity is available. Once this pod is scheduled, it immediately
 uses the resources of Node2, reducing the allocatable resources on Node2 to 400 MB of memory and 200m of CPU.
 
-![Kubernetes Requests 2](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/request_2.png)
+![Kubernetes Requests 2](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/requests_2.png)
 
 If there are no nodes with the minimum capacity defined in the pod, the pod will remain in a pending state until the 
 required resources become available.
 
-![Kubernetes Requests 3](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/request_3.png)
+![Kubernetes Requests 3](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/requests_3.png)
 
 Once the resources become available on any node, the Kubernetes scheduler will schedule the pod onto that node. In short,
 Kubernetes compares the resource requests defined in the pod with the available resources on each node in the cluster and
@@ -56,7 +56,7 @@ automatically assigns a suitable node to the pod. If we don't specify CPU or mem
 that we don't have specific requirements for how much CPU time the process running in the container is allocated. In the 
 worst-case scenario, the process may not receive any CPU time at all.
 
-![Kubernetes Requests 4](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/request_4.png)
+![Kubernetes Requests 4](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/requests_4.png)
 
 Let's say there is suddenly a memory leak in the first application, causing Pod1 to use a lot of memory. What happens to
 the second application on that node, which is Pod3? Pod3 might get terminated due to insufficient memory if it doesn't 
@@ -64,7 +64,15 @@ have enough to function properly. However, if you had instructed Kubernetes to l
 this situation could have been avoided. Fortunately, Kubernetes provides a safeguard against this scenario by allowing 
 you to set resource limits, which prevent a pod from using more memory than specified.
 
-![Kubernetes Requests 5](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/request_5.png)
+![Kubernetes Requests 5](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/requests_5.png)
+
+### 2.Limits:
+Limits in Kubernetes set the maximum CPU and memory a container can use. If a container exceeds these limits, Kubernetes
+may restrict its usage or even terminate it. This prevents one container from consuming too many resources, ensuring fair
+distribution across all applications on the node.
+
+![Kubernetes Limits](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/limits.png)
+
 
 
 
