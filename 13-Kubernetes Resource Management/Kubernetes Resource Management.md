@@ -5,5 +5,5 @@ quotas can restrict overall usage across namespaces, while limits ranges control
 also supports auto-scaling to dynamically adjust resource allocation based on demand, maintaining optimal performance and
 cost-efficiency in cloud-native environments.
 
-![Kubernetes Resource Management]()
+![Kubernetes Resource Management](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/resource_management.png)
 
