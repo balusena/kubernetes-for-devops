@@ -12,11 +12,11 @@ be deployed to a Kubernetes cluster, it's important to be cautious when deployin
 uses computing resources like CPU and memory wisely, performs well, and doesn't impact other applications.
 
 ## Key Things We Need to Understand:
-- **1.Requesting CPU and Memory: Guarantees resources for the application using requests.**
-- **2.Limiting CPU and Memory: Restricts resource usage for the application using limits.**
-- **3.Quality of Service (QoS): Ensures performance levels for applications based on resource requests and limits.**
-- **4.Setting Minimum, Maximum, and Default Resources for Pods in a Namespace: Achieved through LimitRange.**
-- **5.Limiting Resources in a Namespace: Managed using ResourceQuota.**
+- **1.Requesting CPU and Memory:** Guarantees resources for the application using requests.
+- **2.Limiting CPU and Memory:** Restricts resource usage for the application using limits.
+- **3.Quality of Service (QoS):** Ensures performance levels for applications based on resource requests and limits.
+- **4.Setting Minimum, Maximum, and Default Resources for Pods in a Namespace:** Achieved through LimitRange.
+- **5.Limiting Resources in a Namespace:** Managed using ResourceQuota.
 
 
 
