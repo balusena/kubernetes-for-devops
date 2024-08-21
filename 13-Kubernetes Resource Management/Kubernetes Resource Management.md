@@ -400,7 +400,6 @@ the node's total capacity.
 
 ![Kubernetes Memory Management 1](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/memory_management 1.png)
 
-
 Now, let's say Pod2 suddenly starts using its full memory limit of 6 GiB, which is equal to the limit we defined. There's
 no issue with exceeding the limit, but now both pods together are using 9 GiB of memory, which is more than the node's 
 capacity. One of these pods will need to be killed. The question is, which pod should be killed? Since both pods are within
