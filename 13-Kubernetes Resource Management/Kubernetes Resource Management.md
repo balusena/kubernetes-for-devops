@@ -428,6 +428,7 @@ We don't manually set the Quality of Service (QoS) class for a pod; Kubernetes a
 the resource requests and limits defined in the pod's configuration.
 
 - **1.Best Effort Class:**
+
 When we don't define both requests and limits, Kubernetes assigns the Best Effort class to the pod. This applies to both
 CPU and memory. Since we haven't specified any resource requirements, this pod might not get any resources if other pods
 on the node need more. However, if no other pods are using resources, this pod can use as many resources as it needs. 
@@ -435,6 +436,7 @@ If Kubernetes needs to decide which pods to kill, it will prioritize deleting po
 class, as it assumes these pods are less critical due to the lack of defined resource requests and limits.
 
 ![Kubernetes QoS Best Effort Class](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/best_effort_class.png)
+
 
 - **2.Guaranteed Class:**
 
