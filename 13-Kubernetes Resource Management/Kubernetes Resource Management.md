@@ -775,6 +775,213 @@ and prevent any single namespace from consuming excessive resources, maintaining
 
 ![Kubernetes Resource Quota](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/resource_quota.png)
 
+**Note:** LimitRange validates resource requests and limits at the pod or container level, but sometimes we need to impose 
+restrictions at the namespace level. This can be achieved using ResourceQuota, which allows us to set limits on resource
+requests and limits across the entire namespace. ResourceQuota can also restrict the total number of pods, services, 
+deployments, and other resources within the namespace, ensuring balanced and controlled resource allocation.
+
+**Resource Quota:**
+
+### 1.Now create a new manifesat resource-quota-demo.yaml in cluster:
+```
+ubuntu@balasenapathi:~$ nano resource-quota-demo.yaml
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: resource-quota
+spec:
+  hard:
+    requests.cpu: 400m
+    requests.memory: 200Mi
+    limits.cpu: 2000m
+    limits.memory: 3Gi
+    pods: "10"
+    replicationcontrollers: "5"
+    secrets: "10"
+    configmaps: "10"
+    persistentvolumeclaims: "4"
+    services: "5"
+    services.loadbalancers: "1"
+    services.nodeports: "2"
+    # Only two PVCs can claim storage with the ssd StorageClass.
+    ssd.storageclass.storage.k8s.io/persistentvolumeclaims: "2"
+```
+
+**Note:** Here, we are defining a ResourceQuota that specifies limits for the namespace where it is applied. In this 
+namespace, the total CPU usage across all pods should not exceed 2000m (millicores), and the total memory usage should 
+not exceed 3 GiB. Additionally, the maximum number of pods that can be created is set to 10, with a maximum of 5 
+replication controllers, among other Kubernetes resources. We are also limiting the number of PersistentVolumeClaims 
+(PVCs) to two, specifically with the SSD storage class. This way, we can enforce and restrict resource requests and 
+limits at the namespace level.
+
+### 2.Now create a pod more than the limit and see what will happens.
+```
+ubuntu@balasenapathi:~$ nano resources-demo-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resources-demo
+spec:
+  containers:
+  - name: resources-demo
+    image: polinux/stress
+    command: ["stress"]
+    args: ["--cpu", "2", "--vm", "1", "--vm-bytes", "1G", "--vm-hang", "1"]
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "200Mi"
+      limits:
+        cpu: "0.2"
+        memory: "1Gi"
+```
+### 3.Apply the changes in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f  resource-quota-demo.yaml
+resourcequota/resource-quota created
+
+ubuntu-dsbda@ubuntudsbda-virtual-machine:~$ kubectl apply -f resources-demo-pod.yaml
+Error from server (Forbidden): error when creating "resources-demo-pod.yaml": pods "resources-demo" is forbidden: exceeded quota: 
+resource-quota, requested: requests.memory=1Gi, used: requests.memory=0, limited: requests.memory=200Mi
+```
+### To resolve this error make the changes in resources-demo-pod.yaml:
+
+### 4.Now create a pod more than the limit see what happens:
+```
+ubuntu@balasenapathi:~$ nano resources-demo-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resources-demo
+spec:
+  containers:
+  - name: resources-demo
+    image: polinux/stress
+    command: ["stress"]
+    args: ["--cpu", "2", "--vm", "1", "--vm-bytes", "1G", "--vm-hang", "1"]
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "200Mi"
+      limits:
+        cpu: "0.2"
+        memory: "200Mi"
+```
+**Note:** Dont use above manifest in future, The below manifest runs the pods without restarts bcz this satisfies my 
+ResourceQuota:
+```        
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resources-demo
+spec:
+  containers:
+  - name: resources-demo
+    image: polinux/stress
+    command: ["stress"]
+    args: ["--cpu", "1", "--vm", "1", "--vm-bytes", "100M", "--vm-hang", "1"]
+    resources:
+      requests:
+        cpu: "100m"          # CPU request is 100 milliCPU (0.1 CPU core)
+        memory: "100Mi"      # Memory request is 100MiB (100 Megabytes)
+      limits:
+        cpu: "200m"          # CPU limit is 200 milliCPU (0.2 CPU cores)
+        memory: "200Mi"      # Memory limit is 200MiB (200 Megabytes)        
+```
+**Note: Instead of memory limit 1Gi make it to 200Mi, that change can create a pod in the cluster.**
+```
+ubuntu@balasenapathi:~$ kubectl apply -f resources-demo-pod.yaml
+pod/resources-demo created
+```
+```
+ubuntu-dsbda@ubuntudsbda-virtual-machine:~$ kubectl get pods
+NAME             READY   STATUS    RESTARTS   AGE
+resources-demo   1/1     Running   0          46s
+```
+### 5.To get the complete information of the pod in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl describe pod resources-demo
+Name:             resources-demo
+Namespace:        default
+Priority:         0
+Service Account:  default
+Node:             minikube/192.168.49.2
+Start Time:       Sun, 01 Oct 2023 18:29:53 +0530
+Labels:           <none>
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.21
+IPs:
+  IP:  10.244.0.21
+Containers:
+  resources-demo:
+    Container ID:  docker://dad6efd948e7363b6ad7ec1695e9a95f3881b36307afd9145b34191b12654eae
+    Image:         polinux/stress
+    Image ID:      docker-pullable://polinux/stress@sha256:b6144f84f9c15dac80deb48d3a646b55c7043ab1d83ea0a697c09097aaad21aa
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      stress
+    Args:
+      --cpu
+      1
+      --vm
+      1
+      --vm-bytes
+      100M
+      --vm-hang
+      1
+    State:          Running
+      Started:      Sun, 01 Oct 2023 18:29:56 +0530
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     200m
+      memory:  200Mi
+    Requests:
+      cpu:        100m
+      memory:     100Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-lcvv9 (ro)
+Conditions:
+  Type              Status
+  Initialized       True 
+  Ready             True 
+  ContainersReady   True 
+  PodScheduled      True 
+Volumes:
+  kube-api-access-lcvv9:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age    From               Message
+  ----    ------     ----   ----               -------
+  Normal  Scheduled  4m26s  default-scheduler  Successfully assigned default/resources-demo to minikube
+  Normal  Pulling    4m25s  kubelet            Pulling image "polinux/stress"
+  Normal  Pulled     4m23s  kubelet            Successfully pulled image "polinux/stress" in 1.739827461s (1.739838606s including waiting)
+  Normal  Created    4m23s  kubelet            Created container resources-demo
+  Normal  Started    4m23s  kubelet            Started container resources-demo
+```
+
+It appears that your "resources-demo" pod is running successfully without any restarts, and the container is now using 
+the adjusted resource requests and limits. Here's a summary of the pod's current configuration:
+
+- CPU request: 100 milliCPU (0.1 CPU core)
+- Memory request: 100MiB (100 Megabytes)
+- CPU limit: 200 milliCPU (0.2 CPU cores)
+- Memory limit: 200MiB (200 Megabytes)
+
+This configuration aligns with the resource constraints of your Minikube environment (3GB memory and 2 CPU cores) and 
+should allow the pod to operate smoothly without encountering resource-related issues.
+
 
 
 
