@@ -5,5 +5,5 @@ Pod Affinity/Anti-Affinity dictates how pods should be scheduled in relation to 
 pod placement on nodes with specific taints. Together, these features enhance resource efficiency, balance workloads, and
 meet precise deployment needs.
 
-![Kubernetes Advanced Scheduling](https://github.com/balusena/kubernetes-for-devops/tree/main/14-Kubernetes%20Advanced%20Scheduling/advanced_scheduling.png)
+![Kubernetes Advanced Scheduling](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/advanced_scheduling.png)
 
