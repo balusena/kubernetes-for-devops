@@ -18,4 +18,12 @@ how the Kubernetes scheduler works and how we can customize this behavior using:
   - **Pod Affinity**
 - **Taints and Tolerations**
 
+## How Kubernetes Scheduler Works
+In a Kubernetes cluster with many nodes, when a pod is created, the Kubernetes scheduler first filters the nodes to 
+identify which ones are capable of running the pod. It then evaluates these feasible nodes by running a set of scoring 
+functions, rating each node from 1 to 10. Finally, the scheduler selects the node with the highest score and assigns 
+it to the pod.
+
+![Kubernetes Scheduler Workflow 1](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/kubernetes_scheduler_workflow_1.png)
+
 
