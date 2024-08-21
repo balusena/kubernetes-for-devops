@@ -408,7 +408,20 @@ three classes, specifically the Quality of Service (QoS) classes.
 
 ![Kubernetes Memory Management 2](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/memory_management_2.png)
 
-
+### 3.Quality of Service(QoS):
+Quality of Service (QoS) in Kubernetes categorizes pods based on their resource requests and limits to prioritize their 
+survival during resource contention.Kubernetes makes this decision by categorizing pods into three Quality of Service (QoS)
+classes. These QoS classes help Kubernetes prioritize which pod to evict when resources are overcommitted:
+                                    
+- **1.Best Effort:** Pods in this class do not have any requests or limits defined. They have the lowest priority and 
+  are the first to be killed if the node runs out of resources.
+  
+- **2.Guaranteed:** Pods in this class have their requests and limits set to the same values for both CPU and memory. 
+  These pods are the least likely to be killed because they have guaranteed resources.
+                                    
+- **3.Burstable:** Pods in this class have their requests set below their limits, meaning they can use more resources if
+  available, but are not guaranteed the full limit. These pods are more likely to be killed than Guaranteed pods if the 
+  node runs out of resources.
 
 
 
