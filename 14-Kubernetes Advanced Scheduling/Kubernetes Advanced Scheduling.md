@@ -32,6 +32,25 @@ handles this automatically.
 
 ![Kubernetes Scheduler Workflow 2](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/kubernetes_scheduler_workflow_2.png)
 
+For example, running our pods across multiple nodes ensures that if one node goes down, the pods on other nodes can 
+still handle requests. 
+
+![Kubernetes Scheduler Workflow 3](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/kubernetes_scheduler_workflow_3.png)
+
+Kubernetes handles rescheduling of deleted pods onto different nodes when using Deployments or 
+StatefulSets. 
+
+![Kubernetes Scheduler Workflow 4](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/kubernetes_scheduler_workflow_4.png)
+
+However, there may be cases where we want to deploy our pods onto specific nodes, such as nodes with SSDs
+attached or nodes within the same availability zone for frequently communicating pods.
+
+![Kubernetes Scheduler Workflow 5](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/kubernetes_scheduler_workflow_5.png) 
+
+To achieve this, we need to instruct the Kubernetes scheduler. There are several methods to guide Kubernetes in scheduling
+pods onto specific nodes.
+
+
 
 
 
