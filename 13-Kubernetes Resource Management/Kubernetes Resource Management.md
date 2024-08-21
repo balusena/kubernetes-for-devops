@@ -573,9 +573,10 @@ the LimitRange, which specifies acceptable minimum and maximum resource values.*
 **Not only that, but when we don’t define requests and limits, the LimitRange will automatically set default values for 
 these resources while creating the pods.**
 
+- **Note:** When we dont define Requests and Limits LimitRange will set the defaults automatically while creating the pods.
+
 ![Kubernetes LimitRange 3](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/limitrange_3.png)
 
-- **Note:** When we dont define Requests and Limits LimitRange will set the defaults automatically while creating the pods.
 
 
 
