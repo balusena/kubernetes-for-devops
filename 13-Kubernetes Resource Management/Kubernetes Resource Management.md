@@ -559,16 +559,16 @@ across the cluster.
 request of 20 millicores will not be scheduled. This is because the LimitRange enforces that all containers must request
 at least the defined minimum amount of CPU resources.**
 
-![Kubernetes LimitRange 1](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/limitrange_1.png)
-
 - **Note:** Will not be scheduled as we defined container CPU is 50m(millicores).
+
+![Kubernetes LimitRange 1](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/limitrange_1.png)
 
 **If we change the CPU request to 100 millicores (m), it will work because 100 millicores falls within the range defined by
 the LimitRange, which specifies acceptable minimum and maximum resource values.**
 
-![Kubernetes LimitRange 2](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/limitrange_2.png) 
-
 - **Note:** Will be scheduled as it lies between min and max.
+
+![Kubernetes LimitRange 2](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/limitrange_2.png) 
 
 **Not only that, but when we don’t define requests and limits, the LimitRange will automatically set default values for 
 these resources while creating the pods.**
@@ -576,6 +576,8 @@ these resources while creating the pods.**
 ![Kubernetes LimitRange 3](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/limitrange_3.png)
 
 - **Note:** When we dont define Requests and Limits LimitRange will set the defaults automatically while creating the pods.
+
+
 
 
 
