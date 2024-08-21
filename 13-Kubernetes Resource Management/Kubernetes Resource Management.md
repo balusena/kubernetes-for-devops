@@ -83,7 +83,7 @@ of the pod specification.
   degraded application performance, as resource contention may cause throttling and potential pod termination due to 
   insufficient memory.
   
- ## Stress Tool:
+### Stress Tool:
 When dealing with CPU and memory, a tool like Stress can create load without the need for complex code. With this tool, 
 you can easily specify how many CPUs to use and how much memory to consume, effectively simulating CPU and memory usage 
 within a pod. For example, running the Stress process can utilize 8 CPUs and 128 MB of memory. A Docker image 
@@ -381,6 +381,33 @@ can lead to the pod crashing and restarting.
 the resources requested and limited for each container are summed up and compared against the available resources on the
 node during scheduling. By configuring Requests and Limits for each container, we can make efficient use of the CPU and 
 memory resources available on our cluster nodes.
+
+### Memory Management:
+Even if we carefully define resources in our pod configuration, there may be instances where the pod exceeds its CPU and
+memory limits. While exceeding CPU limits isn't a major issue as it just results in throttling, exceeding memory limits 
+can be problematic because it will cause the pod to be killed.
+
+Let's say we have a node with 8 GiB of memory, and we're scheduling two pods, Pod1 and Pod2, each with a request of 3 GiB.
+After scheduling, we're left with 2 GiB of unallocated memory. However, Pod1 and Pod2 are using less memory than requested,
+say 3 GiB and 2 GiB, respectively. Now, if we try to schedule another pod, Pod3, with a 3 GiB memory request, it won't be
+scheduled even though there’s technically 3 GiB of free memory on the node. This is because the Kubernetes scheduler looks
+at unallocated resources, not free memory, when deciding where to place a pod.
+
+Additionally, if we define memory limits that exceed the node's capacity, such as setting limits of 6 GiB for both Pod1 
+and Pod2, Kubernetes will still allow these pods to be scheduled because it only considers the requests, not the limits, 
+during scheduling. This situation is known as "overcommitting," where the combined limits of the scheduled pods exceed 
+the node's total capacity.
+
+![Kubernetes Memory Management 1](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/memory_management 1.png)
+
+
+Now, let's say Pod2 suddenly starts using its full memory limit of 6 GiB, which is equal to the limit we defined. There's
+no issue with exceeding the limit, but now both pods together are using 9 GiB of memory, which is more than the node's 
+capacity. One of these pods will need to be killed. The question is, which pod should be killed? Since both pods are within
+their limits and there is no fault with either, Kubernetes will smartly decide which pod to kill by categorizing them into
+three classes, specifically the Quality of Service (QoS) classes.
+
+![Kubernetes Memory Management 2](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/memory_management 2.png)
 
 
 
