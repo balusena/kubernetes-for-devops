@@ -436,7 +436,13 @@ class, as it assumes these pods are less critical due to the lack of defined res
 
 ![Kubernetes QoS Best Effort Class](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/best_effort_class.png)
 
+- **2.Guaranteed Class:**
 
+When we define both requests and limits and they are equal, Kubernetes assigns the Guaranteed class to the pod. Note that
+this must be true for all containers within the pod. Pods with this class are assured to receive the requested resources,
+making them the highest priority in terms of resource allocation.
+
+![Kubernetes Guaranteed Class](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/guaranteed_class.png)
 
 
 
