@@ -458,7 +458,7 @@ finally, if necessary, those in the Guaranteed class.
 
 ### 1.We can describe the pods Quality of service(QoS) using:
 ```
-ubuntu-dsbda@ubuntudsbda-virtual-machine:~$ kubectl describe pod resources-demo
+ubuntu@balasenapathi:~$ kubectl describe pod resources-demo
 Name:             resources-demo
 Namespace:        default
 Priority:         0
@@ -577,7 +577,203 @@ these resources while creating the pods.**
 
 ![Kubernetes LimitRange 3](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/limitrange_3.png)
 
+**LimitRange:**
 
+### 1.Create a new manifest called limit-range-demo.yaml:
+```
+ubuntu@balasenapathi:~$ nano limit-range-demo.yaml
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: limit-range
+spec:
+  limits:
+    - type: Pod
+      min:
+        cpu: 50m
+        memory: 5Mi
+      max:
+        cpu: "2"
+        memory: 2Gi
+    - type: Container
+      defaultRequest:
+        cpu: 100m
+        memory: 10Mi
+      default:
+        cpu: 200m
+        memory: 100Mi
+      min:
+        cpu: 50m
+        memory: 5Mi
+      max:
+        cpu: "1"
+        memory: 2Gi
+      maxLimitRequestRatio:
+        cpu: "2"
+        memory: 2
+    - type: PersistentVolumeClaim
+      min:
+        storage: 1Gi
+      max:
+        storage: 2Gi
+```
+**Note:** Here, we are specifying the LimitRange in the manifest file, which can be applied at the pod level, container 
+level, and PersistentVolumeClaim (PVC) level. For instance, if we set a minimum CPU request of 50 millicores and a minimum 
+memory request of 5 GiB, any pod with requests lower than these values will be rejected. The same applies to maximum 
+limits: if a pod requests more than these maximum limits, it will also be rejected. This applies to containers within 
+the pod as well.
+
+If requests or limits are not defined in the pod specification, default values from the LimitRange will be applied. 
+The maxLimitRequestRatio ensures that CPU limits cannot be more than 4 times greater than CPU requests, and the same a
+pplies to memory. Additionally, the LimitRange can define storage limits for PVC claims.
+
+### 2.Apply the changes in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f limit-range-demo.yaml
+limitrange/limit-range created
+```
+### 3.Now create a pod more than the limit see what happens:
+```
+ubuntu@balasenapathi:~$ nano resources-demo-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resources-demo
+spec:
+  containers:
+  - name: resources-demo
+    image: polinux/stress
+    imagePullPolicy: Always  # Add this line
+    command: ["stress"]
+    args: ["--cpu", "2", "--vm", "1", "--vm-bytes", "1.5G", "--vm-hang", "1"]
+    resources:
+      requests:
+        cpu: "10m"       # Request 10m CPU core
+        memory: "2Gi"  # Request 2 gigabytes of memory
+      limits:
+        cpu: "1"       # Limit to 1 CPU cores
+        memory: "3Gi"  # Limit to 3 gigabytes of memory
+```        
+### Before applying these changes into the cluster do the below things:
+
+### 4.Delete the existing pod from the cluster
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME             READY   STATUS    RESTARTS     AGE
+resources-demo   1/1     Running   1 (2d ago)   2d
+
+ubuntu@balasenapathi:~$ kubectl delete -f resources-demo-pod.yaml
+pod "resources-demo" deleted
+```
+### 5.Now apply the changes into the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f resources-demo-pod.yaml
+Error from server (Forbidden): error when creating "resources-demo-pod.yaml": pods "resources-demo" is forbidden: [minimum cpu usage per 
+Pod is 50m, but request is 10m, maximum memory usage per Pod is 2Gi, but limit is 3221225472, minimum cpu usage per Container is 50m, but 
+request is 10m, maximum memory usage per Container is 2Gi, but limit is 3Gi, cpu max limit to request ratio per Container is 2, but 
+provided ratio is 100.000000]
+```
+**Note: We can see that there is an error with the pod creation. The errors are:**
+
+- Minimum CPU usage per pod is 50 millicores, but the request is 10 millicores.
+- Maximum memory usage per pod is 2 GiB, but the limit is 3 GiB.
+- Minimum CPU usage per container is 50 millicores, but the request is 10 millicores.
+- Maximum memory usage per container is 2 GiB, but the limit is 3 GiB.
+
+The pod is crossing several limits specified in the LimitRange. To successfully create the pod, these errors must be 
+fixed. Otherwise, the pod will be rejected.
+
+### Now we have fixed the above errors and re-creating the pod with specified requests and limits:
+
+### 6.Create a new manifest called limit-range-demo.yaml:
+```
+ubuntu@balasenapathi:~$ nano limit-range-demo.yaml
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: limit-range
+spec:
+  limits:
+    - type: Pod
+      min:
+        cpu: 50m
+        memory: 5Mi
+      max:
+        cpu: "1"
+        memory: 1Gi
+    - type: Container
+      defaultRequest:
+        cpu: 100m
+        memory: 10Mi
+      default:
+        cpu: 200m
+        memory: 100Mi
+      min:
+        cpu: 50m
+        memory: 5Mi
+      max:
+        cpu: "1"
+        memory: 1Gi
+      maxLimitRequestRatio:
+        cpu: "2"
+        memory: 2
+    - type: PersistentVolumeClaim
+      min:
+        storage: 1Gi
+      max:
+        storage: 1Gi
+```
+### 7.Apply the changes in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f limit-range-demo.yaml
+limitrange/limit-range created        
+```
+### 8.Now create a pod more than the limit see what happens:
+```
+ubuntu@balasenapathi:~$ nano resources-demo-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resources-demo
+spec:
+  containers:
+  - name: resources-demo
+    image: polinux/stress
+    command: ["stress"]
+    args: ["--cpu", "2", "--vm", "1", "--vm-bytes", "1G", "--vm-hang", "1"]
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "200Mi"
+      limits:
+        cpu: "0.2"
+        memory: "200Mi"
+```
+### 9.Apply the changes in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f resources-demo-pod.yaml
+pod/resources-demo created
+```
+### 10.To get the list of pods in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME             READY   STATUS              RESTARTS   AGE
+resources-demo   0/1     ContainerCreating   0          4s
+
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME             READY   STATUS    RESTARTS   AGE
+resources-demo   1/1     Running   0          7s
+```       
+**Note:** As we can see, after adjusting the requests and limits to comply with the LimitRange, the pod was successfully
+created in the cluster.
+
+### 5.Resource Quota:
+A ResourceQuota in Kubernetes sets constraints on the total amount of resources (such as CPU, memory, and storage) that
+can be used within a namespace. It helps prevent resource exhaustion by limiting the total resource usage, including the 
+number of pods, services, and other objects. By enforcing these quotas, administrators ensure fair resource distribution 
+and prevent any single namespace from consuming excessive resources, maintaining cluster stability and performance.
+
+![Kubernetes Resource Quota](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/resource_quota.png)
 
 
 
