@@ -26,4 +26,13 @@ it to the pod.
 
 ![Kubernetes Scheduler Workflow 1](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/kubernetes_scheduler_workflow_1.png)
 
+The Kubernetes scheduler takes into account the pod's resource requirements and any customizations defined by us when 
+scheduling the pod. Most of the time, we don't need to write custom scheduling logic, as the default scheduler effectively
+handles this automatically.
+
+![Kubernetes Scheduler Workflow 2](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/kubernetes_scheduler_workflow_2.png)
+
+
+
+
 
