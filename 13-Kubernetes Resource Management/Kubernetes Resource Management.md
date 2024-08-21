@@ -437,7 +437,6 @@ class, as it assumes these pods are less critical due to the lack of defined res
 
 ![Kubernetes QoS Best Effort Class](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/best_effort_class.png)
 
-
 **2.Guaranteed Class:**
 
 When we define both requests and limits and they are equal, Kubernetes assigns the Guaranteed class to the pod. Note that
@@ -455,8 +454,125 @@ finally, if necessary, those in the Guaranteed class.
 
 ![Kubernetes QoS Burstable Class](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/brustable_class.png)
 
+**QualityofService(QoS):**
 
+### 1.We can describe the pods Quality of service(QoS) using:
+```
+ubuntu-dsbda@ubuntudsbda-virtual-machine:~$ kubectl describe pod resources-demo
+Name:             resources-demo
+Namespace:        default
+Priority:         0
+Service Account:  default
+Node:             minikube/192.168.49.2
+Start Time:       Fri, 29 Sep 2023 02:24:28 +0530
+Labels:           <none>
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.7
+IPs:
+  IP:  10.244.0.7
+Containers:
+  resources-demo:
+    Container ID:  docker://2d07027a556559653154bf5f032b72dcea37843336bed9b714f0882b66582715
+    Image:         polinux/stress
+    Image ID:      docker-pullable://polinux/stress@sha256:b6144f84f9c15dac80deb48d3a646b55c7043ab1d83ea0a697c09097aaad21aa
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      stress
+    Args:
+      --cpu
+      2
+      --vm
+      1
+      --vm-bytes
+      1.5G
+      --vm-hang
+      1
+    State:          Running
+      Started:      Sun, 01 Oct 2023 00:56:33 +0530
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    137
+      Started:      Fri, 29 Sep 2023 02:24:36 +0530
+      Finished:     Fri, 29 Sep 2023 02:52:21 +0530
+    Ready:          True
+    Restart Count:  1
+    Limits:
+      cpu:     1
+      memory:  3Gi
+    Requests:
+      cpu:        1
+      memory:     2Gi
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-tfst6 (ro)
+Conditions:
+  Type              Status
+  Initialized       True 
+  Ready             True 
+  ContainersReady   True 
+  PodScheduled      True 
+Volumes:
+  kube-api-access-tfst6:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason          Age    From               Message
+  ----    ------          ----   ----               -------
+  Normal  Scheduled       46h    default-scheduler  Successfully assigned default/resources-demo to minikube
+  Normal  Pulling         46h    kubelet            Pulling image "polinux/stress"
+  Normal  Pulled          46h    kubelet            Successfully pulled image "polinux/stress" in 6.117190935s (6.117224151s including 
+  waiting)
+  Normal  Created         46h    kubelet            Created container resources-demo
+  Normal  Started         46h    kubelet            Started container resources-demo
+  Normal  SandboxChanged  7m56s  kubelet            Pod sandbox changed, it will be killed and re-created.
+  Normal  Pulling         7m29s  kubelet            Pulling image "polinux/stress"
+  Normal  Pulled          7m16s  kubelet            Successfully pulled image "polinux/stress" in 13.163955699s (13.164034884s including 
+  waiting)
+  Normal  Created         7m15s  kubelet            Created container resources-demo
+  Normal  Started         7m13s  kubelet            Started container resources-demo
+```
+**Note:** As we can see, the Quality of Service (QoS) class for our pod is Burstable ("QoS Class: Burstable") because we
+defined both requests and limits, but they are not equal.
 
+### 4.Limit Range:
+A LimitRange in Kubernetes sets constraints on the minimum and maximum resources (CPU and memory) that can be requested
+and used by pods and containers within a namespace. It ensures that resources are allocated fairly and helps prevent 
+resource exhaustion by imposing limits on individual containers. By defining a LimitRange, administrators can enforce 
+policies that standardize resource usage and avoid scenarios where a single pod consumes excessive resources, impacting
+other workloads in the namespace.
+
+Kubernetes provides fine-grained control over resources. If administrators want to control the maximum resources a pod 
+can use or set default requests and limits, Kubernetes offers a resource called LimitRange. This allows administrators 
+to enforce maximum and minimum resource constraints, as well as default values, ensuring consistent resource management 
+across the cluster.
+
+**For example, after creating a LimitRange that specifies a minimum CPU request of 50 millicores (m), a pod with a CPU 
+request of 20 millicores will not be scheduled. This is because the LimitRange enforces that all containers must request
+at least the defined minimum amount of CPU resources.**
+
+![Kubernetes LimitRange 1](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/limitrange_1.png)
+**Note:** Will not be scheduled as we defined container CPU is 50m(millicores).
+
+**If we change the CPU request to 100 millicores (m), it will work because 100 millicores falls within the range defined by
+the LimitRange, which specifies acceptable minimum and maximum resource values.**
+
+![Kubernetes LimitRange 1](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/limitrange_2.png) 
+**Note:** Will be scheduled as it lies between min and max.
+
+**Not only that, but when we don’t define requests and limits, the LimitRange will automatically set default values for 
+these resources while creating the pods.**
+
+![Kubernetes LimitRange 1](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/limitrange_3.png)
+**Note:** When we dont define Requests and Limits LimitRange will set the defaults automatically while creating the pods.
 
 
 
