@@ -444,9 +444,16 @@ When we define both requests and limits and they are equal, Kubernetes assigns t
 this must be true for all containers within the pod. Pods with this class are assured to receive the requested resources,
 making them the highest priority in terms of resource allocation.
 
-![Kubernetes Guaranteed Class](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/guaranteed_class.png)
+![Kubernetes QoS Guaranteed Class](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/guaranteed_class.png)
 
+**3.Burstable Class:**
 
+All other pods where requests and limits are not equal fall into the Burstable class. In short, when the system is 
+overcommitted, the Quality of Service (QoS) class determines which pod should be killed to free up resources for 
+higher-priority pods. Pods with the Best Effort class are killed first, followed by those in the Burstable class, and 
+finally, if necessary, those in the Guaranteed class.
+
+![Kubernetes QoS Burstable Class](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/brustable_class.png)
 
 
 
