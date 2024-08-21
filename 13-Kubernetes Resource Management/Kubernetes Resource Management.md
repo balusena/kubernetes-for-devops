@@ -427,7 +427,7 @@ classes. These QoS classes help Kubernetes prioritize which pod to evict when re
 We don't manually set the Quality of Service (QoS) class for a pod; Kubernetes automatically assigns the class based on 
 the resource requests and limits defined in the pod's configuration.
 
-- **1.Best Effort Class:**
+**1.Best Effort Class:**
 
 When we don't define both requests and limits, Kubernetes assigns the Best Effort class to the pod. This applies to both
 CPU and memory. Since we haven't specified any resource requirements, this pod might not get any resources if other pods
@@ -438,7 +438,7 @@ class, as it assumes these pods are less critical due to the lack of defined res
 ![Kubernetes QoS Best Effort Class](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/best_effort_class.png)
 
 
-- **2.Guaranteed Class:**
+**2.Guaranteed Class:**
 
 When we define both requests and limits and they are equal, Kubernetes assigns the Guaranteed class to the pod. Note that
 this must be true for all containers within the pod. Pods with this class are assured to receive the requested resources,
