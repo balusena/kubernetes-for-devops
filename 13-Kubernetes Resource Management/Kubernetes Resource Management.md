@@ -398,7 +398,7 @@ and Pod2, Kubernetes will still allow these pods to be scheduled because it only
 during scheduling. This situation is known as "overcommitting," where the combined limits of the scheduled pods exceed 
 the node's total capacity.
 
-![Kubernetes Memory Management 1](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/memory_management 1.png)
+![Kubernetes Memory Management 1](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/memory_management_1.png)
 
 Now, let's say Pod2 suddenly starts using its full memory limit of 6 GiB, which is equal to the limit we defined. There's
 no issue with exceeding the limit, but now both pods together are using 9 GiB of memory, which is more than the node's 
@@ -406,7 +406,7 @@ capacity. One of these pods will need to be killed. The question is, which pod s
 their limits and there is no fault with either, Kubernetes will smartly decide which pod to kill by categorizing them into
 three classes, specifically the Quality of Service (QoS) classes.
 
-![Kubernetes Memory Management 2](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/memory_management 2.png)
+![Kubernetes Memory Management 2](https://github.com/balusena/kubernetes-for-devops/blob/main/13-Kubernetes%20Resource%20Management/memory_management_2.png)
 
 
 
