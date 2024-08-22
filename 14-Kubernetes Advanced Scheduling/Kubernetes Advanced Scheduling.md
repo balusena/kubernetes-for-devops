@@ -823,10 +823,271 @@ mosquitoes (pods) from landing.
 ![Kubernetes Taints Toleartion 2](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/taints_toleration_2.png)   
 
 However, if another type of bug is tolerant to the repellent, it can land on Bob's body. Similarly, Taints on nodes repel
-pods that don’t have the corresponding Tolerations, while those with matching tolerations can still be scheduled on these 
+pods that don’t have the corresponding Toleration, while those with matching Toleration can still be scheduled on these 
 nodes.
 
 ![Kubernetes Taints Toleartion 3](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/taints_toleration_3.png)   
+
+#### There are 3 types of Taint effects:
+- **1.NoSchedule (Hard):** Pods cannot be scheduled onto the node if they do not tolerate the taint. This is a strict 
+  rule, meaning that if a pod cannot tolerate the taint, it will not be scheduled on that node.
+
+- **2.PreferNoSchedule (Soft):** Pods can be scheduled onto the node if no other nodes are available, even if they do 
+  not tolerate the taint. This is a less strict rule, preferring to avoid the node but allowing scheduling if necessary.
+
+- **3.NoExecute (Strict):** This effect not only prevents new pods from being scheduled on the node if they do not 
+  tolerate the taint but also evicts running pods that cannot tolerate the newly added taint. This is a very strict 
+  rule that enforces taint toleration for both scheduling and running pods.
+
+### 1.So we can add it into the node Now taint a second node minikube-m02 in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl taint node minikube-m02 env=production:NoExecute
+node/minikube-m02 tainted
+```
+**Note:** The environment env=production with the taint effect NoExecute (i.e., env=production:NoExecute) has been 
+applied to node2 (i.e., minikube-m02). With this taint, we expect that any pods already running on minikube-m02 that do 
+not tolerate this taint will be evicted from the node.
+
+### 2.Now verify this by listing down the pods.
+```
+ubuntu@balasenapathi:~$ kubectl get pods -o wide
+NAME                        READY   STATUS           RESTARTS    AGE     IP           NODE           NOMINATED NODE   READINESS GATES
+todo-api-67d9f8f977-782rd   0/1     ContainerCreating       0    17s     <none>       minikube-m04   <none>           <none>
+todo-api-67d9f8f977-d6l2m   1/1     Terminating             0    86m     10.244.1.9   minikube-m02   <none>           <none>
+todo-api-67d9f8f977-pmzfk   1/1     Running                 0    84m     10.244.3.3   minikube-m04   <none>           <none>
+todo-ui-75d9ff8dd4-9vrxf    1/1     Running                 0    4h35m   10.244.2.4   minikube-m03   <none>           <none>
+todo-ui-75d9ff8dd4-j27lj    1/1     Running                 0    4h35m   10.244.2.5   minikube-m03   <none>           <none>
+```
+**Note:** As observed, the pod previously running on node2 (i.e., minikube-m02) has been terminated and is now being 
+created on a different node, specifically node4 (i.e., minikube-m04). This occurs because the pod cannot tolerate the 
+NoExecute taint applied to minikube-m02, resulting in its eviction from the node.
+
+### 3.Now verify this by listing down the pods.
+```
+ubuntu@balasenapathi:~$ kubectl get pods -o wide
+NAME                        READY   STATUS    RESTARTS   AGE     IP           NODE           NOMINATED NODE   READINESS GATES
+todo-api-67d9f8f977-782rd   1/1     Running   0          39s     10.244.3.4   minikube-m04   <none>           <none>
+todo-api-67d9f8f977-pmzfk   1/1     Running   0          85m     10.244.3.3   minikube-m04   <none>           <none>
+todo-ui-75d9ff8dd4-9vrxf    1/1     Running   0          4h35m   10.244.2.4   minikube-m03   <none>           <none>
+todo-ui-75d9ff8dd4-j27lj    1/1     Running   0          4h35m   10.244.2.5   minikube-m03   <none>           <none>
+```
+
+### 4.If we want to look at the taints that are applied on a node we should describe the node i.e, minikube-02:
+```
+ubuntu@balasenapathi:~$ kubectl describe node minikube-m02
+Name:               minikube-m02
+Roles:              <none>
+Labels:             beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/os=linux
+                    kubernetes.io/arch=amd64
+                    kubernetes.io/hostname=minikube-m02
+                    kubernetes.io/os=linux
+                    rank=3
+Annotations:        kubeadm.alpha.kubernetes.io/cri-socket: /var/run/cri-dockerd.sock
+                    node.alpha.kubernetes.io/ttl: 0
+                    volumes.kubernetes.io/controller-managed-attach-detach: true
+CreationTimestamp:  Mon, 02 Oct 2023 18:22:12 +0530
+Taints:             env=production:NoExecute
+Unschedulable:      false
+Lease:
+  HolderIdentity:  minikube-m02
+  AcquireTime:     <unset>
+  RenewTime:       Tue, 03 Oct 2023 01:59:12 +0530
+Conditions:
+  Type             Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+  ----             ------  -----------------                 ------------------                ------                       -------
+  MemoryPressure   False   Tue, 03 Oct 2023 01:58:58 +0530   Mon, 02 Oct 2023 21:44:06 +0530   KubeletHasSufficientMemory   kubelet has 
+  sufficient memory available
+  DiskPressure     False   Tue, 03 Oct 2023 01:58:58 +0530   Mon, 02 Oct 2023 21:44:06 +0530   KubeletHasNoDiskPressure     kubelet has 
+  no disk pressure
+  PIDPressure      False   Tue, 03 Oct 2023 01:58:58 +0530   Mon, 02 Oct 2023 21:44:06 +0530   KubeletHasSufficientPID      kubelet has 
+  sufficient PID available
+  Ready            True    Tue, 03 Oct 2023 01:58:58 +0530   Mon, 02 Oct 2023 21:44:06 +0530   KubeletReady                 kubelet is 
+  posting ready status
+Addresses:
+  InternalIP:  192.168.49.3
+  Hostname:    minikube-m02
+Capacity:
+  cpu:                2
+  ephemeral-storage:  102107096Ki
+  hugepages-2Mi:      0
+  memory:             3969504Ki
+  pods:               110
+Allocatable:
+  cpu:                2
+  ephemeral-storage:  102107096Ki
+  hugepages-2Mi:      0
+  memory:             3969504Ki
+  pods:               110
+System Info:
+  Machine ID:                 b1595f30b59c403d8a2c6d6b807e8fae
+  System UUID:                a24bd237-c239-4b1c-b82b-a3fccc0ef03f
+  Boot ID:                    db017686-fa13-4fbd-8064-afde19206136
+  Kernel Version:             5.15.0-84-generic
+  OS Image:                   Ubuntu 22.04.2 LTS
+  Operating System:           linux
+  Architecture:               amd64
+  Container Runtime Version:  docker://24.0.4
+  Kubelet Version:            v1.27.3
+  Kube-Proxy Version:         v1.27.3
+PodCIDR:                      10.244.1.0/24
+PodCIDRs:                     10.244.1.0/24
+Non-terminated Pods:          (1 in total)
+  Namespace                   Name                CPU Requests  CPU Limits  Memory Requests  Memory Limits  Age
+  ---------                   ----                ------------  ----------  ---------------  -------------  ---
+  kube-system                 kube-proxy-wnpw4    0 (0%)        0 (0%)      0 (0%)           0 (0%)         7h37m
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests  Limits
+  --------           --------  ------
+  cpu                0 (0%)    0 (0%)
+  memory             0 (0%)    0 (0%)
+  ephemeral-storage  0 (0%)    0 (0%)
+  hugepages-2Mi      0 (0%)    0 (0%)
+Events:              <none>
+```
+**Note:** In "Taints: env=production:NoExecute" these are the taints applied on to the node2 i.e "minikube-m02"
+
+### 5.We can delete a taint by using:
+```
+ubuntu@balasenapathi:~$ kubectl taint node minikube-m02 env=production:NoExecute-
+node/minikube-m02 untainted
+```
+**Note:** By adding "-" at the end of cmd Now the taint on node2 i.e "minikube-m02" untainted meaning the taint is deleted.
+
+### 6.Now add a taint with different effect now NoSchedule on node 2 i.e, "minikube-m02":
+```
+ubuntu@balasenapathi:~$ kubectl taint node minikube-m02 env=production:NoSchedule
+node/minikube-m02 tainted
+```
+Please note that the taint is applied to the node minikube-m02, and the toleration is added to the pod. Before applying
+the toleration, let’s first add the nodeAffinity to ensure that the pod is deployed on the second node, minikube-m02.
+
+### 7.Create a todo-api-deployment in cluster:
+```
+ubuntu@balasenapathi:~$ nano todo-api-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-api
+  template:
+    metadata:
+      name: todo-api-pod
+      labels:
+        app: todo-api
+    spec:
+      containers:
+        - name: todo-api
+          image: balasenapathi/todo-api:1.0.2
+          ports:
+            - containerPort: 8082
+          env:
+            - name: "spring.data.mongodb.uri"
+              value: "mongodb+srv://root:321654@cluster0.p9jq2.mongodb.net/todo?retryWrites=true&w=majority"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: rank
+                    operator: Lt
+                    values:
+                      - "5" 
+```
+### 8.Now apply the changes in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f todo-api-deployment.yaml
+deployment.apps/todo-api configured
+```
+### 9.Now list down all the pods in the cluster
+```
+ubuntu@balasenapathi:~$ kubectl get pods -o wide
+NAME                        READY   STATUS    RESTARTS   AGE     IP           NODE           NOMINATED NODE   READINESS GATES
+todo-api-67d9f8f977-22ps2   1/1     Running   0          2m30s   10.244.3.6   minikube-m04   <none>           <none>
+todo-api-67d9f8f977-hn6rq   1/1     Running   0          4m13s   10.244.3.5   minikube-m04   <none>           <none>
+todo-api-8675d4bfb7-mn2pg   0/1     Pending   0          5s      <none>       <none>         <none>           <none>
+todo-ui-75d9ff8dd4-9vrxf    1/1     Running   0          5h19m   10.244.2.4   minikube-m03   <none>           <none>
+todo-ui-75d9ff8dd4-j27lj    1/1     Running   0          5h19m   10.244.2.5   minikube-m03   <none>           <none>
+```
+**Note:** As we can see, the pod todo-api-8675d4bfb7-mn2pg is stuck in a pending state, and existing pods remain unaffected.
+This is because the NoSchedule taint effect only impacts pod scheduling and does not affect running pods. The pending state
+occurs because the scheduler attempts to schedule the pod on the second node (which matches the nodeAffinity criteria) but
+the node has a taint that the pod does not tolerate. To resolve this, the pod must have a toleration for the taint applied
+to the node.
+
+- Note: So now add the toleration in toleartion section in manifest file.So now this matches the taint that we added:
+
+### 10.Create a todo-api-deployment in cluster:
+```
+ubuntu@balasenapathi:~$ nano todo-api-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-api
+  template:
+    metadata:
+      name: todo-api-pod
+      labels:
+        app: todo-api
+    spec:
+      containers:
+        - name: todo-api
+          image: balasenapathi/todo-api:1.0.2
+          ports:
+            - containerPort: 8082
+          env:
+            - name: "spring.data.mongodb.uri"
+              value: "mongodb+srv://root:321654@cluster0.p9jq2.mongodb.net/todo?retryWrites=true&w=majority"
+      tolerations:
+        - key: "env"
+          operator: "Equal"
+          value: "production"
+          effect: "NoSchedule"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: rank
+                    operator: Lt
+                    values:
+                      - "5"
+```
+
+### 11.Now apply the changes in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f todo-api-deployment.yaml
+deployment.apps/todo-api configured
+```
+### 12.Now list down all the pods in the cluster
+```
+ubuntu@balasenapathi:~$ kubectl get pods -o wide
+NAME                        READY   STATUS    RESTARTS   AGE     IP            NODE           NOMINATED NODE   READINESS GATES
+todo-api-6bb64f8456-hjnf2   1/1     Running   0          9s      10.244.1.13   minikube-m02   <none>           <none>
+todo-api-6bb64f8456-w2lsf   1/1     Running   0          7s      10.244.1.14   minikube-m02   <none>           <none>
+todo-ui-75d9ff8dd4-9vrxf    1/1     Running   0          5h31m   10.244.2.4    minikube-m03   <none>           <none>
+todo-ui-75d9ff8dd4-j27lj    1/1     Running   0          5h31m   10.244.2.5    minikube-m03   <none>           <none>
+```
+**Note:** Now we can see that the API pods are running on the second node, "minikube-m02," because the pods have been 
+configured to tolerate the applied taint.
+
+Finally, the last taint effect is PreferNoSchedule, which means Kubernetes will try to avoid scheduling pods on nodes 
+with this taint but will allow it if no other nodes are available. This is a soft rule.
+
+#### Summary:
+
+![Kubernetes Advanced Scheduling](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/summary.png)   
+
 
 
 
