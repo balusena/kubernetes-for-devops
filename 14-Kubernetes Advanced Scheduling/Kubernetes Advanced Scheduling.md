@@ -364,6 +364,9 @@ or close to each other, which can be useful for optimizing network latency or co
 `PodAntiAffinity` ensures that pods are spread across different nodes, improving resilience and fault tolerance.
 
 
+vire
+
+
 
 
 
