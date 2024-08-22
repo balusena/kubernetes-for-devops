@@ -636,16 +636,30 @@ flexible and nuanced scheduling conditions.
 3. **If we define multiple `matchExpressions` associated with a single `nodeSelector` term, the pod can be scheduled onto
    a node only if all `matchExpressions` are satisfied.**
 
-
-
-- **2.Pod Affinity:**
+#### 2.Pod Affinity:
 `PodAffinity` controls how pods are placed relative to other pods. It ensures that pods are scheduled on the same node 
 or close to each other, which can be useful for optimizing network latency or co-locating related services. Conversely, 
 `PodAntiAffinity` ensures that pods are spread across different nodes, improving resilience and fault tolerance.
 
+We learned that while `nodeAffinity` is used to schedule pods onto specific nodes, `podAffinity` is used to co-locate pods. 
+For example, if we want two applications that communicate frequently to be deployed in the same region for reduced latency,
+we use `podAffinity`.
 
+![Kubernetes Pod Affinity 1](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/podaffinity_1.png)  
 
+Consider our "todo-ui" and "todo-api" applications. If "todo-ui" is deployed on a node in the "us-east-1" region, we can 
+use `podAffinity` to deploy "todo-api" in the same region. We define the label selector and the "topology key" in `podAffinity`.
+Kubernetes scheduler then ensures that the new pod is scheduled onto a node with the same label, so both applications are
+co-located.
 
+![Kubernetes Pod Affinity 2](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/podaffinity_2.png)  
+
+![Kubernetes Pod Affinity 3](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/podaffinity_3.png) 
+ 
+In contrast, there might be cases where we want to spread pods across different nodes or regions to prevent performance 
+issues due to co-location. This strategy helps ensure that a failure in one node or region does not affect the entire service.
+
+![Kubernetes Pod Affinity 4](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/podaffinity_4.png)  
 
 
 
