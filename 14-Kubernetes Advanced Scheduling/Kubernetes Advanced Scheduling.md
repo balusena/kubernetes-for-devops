@@ -346,10 +346,10 @@ fall within a specific range of values or that meet certain requirements.
 
 ![Kubernetes Node Affinity 1](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/nodeaffinity_1.png)  
 
-1. **Required During Scheduling, Ignore During Execution**:  
-   This type of affinity specifies rules that must be met during the scheduling of a pod. If the conditions specified 
-   are not met, the pod will not be scheduled on that node. Once scheduled, Kubernetes does not enforce these rules 
-   during the pod's execution.
+#### 1.Required During Scheduling, Ignore During Execution: 
+This type of affinity specifies rules that must be met during the scheduling of a pod. If the conditions specified are 
+not met, the pod will not be scheduled on that node. Once scheduled, Kubernetes does not enforce these rules during the 
+pod's execution.
    
 **Required During Scheduling** means that whatever labels we specify in the pod definition, the node must have those same 
 labels during scheduling. If the node does not have the specified labels, the pod will remain in a pending state. These
@@ -458,10 +458,10 @@ of 5, which doesn't meet this criterion. Even if we delete these labels from the
 we used `IgnoreDuringExecution`, meaning the labels are ignored once the pods are running. Instead of just 
 `requiredDuringScheduling`, we can also use `preferredDuringScheduling` or even combine both in `nodeAffinity`.
 
-2. **Preferred During Scheduling, Ignore During Execution**:  
-   This type of affinity expresses a preference for certain nodes during pod scheduling. However, it does not strictly 
-   enforce this preference. If the preferred conditions are not met, the pod can still be scheduled on other nodes. 
-   Like the required type, this does not impact the pod during execution.
+#### 2.Preferred During Scheduling, Ignore During Execution: 
+This type of affinity expresses a preference for certain nodes during pod scheduling. However, it does not strictly 
+enforce this preference. If the preferred conditions are not met, the pod can still be scheduled on other nodes. Like
+the required type, this does not impact the pod during execution.
    
 Let's consider we have four nodes with specific labels, and we're using `preferredDuringScheduling` for node affinity. 
 Here, we're setting preferences among the nodes. In this example, we prefer nodes with the label `region: us-east-1`
