@@ -333,7 +333,7 @@ capabilities and allowing for more nuanced criteria.
 Affinity is an alternative to nodeSelector and allows us to instruct Kubernetes to schedule our pods onto specific 
 nodes using advanced operators. It is divided into two main types:
    - **1.Node Affinity**
-   - **2.Pod Affinity**
+   - **2.Pod Affinity/Pod Anti Affinity**
 
 #### 1.Node Affinity:
 NodeAffinity enables pods to be scheduled on nodes that match specific criteria, such as having particular labels or 
@@ -804,6 +804,29 @@ todo-ui-75d9ff8dd4-j27lj    1/1     Running   0          3h13m   10.244.2.5   mi
 ```
 Note: We can see that the API pods are scheduled onto nodes "minikube-m02" and "minikube-m04," but not onto "minikube-m03.
 " This is because of the podAntiAffinity rule, which ensures that API pods do not co-locate with the UI pods on "minikube-m03."
+
+### 4.Taints and Tolerations:
+
+Taints and Tolerations in Kubernetes control how pods are scheduled onto nodes. Taints allow nodes to repel pods unless 
+those pods have matching Tolerations. A taint on a node prevents pods from being scheduled onto it unless they have a 
+corresponding toleration that allows them to be scheduled there. This mechanism helps in managing which pods can run on 
+which nodes, ensuring proper workload distribution and resource utilization across the cluster.
+
+We understood that Affinity attracts pods to certain nodes. Conversely, to keep pods away from specific nodes, we use 
+Taints and Tolerations.
+
+Imagine Bob uses mosquito repellent to keep mosquitoes away. The repellent is like a taint on a node, preventing
+mosquitoes (pods) from landing.
+
+![Kubernetes Taints Toleartion 1](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/taints_toleration_1.png)   
+
+![Kubernetes Taints Toleartion 2](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/taints_toleration_2.png)   
+
+However, if another type of bug is tolerant to the repellent, it can land on Bob's body. Similarly, Taints on nodes repel
+pods that don’t have the corresponding Tolerations, while those with matching tolerations can still be scheduled on these 
+nodes.
+
+![Kubernetes Taints Toleartion 3](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/taints_toleration_3.png)   
 
 
 
