@@ -350,12 +350,133 @@ fall within a specific range of values or that meet certain requirements.
    This type of affinity specifies rules that must be met during the scheduling of a pod. If the conditions specified 
    are not met, the pod will not be scheduled on that node. Once scheduled, Kubernetes does not enforce these rules 
    during the pod's execution.
+   
+**Required During Scheduling** means that whatever labels we specify in the pod definition, the node must have those same 
+labels during scheduling. If the node does not have the specified labels, the pod will remain in a pending state. These
+labels are mandatory for the pod to be scheduled.
+
+**Ignore During Execution** means that once the pod is already running on a node, it won’t be impacted even if the node’s
+labels change or no longer match. Essentially, this means not to disturb the running pods, regardless of any changes to 
+the node labels.
+
+### 1.Now create a simple deployment file todo-ui-deployment.yaml.
+```
+ubuntu@balasenapathi:~$ nano todo-ui-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-ui
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-ui
+  template:
+    metadata:
+      name: todo-ui-pod
+      labels:
+        app: todo-ui
+    spec:
+      # nodeName: minikube-m02
+      # nodeSelector:
+      #   team: analytics
+      affinity:
+        nodeAffinity:
+           requiredDuringSchedulingIgnoredDuringExecution:
+             nodeSelectorTerms:
+               - matchExpressions:
+                   - key: rank
+                     operator: Lt
+                     values:
+                       - "5"
+      containers:
+        - name: todo-ui
+          image: balasenapathi/todo-ui:1.0.2
+          ports:
+            - containerPort: 80
+          env:
+            - name: "REACT_APP_BACKEND_SERVER_URL"
+              value: "http://todo.com/api"
+```
+**Note:** We assign node labels using `matchExpressions`, where we specify the key-value pair. 
+
+- **Key:** "rank"
+- **Operators:**
+  - **Gt:** Greater than
+  - **Lt:** Less than
+  - **In:** Contains specified values
+  - **NotIn:** Does not contain specified values
+  - **Exists:** Contains specified labels
+  - **DoesNotExist:** Does not contain specified labels
+
+For this case,we'll use **Lt** (Less than) and set the value to "5".In the Affinity section,we are instructing Kubernetes
+to choose a node with a label key "rank" where the value is less than 5.
+
+### 2.Now apply the deployment changes in cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f todo-ui-deployment.yaml
+deployment.apps/todo-ui configured
+```
+**Note:** We can see our deployment is changed.
+
+### 3.Now list down the pods in the cluster and give wide option to display the nodes also.
+```
+ubuntu@balasenapathi:~$ kubectl get pods -o wide
+NAME                       READY   STATUS    RESTARTS   AGE   IP       NODE     NOMINATED NODE   READINESS GATES
+todo-ui-5f6567cc9d-6zlbc   0/1     Pending   0          6s    <none>   <none>   <none>           <none>
+todo-ui-5f6567cc9d-cds9h   0/1     Pending   0          6s    <none>   <none>   <none>           <none>
+```
+**Note:** The pod is currently in a pending state. This is because we've specified the label as `rank` in the pod's 
+affinity rules, but no node in the cluster has this label. Additionally, since we used the `requiredDuringScheduling` 
+rule, these labels must exist on the node during scheduling for the pod to be deployed. Without the matching label, 
+the pod cannot be scheduled.
+
+### 4.Now add these labels to the nodes 2 and 3 in the cluster.
+
+#### Add the label to the second node i.e minikube-m02.
+```
+ubuntu@balasenapathi:~$ kubectl label node minikube-m02 rank=3
+node/minikube-m02 labeled
+```
+#### Add the label to the third node i.e minikube-m03.
+```
+ubuntu@balasenapathi:~$ kubectl label node minikube-m03 rank=5
+node/minikube-m03 labeled
+```
+**Note: Added labels to the second and third nodes i.e, minikube-m02,  minikube-m03**
+
+### 5.Now list down the pods in the cluster with above changes.
+```
+ubuntu@balasenapathi:~$ kubectl get pods -o wide
+NAME                       READY   STATUS    RESTARTS   AGE     IP           NODE           NOMINATED NODE   READINESS GATES
+todo-ui-5f6567cc9d-6zlbc   1/1     Running   0          8m27s   10.244.1.6   minikube-m02   <none>           <none>
+todo-ui-5f6567cc9d-cds9h   1/1     Running   0          8m27s   10.244.1.5   minikube-m02   <none>           <none>
+```
+**Note:** The pods are now running successfully after we added the appropriate label to the nodes. Both pods are scheduled 
+on the same node because our `matchExpression` specifies that the `rank` should be less than 5. The third node has a `rank`
+of 5, which doesn't meet this criterion. Even if we delete these labels from the nodes, the pods won't be killed because 
+we used `IgnoreDuringExecution`, meaning the labels are ignored once the pods are running. Instead of just 
+`requiredDuringScheduling`, we can also use `preferredDuringScheduling` or even combine both in `nodeAffinity`.
 
 2. **Preferred During Scheduling, Ignore During Execution**:  
    This type of affinity expresses a preference for certain nodes during pod scheduling. However, it does not strictly 
    enforce this preference. If the preferred conditions are not met, the pod can still be scheduled on other nodes. 
    Like the required type, this does not impact the pod during execution.
+   
+Let's consider we have four nodes with specific labels, and we're using `preferredDuringScheduling` for node affinity. 
+Here, we're setting preferences among the nodes. In this example, we prefer nodes with the label `region: us-east-1`
+three times more than those labeled `team: analytics`.
 
+![Kubernetes Node Affinity 2](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/nodeaffinity_2.png)  
+ 
+We've set this preference with a weight, so Kubernetes will rank the nodes based on these preferences and choose the node 
+with the highest rank.
+
+![Kubernetes Node Affinity 3](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/nodeaffinity_3.png)  
+
+**Note:** This is a soft rule, meaning it's not mandatory. Even if the scheduler doesn't find a node with these 
+labels, the pod will still be deployed to another node. This is why Kubernetes ranks the fourth node, even though it 
+lacks any of the labels that the pod prefers.
 
 
 - **2.Pod Affinity:**
