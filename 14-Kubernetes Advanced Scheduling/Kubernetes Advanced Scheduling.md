@@ -330,19 +330,19 @@ To address these needs, nodeAffinity was introduced as a more powerful mechanism
 capabilities and allowing for more nuanced criteria.
 
 ### 3.Affinity:
-`Affinity` is an alternative to `nodeSelector` and allows us to instruct Kubernetes to schedule our pods onto specific 
+Affinity is an alternative to nodeSelector and allows us to instruct Kubernetes to schedule our pods onto specific 
 nodes using advanced operators. It is divided into two main types:
-- 1.Node Affinity
-- 2.Pod Affinity
+   - **1.Node Affinity**
+   - **2.Pod Affinity**
 
 - **1.Node Affinity:**
-`NodeAffinity` enables pods to be scheduled on nodes that match specific criteria, such as having particular labels or 
+NodeAffinity enables pods to be scheduled on nodes that match specific criteria, such as having particular labels or 
 satisfying certain conditions. It allows you to express complex rules, like scheduling pods on nodes with labels that 
 fall within a specific range of values or that meet certain requirements.
 
 #### Node Affinity is further divided into two types:
-- Required During Scheduling, Ignore During Execution
-- Preffered During Scheduling, Ignore During Execution
+- **1.Required During Scheduling, Ignore During Execution**
+- **2.Preffered During Scheduling, Ignore During Execution**
 
 ![Kubernetes Node Affinity 1](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/nodeaffinity_1.png)  
 
