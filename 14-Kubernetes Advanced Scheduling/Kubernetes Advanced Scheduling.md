@@ -478,6 +478,165 @@ with the highest rank.
 labels, the pod will still be deployed to another node. This is why Kubernetes ranks the fourth node, even though it 
 lacks any of the labels that the pod prefers.
 
+### 1.Now create a simple deployment file todo-ui-deployment.yaml.
+```
+ubuntu@balasenapathi:~$ nano todo-ui-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-ui
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-ui
+  template:
+    metadata:
+      name: todo-ui-pod
+      labels:
+        app: todo-ui
+    spec:
+      # nodeName: minikube-m02
+      # nodeSelector:
+      #   team: analytics
+      affinity:
+        nodeAffinity:
+           requiredDuringSchedulingIgnoredDuringExecution:
+             nodeSelectorTerms:
+               - matchExpressions:
+                   - key: rank
+                     operator: Lt
+                     values:
+                       - "5"
+           preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 40
+              preference:
+                matchExpressions:
+                - key: "team"
+                  operator: In
+                  values: ["analytics"]
+            - weight: 60
+              preference:
+                matchExpressions:
+                - key: "rank"
+                  operator: Gt
+                  values: ["4"]
+      containers:
+        - name: todo-ui
+          image: balasenapathi/todo-ui:1.0.2
+          ports:
+            - containerPort: 80
+          env:
+            - name: "REACT_APP_BACKEND_SERVER_URL"
+              value: "http://todo.com/api"
+```
+**Note:** Here, we're setting our preferences for node scheduling. The first preference is for nodes with a label `rank`
+that is greater than 4. The second preference is for nodes labeled `team: analytics`. This setup guides the Kubernetes 
+scheduler to prioritize nodes matching the first condition, and if those are not available, it will consider the nodes 
+with the second label.
+
+### 2.Now apply the deployment changes in cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f todo-ui-deployment.yaml
+deployment.apps/todo-ui configured
+```
+**Note: We can see our deployment is changed.**
+
+### 3.Now list down the pods in the cluster and give wide option to display the nodes also.
+```
+ubuntu@balasenapathi:~$ kubectl get pods -o wide
+NAME                       READY   STATUS    RESTARTS   AGE   IP           NODE           NOMINATED NODE   READINESS GATES
+todo-ui-7f8fc96c5b-g48kt   1/1     Running   0          26s   10.244.1.7   minikube-m02   <none>           <none>
+todo-ui-7f8fc96c5b-zcgzm   1/1     Running   0          23s   10.244.1.8   minikube-m02   <none>           <none>
+```
+**Note:** As we can see, the pods remain on the same node because Kubernetes first filters nodes based on the required
+labels (rank < 5), which matches the second node. Then, it applies the preferences, but since there are no nodes meeting
+these preferences, it defaults to the second node. If you remove the `nodeAffinity: requiredDuringSchedulingIgnoredDuringExecution:`
+section, the scheduler will no longer enforce these strict label requirements, and the pods may be scheduled to other nodes
+based on preferences alone.
+
+### 4.Now create a simple deployment file todo-ui-deployment.yaml.
+```
+ubuntu@balasenapathi:~$ nano todo-ui-deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-ui
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-ui
+  template:
+    metadata:
+      name: todo-ui-pod
+      labels:
+        app: todo-ui
+    spec:
+      # nodeName: minikube-m02
+      # nodeSelector:
+      #   team: analytics
+      affinity:
+        nodeAffinity:
+          # requiredDuringSchedulingIgnoredDuringExecution:
+          #   nodeSelectorTerms:
+          #     - matchExpressions:
+          #         - key: rank
+          #           operator: Lt
+          #           values:
+          #             - "5"
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 40
+              preference:
+                matchExpressions:
+                - key: "team"
+                  operator: In
+                  values: ["analytics"]
+            - weight: 60
+              preference:
+                matchExpressions:
+                - key: "rank"
+                  operator: Gt
+                  values: ["4"]
+      containers:
+        - name: todo-ui
+          image: balasenapathi/todo-ui:1.0.2
+          ports:
+            - containerPort: 80
+          env:
+            - name: "REACT_APP_BACKEND_SERVER_URL"
+              value: "http://todo.com/api"
+```
+### 5.Now apply the deployment changes in cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f todo-ui-deployment.yaml
+deployment.apps/todo-ui configured
+```
+**Note: We can see our deployment is changed.**
+
+### 6.Now list down the pods in the cluster and give wide option to display the nodes also:
+```
+ubuntu@balasenapathi:~$ kubectl get pods -o wide
+NAME                       READY   STATUS    RESTARTS   AGE   IP           NODE           NOMINATED NODE   READINESS GATES
+todo-ui-75d9ff8dd4-9vrxf   1/1     Running   0          8s    10.244.2.4   minikube-m03   <none>           <none>
+todo-ui-75d9ff8dd4-j27lj   1/1     Running   0          4s    10.244.2.5   minikube-m03   <none>           <none>
+```
+**Note:** As we can see, our pods got deployed onto the third node, "minikube-m03." This is because we gave higher preference
+to nodes with a rank greater than 4, which matches the third node. This demonstrates how node affinity allows for more 
+flexible and nuanced scheduling conditions.
+
+**Please note that:**
+
+1. **If we define both `nodeAffinity` and `nodeSelector`, both must be satisfied for the pod to be scheduled onto a node.**
+
+2. **If we define multiple `nodeSelector` terms associated with `nodeAffinity`, the pod can be scheduled onto a node if 
+   one of the specified `nodeSelector` terms can be satisfied.**
+
+3. **If we define multiple `matchExpressions` associated with a single `nodeSelector` term, the pod can be scheduled onto
+   a node only if all `matchExpressions` are satisfied.**
+
+
 
 - **2.Pod Affinity:**
 `PodAffinity` controls how pods are placed relative to other pods. It ensures that pods are scheduled on the same node 
