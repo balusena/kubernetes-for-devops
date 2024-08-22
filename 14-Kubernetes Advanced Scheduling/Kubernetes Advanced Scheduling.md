@@ -321,6 +321,14 @@ todo-ui-5b8b7964b7-dvg9w   1/1     Running   0          44s   10.244.2.3   minik
 **Note:** As you can see, our pods are scheduled onto the first node, minikube, and the third node, minikube-m03. This 
 is because we specified the nodeSelector as team:analytics, and these are the nodes that have the label team=analytics.
 
+nodeSelector is straightforward and useful for placing pods on specific nodes based on labels. However, it lacks 
+flexibility for more complex conditions, such as selecting nodes with label values greater than a certain number. 
+
+![Kubernetes Node Selector 3](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/nodeselector_3.png)  
+
+To address these needs, nodeAffinity was introduced as a more powerful mechanism, offering advanced scheduling 
+capabilities and allowing for more nuanced criteria.
+
 
 
 
