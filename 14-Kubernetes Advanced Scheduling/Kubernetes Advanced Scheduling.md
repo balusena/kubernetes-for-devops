@@ -648,7 +648,7 @@ we use `podAffinity`.
 ![Kubernetes Pod Affinity 1](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/podaffinity_1.png)  
 
 Consider our "todo-ui" and "todo-api" applications. If "todo-ui" is deployed on a node in the "us-east-1" region, we can 
-use `podAffinity` to deploy "todo-api" in the same region. We define the label selector and the "topology key" in `podAffinity`.
+use `podAffinity` to deploy "todo-api" in the same region. We define the label selector and the "topologykey" in `podAffinity`.
 Kubernetes scheduler then ensures that the new pod is scheduled onto a node with the same label, so both applications are
 co-located.
 
@@ -661,6 +661,149 @@ issues due to co-location. This strategy helps ensure that a failure in one node
 
 ![Kubernetes Pod Affinity 4](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/podaffinity_4.png)  
 
+### 1.Create a todo-api-deployment in cluster:
+```
+ubuntu@balasenapathi:~$ nano todo-api-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-api
+  template:
+    metadata:
+      name: todo-api-pod
+      labels:
+        app: todo-api
+    spec:
+      containers:
+        - name: todo-api
+          image: balasenapathi/todo-api:1.0.2
+          ports:
+            - containerPort: 8082
+          env:
+            - name: "spring.data.mongodb.uri"
+              value: "mongodb+srv://root:321654@cluster0.p9jq2.mongodb.net/todo?retryWrites=true&w=majority"
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - "todo-ui"
+              topologyKey: kubernetes.io/hostname      
+```
+Note: Here we define podAffinity under the affinity section similar to the nodeAffinity.
+
+
+#### podAffinity is categorized into two types:
+
+- 1.Soft
+- 2.Hard
+
+1. **Soft Affinity**: This type is a preference, not a strict requirement. If the preferred conditions (like co-locating
+pods on the same node or region) are met, the Kubernetes scheduler will try to satisfy them. However, if the conditions
+cannot be met, the pod will still be scheduled on a different node or region. This is helpful when the desired placement
+improves performance but is not critical.
+
+2. **Hard Affinity**: This type is a strict requirement. The pod can only be scheduled on a node if the specified 
+conditions are met. If no nodes satisfy these conditions, the pod will remain unscheduled (in a pending state) until a
+suitable node becomes available. This is used when specific co-location is crucial for the application's functionality.
+
+Here, we are instructing Kubernetes to select the pods with the "todo-ui" label and use "hostname" as the topologyKey, 
+which represents the node name. The expectation is that these pods will be deployed on the same node because the 
+topologyKey is set to "hostname," matching the node where the UI application is deployed, as specified by the UI pod label.
+
+### 2.Now apply the deployment changes in cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f todo-api-deployment.yaml
+deployment.apps/todo-api created
+```
+
+### 3.Now list down the pods in the cluster and give wide option to display the nodes also:
+```
+ubuntu@balasenapathi:~$ kubectl get pods -o wide
+NAME                       READY   STATUS    RESTARTS   AGE     IP           NODE           NOMINATED NODE   READINESS GATES
+todo-api-d7c6465b5-jg6tg   1/1     Running   0          4m10s   10.244.2.7   minikube-m03   <none>           <none>
+todo-api-d7c6465b5-q4wfr   1/1     Running   0          4m10s   10.244.2.6   minikube-m03   <none>           <none>
+todo-ui-75d9ff8dd4-9vrxf   1/1     Running   0          175m    10.244.2.4   minikube-m03   <none>           <none>
+todo-ui-75d9ff8dd4-j27lj   1/1     Running   0          175m    10.244.2.5   minikube-m03   <none>           <none>
+```
+
+**Note:** As we can see, the API pods are also deployed onto the same node where the UI pods are deployed, i.e., 
+"minikube-m03." This demonstrates how we can co-locate pods on the same node, in the same availability zone, or within 
+the same region.
+
+### podAntiAffinity:
+Pod anti-affinity in Kubernetes ensures that specific pods are not scheduled on the same node or within the same topology
+as others. This feature helps distribute pods across different nodes, zones, or regions, reducing the risk of resource 
+contention and minimizing the impact of node failures. By enforcing separation, pod anti-affinity enhances application 
+resilience, ensuring critical workloads remain operational even during node failures, thus supporting high availability
+and fault tolerance within the cluster.
+
+### 1.Create a todo-api-deployment in cluster:
+```
+ubuntu@balasenapathi:~$ nano todo-api-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-api
+  template:
+    metadata:
+      name: todo-api-pod
+      labels:
+        app: todo-api
+    spec:
+      containers:
+        - name: todo-api
+          image: balasenapathi/todo-api:1.0.2
+          ports:
+            - containerPort: 8082
+          env:
+            - name: "spring.data.mongodb.uri"
+              value: "mongodb+srv://root:321654@cluster0.p9jq2.mongodb.net/todo?retryWrites=true&w=majority"
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - "todo-ui"
+              topologyKey: kubernetes.io/hostname      
+```
+Note: Now, we are specifying that for pods matching the UI pod label, the scheduler should retrieve the value of the 
+topologyKey, which is the hostname. With anti-affinity, we are instructing the scheduler not to co-locate these pods. 
+The expectation is that the API pods should never be scheduled on the same node as the UI pods, since we defined the 
+topologyKey as the hostname and used the UI pod label in the matchExpression.
+
+### 2.Now apply the changes in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f todo-api-deployment.yaml
+deployment.apps/todo-api configured
+```
+### 3.Now list down all the pods in the cluster
+```
+ubuntu@balasenapathi:~$ kubectl get pods -o wide
+NAME                        READY   STATUS    RESTARTS   AGE     IP           NODE           NOMINATED NODE   READINESS GATES
+todo-api-67d9f8f977-d6l2m   1/1     Running   0          5m11s   10.244.1.9   minikube-m02   <none>           <none>
+todo-api-67d9f8f977-pmzfk   1/1     Running   0          3m10s   10.244.3.3   minikube-m04   <none>           <none>
+todo-ui-75d9ff8dd4-9vrxf    1/1     Running   0          3h13m   10.244.2.4   minikube-m03   <none>           <none>
+todo-ui-75d9ff8dd4-j27lj    1/1     Running   0          3h13m   10.244.2.5   minikube-m03   <none>           <none>
+```
+Note: We can see that the API pods are scheduled onto nodes "minikube-m02" and "minikube-m04," but not onto "minikube-m03.
+" This is because of the podAntiAffinity rule, which ensures that API pods do not co-locate with the UI pods on "minikube-m03."
 
 
 
