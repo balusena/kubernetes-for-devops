@@ -335,7 +335,7 @@ nodes using advanced operators. It is divided into two main types:
    - **1.Node Affinity**
    - **2.Pod Affinity**
 
-- **1.Node Affinity:**
+#### 1.Node Affinity:
 NodeAffinity enables pods to be scheduled on nodes that match specific criteria, such as having particular labels or 
 satisfying certain conditions. It allows you to express complex rules, like scheduling pods on nodes with labels that 
 fall within a specific range of values or that meet certain requirements.
@@ -364,7 +364,6 @@ or close to each other, which can be useful for optimizing network latency or co
 `PodAntiAffinity` ensures that pods are spread across different nodes, improving resilience and fault tolerance.
 
 
-vire
 
 
 
