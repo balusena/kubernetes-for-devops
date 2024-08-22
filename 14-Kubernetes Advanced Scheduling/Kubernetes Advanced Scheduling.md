@@ -246,12 +246,12 @@ from-external-load-balancers=,team=analytics
 beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/
 arch=amd64,kubernetes.io/hostname=minikube-m02,kubernetes.io/os=linux
 ```
-### Labels of third node:minikube:m03:
+### Labels of third node:minikube:m03.
 ```
 beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/
 arch=amd64,kubernetes.io/hostname=minikube-m03,kubernetes.io/os=linux,team=analytics
 ```
-### Labels of fourth node:minikube-m04:
+### Labels of fourth node:minikube-m04.
 ```
 beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/
 arch=amd64,kubernetes.io/hostname=minikube-m04,kubernetes.io/os=linux
@@ -260,7 +260,7 @@ arch=amd64,kubernetes.io/hostname=minikube-m04,kubernetes.io/os=linux
 indicating the node architecture is amd64, and `beta.kubernetes.io/os=linux`, specifying the OS is Linux. Additionally,
 we added the custom label `team=analytics` to both the first node (`minikube`) and the third node (`minikube-m03`).
 
-### 4.To filter our nodes with specific labels in our cluster:
+### 4.To filter our nodes with specific labels in our cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl get nodes -l team=analytics 
 NAME           STATUS   ROLES           AGE    VERSION
@@ -270,7 +270,7 @@ minikube-m03   Ready    <none>          118m   v1.27.3
 **Note:** Now we have identified all the nodes with the label team=analytics. Let's use this label in the nodeSelector 
 of our deployment file to ensure the pods are scheduled onto these nodes. 
 
-### 5.Now change the deployment file todo-ui-deployment.yaml:
+### 5.Now change the deployment file todo-ui-deployment.yaml.
 ```
 ubuntu@balasenapathi:~$ nano todo-ui-deployment.yaml
 apiVersion: apps/v1
@@ -304,14 +304,14 @@ spec:
 **Note:** When creating labels for nodes, we use = (e.g., team=analytics). However, in the nodeSelector specification of
 the deployment file, you should use a colon to define the label as a key-value pair (e.g., team:analytics).
 
-### 6.Now apply the deployment changes in cluster:
+### 6.Now apply the deployment changes in cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl apply -f todo-ui-deployment.yaml
 deployment.apps/todo-ui configured
 ```
 **Note:** We can see our deployment is changed.
 
-### 7.Now list down the pods in the cluster and give wide option to display the nodes also:
+### 7.Now list down the pods in the cluster and give wide option to display the nodes also.
 ```
 ubuntu@balasenapathi:~$ kubectl get pods -o wide
 NAME                       READY   STATUS    RESTARTS   AGE   IP           NODE           NOMINATED NODE   READINESS GATES
@@ -328,6 +328,40 @@ flexibility for more complex conditions, such as selecting nodes with label valu
 
 To address these needs, nodeAffinity was introduced as a more powerful mechanism, offering advanced scheduling 
 capabilities and allowing for more nuanced criteria.
+
+### 3.Affinity:
+`Affinity` is an alternative to `nodeSelector` and allows us to instruct Kubernetes to schedule our pods onto specific 
+nodes using advanced operators. It is divided into two main types:
+- 1.Node Affinity
+- 2.Pod Affinity
+
+- **1.Node Affinity:**
+`NodeAffinity` enables pods to be scheduled on nodes that match specific criteria, such as having particular labels or 
+satisfying certain conditions. It allows you to express complex rules, like scheduling pods on nodes with labels that 
+fall within a specific range of values or that meet certain requirements.
+
+#### Node Affinity is further divided into two types:
+- Required During Scheduling, Ignore During Execution
+- Preffered During Scheduling, Ignore During Execution
+
+![Kubernetes Node Affinity 1](https://github.com/balusena/kubernetes-for-devops/blob/main/14-Kubernetes%20Advanced%20Scheduling/nodeaffinity_1.png)  
+
+1. **Required During Scheduling, Ignore During Execution**:  
+   This type of affinity specifies rules that must be met during the scheduling of a pod. If the conditions specified 
+   are not met, the pod will not be scheduled on that node. Once scheduled, Kubernetes does not enforce these rules 
+   during the pod's execution.
+
+2. **Preferred During Scheduling, Ignore During Execution**:  
+   This type of affinity expresses a preference for certain nodes during pod scheduling. However, it does not strictly 
+   enforce this preference. If the preferred conditions are not met, the pod can still be scheduled on other nodes. 
+   Like the required type, this does not impact the pod during execution.
+
+
+
+- **2.Pod Affinity:**
+`PodAffinity` controls how pods are placed relative to other pods. It ensures that pods are scheduled on the same node 
+or close to each other, which can be useful for optimizing network latency or co-locating related services. Conversely, 
+`PodAntiAffinity` ensures that pods are spread across different nodes, improving resilience and fault tolerance.
 
 
 
