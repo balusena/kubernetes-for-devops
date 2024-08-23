@@ -116,6 +116,9 @@ from the new pods as well.
 
 ![Kubernetes HPA Worflow](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/hpa_workflow.png)
 
+**HPA(Horizontal Pod Autoscaler) uses the below formula to calculate number of replicas:**
+
+![Kubernetes HPA Replica Formula](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/hpa_replica_formula.png)
 
 
 
