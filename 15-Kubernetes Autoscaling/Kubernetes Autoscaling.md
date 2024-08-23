@@ -49,4 +49,40 @@ job for us it adds the nodes to the cluster if there are any pods struck in the 
 in the cluster.
 
 ![Kubernetes Cluster Autoscaler](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/ca.png)
- 
+
+### Scale Up and Scale Down in (HPA, VPA, CA) Autoscaling
+
+#### 1. Scale Up
+In autoscaling, "scale up" refers to increasing the number of pod replicas or resources allocated to existing pods to 
+handle higher demand, thereby distributing the load more effectively.
+
+- **Horizontal Pod Autoscaler (HPA)**
+  - **Scale Up:** Increases the number of pod replicas based on metrics like CPU usage or memory, distributing the load 
+    across more pods.
+
+- **Vertical Pod Autoscaler (VPA)**
+  - **Scale Up:** Increases resource requests (CPU and memory) for existing pods to handle higher loads, adjusting the 
+    resources allocated to each pod.
+
+- **Cluster Autoscaler (CA)**
+  - **Scale Up:** Adds new nodes to the cluster when there are insufficient resources to schedule new pods, helping to 
+    manage increased pod demands.
+    
+![Kubernetes Autoscaling ScaleUp](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/scaleup.png)  
+
+#### 2. Scale Down
+In autoscaling, "Scale down" involves reducing the number of pod replicas or resources when demand decreases, optimizing
+resource usage and reducing costs.
+
+- **Horizontal Pod Autoscaler (HPA)**
+  - **Scale Down:** Decreases the number of pod replicas when metrics fall below the threshold, reducing resource consumption.
+
+- **Vertical Pod Autoscaler (VPA)**
+  - **Scale Down:** Decreases resource requests for existing pods when the load decreases, optimizing resource usage.
+
+- **Cluster Autoscaler (CA)**
+  - **Scale Down:** Removes underutilized nodes from the cluster to reduce costs when there are fewer pods requiring resources.
+  
+![Kubernetes Autoscaling ScaleDown](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/scaledown.png)
+
+
