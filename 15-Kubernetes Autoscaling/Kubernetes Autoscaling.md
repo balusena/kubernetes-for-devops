@@ -13,7 +13,7 @@ handle such traffic spikes can be a tedious process. What if there were a way to
 scale them whenever there is an increase in CPU usage, memory, or other metrics like QPS (Queries Per Second)? This 
 is called **Autoscaling**—scaling automatically based on specific metrics.
 
-![Kubernetes Autoscaling Intro]()
+![Kubernetes Autoscaling Intro](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/autoscaling.png)
   
 
 
