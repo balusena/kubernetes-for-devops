@@ -85,4 +85,20 @@ resource usage and reducing costs.
   
 ![Kubernetes Autoscaling ScaleDown](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/scaledown.png)
 
+### Working examples of Autoscalers:
+
+#### 1.Horizontal Pod Autoscaler (HPA):
+Let's say our application is an e-commerce application and during a big billion sale, we get so many orders. When there 
+is such unusual traffic, our application should be able to serve all the users without any downtime. For that, 
+
+when the demand increases, the app should scale up, which means increasing the number of replicas to stay responsive.
+
+![Kubernetes HPA ScaleUp](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/hpa_scaleup.png)
+
+When the demand decreases, the app should scale down, which means decreasing the number of replicas to avoid wasting any
+resources.
+
+![Kubernetes HPA ScaleDown](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/hpa_scaledown.png)
+
+
 
