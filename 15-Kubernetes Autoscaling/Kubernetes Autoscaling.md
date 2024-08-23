@@ -100,5 +100,25 @@ resources.
 
 ![Kubernetes HPA ScaleDown](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/hpa_scaledown.png)
 
+But how does Kubernetes know when to scale up and when to scale down a deployment? For that, Kubernetes offers a resource
+named Horizontal Pod Autoscaler (HPA). With HPA, we can instruct Kubernetes when and how to scale our deployment based on
+specific metrics.
+
+#### Horizontal Pod Autoscaler (HPA) Workflow:
+Let's see how HPA works in Kubernetes. In the Kubernetes architecture, we have learned that on every worker node, kubelet
+runs, and there is an agent in kubelet called cAdvisor (Container Advisor) by Google. When our pods are running on the 
+worker node, cAdvisor can scrape the pod's CPU and memory usage every 10 seconds. Every minute, the metrics server aggregates
+these metrics and exposes them to the Kubernetes API server. The HPA controller queries the API server every 15 minutes 
+for these metrics. Once the controller gets the desired pod metrics, it checks them against our definitions and decides 
+to scale up or scale down our replicas. The HPA controller updates the replica count in the target deployment. Spinning 
+up new pods or deleting existing pods is managed by the replication controller, and cAdvisor starts collecting metrics 
+from the new pods as well.
+
+![Kubernetes HPA Worflow](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/hpa_workflow.png)
+
+
+
+
+
 
 
