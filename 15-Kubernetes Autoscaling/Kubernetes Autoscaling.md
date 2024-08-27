@@ -536,7 +536,7 @@ Vertical Pod Autoscaler (VPA) performs three steps:
 - **Recommends Resources:** Based on these metrics, it provides recommendations for resource requests.
 - **Updates Resources (Optional):** If auto-update is enabled, it adjusts the resource allocations of the pods accordingly.
 
-### 1.Now create a vpa.yaml manifest file:
+### 1.Now create a vpa.yaml manifest file.
 ```
 ubuntu@balasenapathi:~$ nano vpa.yaml
 apiVersion: autoscaling.k8s.io/v1
@@ -561,7 +561,7 @@ Please note: updateMode: Off is preferred in production environments because app
 potentially causing workload disruption. The best practice is to set updateMode: Off in production, feed the recommendations
 to a capacity monitoring dashboard like Grafana, and apply the recommendations in the next deployment cycle.
 
-### 2.Now apply the changes in the cluster:
+### 2.Now apply the changes in the cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl apply -f vpa.yaml
 error: resource mapping not found for name: "utility-api" namespace: "" from "vpa.yaml": no matches for kind "VerticalPodAutoscaler" in 
@@ -571,7 +571,7 @@ ensure CRDs are installed first
 **Note:** There is an error indicating that VerticalPodAutoscaler is not found. The reason is that, by default, VPA is not 
 available in our cluster. We need to install it explicitly by cloning the VPA repository.
 
-### 3.Cloning VPA from the Git:
+### 3.Cloning VPA from the Git.
 ```
 ubuntu@balasenapathi:~$ git clone https://github.com/kubernetes/autoscaler.git
 Cloning into 'autoscaler'...
@@ -583,9 +583,9 @@ Receiving objects: 100% (184223/184223), 205.46 MiB | 3.19 MiB/s, done.
 Resolving deltas: 100% (116352/116352), done.
 Updating files: 100% (30568/30568), done.
 ```
-Note: The repository is cloned and this repository is being maintained by the kubernetes.
+**Note:** The repository is cloned and this repository is being maintained by the kubernetes.
 
-### 4.Now get into the autoscaler repository/directory run this command to install VPA :
+### 4.Now get into the autoscaler repository/directory run this command to install VPA .
 ```
 ubuntu@balasenapathi:~$ cd autoscaler
 ubuntu-dsbda@ubuntudsbda-virtual-machine:~/autoscaler$ ./vertical-pod-autoscaler/hack/vpa-up.sh
@@ -697,8 +697,36 @@ the maximum recommended resource estimation. In other words, the Lower Bound cor
 corresponds to the Limits. This is how VPA provides resource recommendations, rather than requiring us to guess the Requests
 and Limits for our application.
 
-- Note: Now that we understand how to scale our application both horizontally and vertically, what if we don't have enough
-  capacity in the cluster to scale our pods?
+Now that we understand how to scale our application both horizontally and vertically, what if we don't have enough capacity
+in the cluster to scale our pods?
+
+#### 3.Cluster Autoscaler(CA):
+**For example,** when a pod requests 1 CPU but the cluster has only 0.5 CPU available, the scheduler marks the pod as 
+unschedulable. As we've seen in advanced scheduling, in this case, we have multiple options:
+
+1. **Free up resources:** Delete unwanted workloads in the cluster.
+2. **Add a node manually:** Manually add new nodes.
+3. **Let Kubernetes handle it:** Allow Kubernetes to automatically add nodes when necessary, using an automated approach.
+
+This is where the **Cluster Autoscaler (CA)** comes into play. The CA checks for any unschedulable pods every 10 seconds.
+Once one or more unschedulable pods are detected, the CA runs an algorithm to decide how many nodes are needed to deploy
+all pending pods and what type of nodes should be created. The same process applies for downscaling; every 10 seconds, 
+the CA decides to remove a node only when the resource utilization falls below 50%.
+
+When the Cluster Autoscaler (CA) detects an unschedulable pod,it will create a new node,and the scheduler will automatically
+schedule this pod onto the new node. **Note** that the CA doesn't look at the available memory or CPU when it triggers 
+autoscaling; it focuses on the unschedulable pods.
+
+- If you're using **AWS**, the CA will provision a new EC2 instance.
+- If you're using **Azure**, the CA will create a new virtual machine.
+- If you're on **GCP**, the CA will create a new compute engine.
+
+![Kubernetes CA Worflow](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/ca_workflow.png)
+
+
+
+
+
 
 
 
