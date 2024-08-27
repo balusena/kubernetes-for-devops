@@ -536,6 +536,174 @@ Vertical Pod Autoscaler (VPA) performs three steps:
 - **Recommends Resources:** Based on these metrics, it provides recommendations for resource requests.
 - **Updates Resources (Optional):** If auto-update is enabled, it adjusts the resource allocations of the pods accordingly.
 
+### 1.Now create a vpa.yaml manifest file:
+```
+ubuntu@balasenapathi:~$ nano vpa.yaml
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: utility-api
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: utility-api
+  updatePolicy:
+    updateMode: "Off"
+```
+**Note:** Here, our target is the same utility-api, and the updateMode is set to Off. The updateMode has three values:
+
+- Auto: Applies the recommendations suggested by the VPA directly by updating the pods.
+- Off: Provides recommendations but does not update the pods.
+- Initial: Applies the recommended values only to newly created pods.
+
+Please note: updateMode: Off is preferred in production environments because applying changes with VPA can restart pods,
+potentially causing workload disruption. The best practice is to set updateMode: Off in production, feed the recommendations
+to a capacity monitoring dashboard like Grafana, and apply the recommendations in the next deployment cycle.
+
+### 2.Now apply the changes in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f vpa.yaml
+error: resource mapping not found for name: "utility-api" namespace: "" from "vpa.yaml": no matches for kind "VerticalPodAutoscaler" in 
+version "autoscaling.k8s.io/v1"
+ensure CRDs are installed first
+```
+**Note:** There is an error indicating that VerticalPodAutoscaler is not found. The reason is that, by default, VPA is not 
+available in our cluster. We need to install it explicitly by cloning the VPA repository.
+
+### 3.Cloning VPA from the Git:
+```
+ubuntu@balasenapathi:~$ git clone https://github.com/kubernetes/autoscaler.git
+Cloning into 'autoscaler'...
+remote: Enumerating objects: 184223, done.
+remote: Counting objects: 100% (3220/3220), done.
+remote: Compressing objects: 100% (2306/2306), done.
+remote: Total 184223 (delta 1385), reused 1803 (delta 823), pack-reused 181003
+Receiving objects: 100% (184223/184223), 205.46 MiB | 3.19 MiB/s, done.
+Resolving deltas: 100% (116352/116352), done.
+Updating files: 100% (30568/30568), done.
+```
+Note: The repository is cloned and this repository is being maintained by the kubernetes.
+
+### 4.Now get into the autoscaler repository/directory run this command to install VPA :
+```
+ubuntu@balasenapathi:~$ cd autoscaler
+ubuntu-dsbda@ubuntudsbda-virtual-machine:~/autoscaler$ ./vertical-pod-autoscaler/hack/vpa-up.sh
+customresourcedefinition.apiextensions.k8s.io/verticalpodautoscalercheckpoints.autoscaling.k8s.io created
+customresourcedefinition.apiextensions.k8s.io/verticalpodautoscalers.autoscaling.k8s.io created
+clusterrole.rbac.authorization.k8s.io/system:metrics-reader created
+clusterrole.rbac.authorization.k8s.io/system:vpa-actor created
+clusterrole.rbac.authorization.k8s.io/system:vpa-status-actor created
+clusterrole.rbac.authorization.k8s.io/system:vpa-checkpoint-actor created
+clusterrole.rbac.authorization.k8s.io/system:evictioner created
+clusterrolebinding.rbac.authorization.k8s.io/system:metrics-reader created
+clusterrolebinding.rbac.authorization.k8s.io/system:vpa-actor created
+clusterrolebinding.rbac.authorization.k8s.io/system:vpa-status-actor created
+clusterrolebinding.rbac.authorization.k8s.io/system:vpa-checkpoint-actor created
+clusterrole.rbac.authorization.k8s.io/system:vpa-target-reader created
+clusterrolebinding.rbac.authorization.k8s.io/system:vpa-target-reader-binding created
+clusterrolebinding.rbac.authorization.k8s.io/system:vpa-evictioner-binding created
+serviceaccount/vpa-admission-controller created
+serviceaccount/vpa-recommender created
+serviceaccount/vpa-updater created
+clusterrole.rbac.authorization.k8s.io/system:vpa-admission-controller created
+clusterrolebinding.rbac.authorization.k8s.io/system:vpa-admission-controller created
+clusterrole.rbac.authorization.k8s.io/system:vpa-status-reader created
+clusterrolebinding.rbac.authorization.k8s.io/system:vpa-status-reader-binding created
+deployment.apps/vpa-updater created
+deployment.apps/vpa-recommender created
+Generating certs for the VPA Admission Controller in /tmp/vpa-certs.
+Generating RSA private key, 2048 bit long modulus (2 primes)
+..................................................................................+++++
+...................................................................................+++++
+e is 65537 (0x010001)
+Generating RSA private key, 2048 bit long modulus (2 primes)
+...........................+++++
+.........................+++++
+e is 65537 (0x010001)
+Signature ok
+subject=CN = vpa-webhook.kube-system.svc
+Getting CA Private Key
+Uploading certs to the cluster.
+secret/vpa-tls-certs created
+Deleting /tmp/vpa-certs.
+deployment.apps/vpa-admission-controller created
+service/vpa-webhook created
+```
+**Note:** Now we can see that the VPA has been installed.
+
+### 5.Now apply the changes in the cluster for VPA:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f vpa.yaml
+verticalpodautoscaler.autoscaling.k8s.io/utility-api created
+```
+**Note:** We can see that the VPA has created
+
+### 6.We can verify that by using:
+```
+ubuntu@balasenapathi:~$ kubectl get vpa
+NAME          MODE   CPU   MEM       PROVIDED   AGE
+utility-api   Off    25m   262144k   True       68s 
+
+ubuntu@balasenapathi:~$ kubectl get vpa utility-api
+NAME          MODE   CPU   MEM       PROVIDED   AGE
+utility-api   Off    25m   262144k   True       105s
+```
+### 7.Now try to describe this VPA:
+```
+ubuntu@balasenapathi:~$ kubectl describe vpa utility-api
+Name:         utility-api
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+API Version:  autoscaling.k8s.io/v1
+Kind:         VerticalPodAutoscaler
+Metadata:
+  Creation Timestamp:  2023-10-04T17:49:56Z
+  Generation:          1
+  Resource Version:    2463
+  UID:                 3a320cf3-2deb-426c-afc5-aa2a3c6b6625
+Spec:
+  Target Ref:
+    API Version:  apps/v1
+    Kind:         Deployment
+    Name:         utility-api
+  Update Policy:
+    Update Mode:  Off
+Status:
+  Conditions:
+    Last Transition Time:  2023-10-04T17:50:44Z
+    Status:                True
+    Type:                  RecommendationProvided
+  Recommendation:
+    Container Recommendations:
+      Container Name:  utility-api
+      Lower Bound:
+        Cpu:     25m
+        Memory:  262144k
+      Target:
+        Cpu:     25m
+        Memory:  262144k
+      Uncapped Target:
+        Cpu:     25m
+        Memory:  262144k
+      Upper Bound:
+        Cpu:     15851m
+        Memory:  235427771491
+Events:          <none>
+```
+**Note:** Here, the Lower Bound represents the minimum estimated resources for the container, while the Upper Bound represents
+the maximum recommended resource estimation. In other words, the Lower Bound corresponds to the Requests and the Upper Bound
+corresponds to the Limits. This is how VPA provides resource recommendations, rather than requiring us to guess the Requests
+and Limits for our application.
+
+- Note: Now that we understand how to scale our application both horizontally and vertically, what if we don't have enough
+  capacity in the cluster to scale our pods?
+
+
+
+
+
  
 
 
