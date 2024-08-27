@@ -120,8 +120,25 @@ from the new pods as well.
 
 ![Kubernetes HPA Replica Formula](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/hpa_replica_formula.png)
 
+**Usecase:**
+
+Let's say we have a deployment with two (2) pods, and both pods are consuming 90% of CPU on average. Now, assume that we
+define the deployment to scale when CPU usage exceeds 70%. Every 15 seconds, the HPA (Horizontal Pod Autoscaler) calculates
+the desired number of replicas. This results in three (3) pods instead of two, so that the load is distributed more 
+effectively, preventing the initial pods from struggling. Not only deployments, but we can also scale StatefulSets and 
+ReplicaSets with HPA (Horizontal Pod Autoscaler).
 
 
+![Kubernetes HPA Replica Formula Example](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/hpa_example.png)
 
+We can even define multiple metrics for scaling, such as CPU and memory usage. When AutoScaling is based on multiple 
+metrics, the autoscaler calculates the replica count for each metric individually and then takes the highest value—in 
+this case, 4 replicas.
+
+In summary, the purpose of HPA (Horizontal Pod Autoscaler) is to calculate the replica count that brings the current 
+metrics value as close as possible to the target value.
+
+
+ 
 
 
