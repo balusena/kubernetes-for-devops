@@ -128,7 +128,6 @@ the desired number of replicas. This results in three (3) pods instead of two, s
 effectively, preventing the initial pods from struggling. Not only deployments, but we can also scale StatefulSets and 
 ReplicaSets with HPA (Horizontal Pod Autoscaler).
 
-
 ![Kubernetes HPA Replica Formula Example](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/hpa_example.png)
 
 We can even define multiple metrics for scaling, such as CPU and memory usage. When AutoScaling is based on multiple 
@@ -137,6 +136,390 @@ this case, 4 replicas.
 
 In summary, the purpose of HPA (Horizontal Pod Autoscaler) is to calculate the replica count that brings the current 
 metrics value as close as possible to the target value.
+
+- **Create a simple Spring Boot API with a `/stress` endpoint that generates CPU load when invoked:**
+
+### 1.Now deploy this API with kubernetes deployment.
+```
+ubuntu@balasenapathi:~$ nano deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: utility-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: utility-api
+  template:
+    metadata:
+      name: utility-api-pod
+      labels:
+        app: utility-api
+    spec:
+      containers:
+        - name: utility-api
+          image: balasenapathi/utility-api
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: 20Mi
+              cpu: "0.25"
+            limits:
+              memory: 400Mi
+              cpu: "1"
+```
+**Note: This is the deployment manifest for the Utility API here we are giving the 2 replicas.**
+
+### 2.Now create a kubernetes service in cluster to access this application.
+```
+ubuntu@balasenapathi:~$ nano service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: utility-api-service
+spec:
+  selector:
+    app: utility-api
+  ports:
+    - port: 8080
+      targetPort: 8080
+```
+### 3.Now create/define a HPA-Horizontal Pod AutoScaler for the above deployment.
+```
+ubuntu@balasenapathi:~$ nano hpa.yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: utility-api
+spec:
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 70
+          type: Utilization
+      type: Resource
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: utility-api
+```
+**Note:** The minReplicas and maxReplicas parameters indicate that our deployment will scale up to a maximum of 5 replicas
+if the average CPU usage exceeds 70%, and scale down to a minimum of one replica when CPU usage is low.
+
+### 4.First apply our deployment of spring boot application.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f deployment.yaml
+deployment.apps/utility-api created
+```
+### 5.Now apply the service to access this application.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f service.yaml
+service/utility-api-service created
+```
+### 6.Now apply the HPA in cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f hpa.yaml
+horizontalpodautoscaler.autoscaling/utility-api created
+```
+**Note:** The expectation is that the HPA controller should scrape the metrics of our pods because we specified 
+scaleTargetRef as the utility-api that was deployed.
+
+### 7.Now list down all the pods in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                           READY   STATUS    RESTARTS   AGE
+utility-api-5b4b9b5776-g2fkl   1/1     Running   0          7m21s
+utility-api-5b4b9b5776-z4tp8   1/1     Running   0          7m21s
+```
+### 8.Now lets list down the metrics of these pods.
+```
+ubuntu@balasenapathi:~$ minikube addons enable metrics-server
+💡  metrics-server is an addon maintained by Kubernetes. For any concerns contact minikube on GitHub.
+You can view the list of minikube maintainers at: https://github.com/kubernetes/minikube/blob/master/OWNERS
+    ▪ Using image registry.k8s.io/metrics-server/metrics-server:v0.6.3
+🌟  The 'metrics-server' addon is enabled
+
+
+ubuntu@balasenapathi:~$ kubectl top pods
+NAME                           CPU(cores)   MEMORY(bytes)   
+utility-api-5b4b9b5776-g2fkl   2m           99Mi                
+```
+**Note:** As we can see, the CPU usage is 2m and the memory consumption is 99Mi. Although we defined 2 replicas in our 
+deployment, we currently see only one pod.
+
+### 9.Now list down the pods again.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                           READY   STATUS    RESTARTS   AGE
+utility-api-5b4b9b5776-g2fkl   1/1     Running   0          12m
+```
+**Note:** This is because the average CPU utilization of our deployment is less than 70%. We have defined that the 
+application should scale down to one replica if there is no significant load on the pods. Since our application is 
+consuming only 2m millicores, it has scaled down to one pod
+
+### 10.We can verify that HPA scaled it down by describing the HPA.
+```
+ubuntu@balasenapathi:~$ kubectl get  hpa
+NAME          REFERENCE                TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+utility-api   Deployment/utility-api   1%/70%    1         5         1          15m
+```
+**Note:** We can see only 1% of the CPU is being used, and the current replicas are 1.
+
+### 11.Now try to describe this HPA.
+```
+ubuntu@balasenapathi:~$ kubectl describe hpa utility-api
+Name:                                                  utility-api
+Namespace:                                             default
+Labels:                                                <none>
+Annotations:                                           <none>
+CreationTimestamp:                                     Wed, 04 Oct 2023 01:57:11 +0530
+Reference:                                             Deployment/utility-api
+Metrics:                                               ( current / target )
+  resource cpu on pods  (as a percentage of request):  0% (2m) / 70%
+Min replicas:                                          1
+Max replicas:                                          5
+Deployment pods:                                       1 current / 1 desired
+Conditions:
+  Type            Status  Reason               Message
+  ----            ------  ------               -------
+  AbleToScale     True    ScaleDownStabilized  recent recommendations were higher than current one, applying the highest recent recommendation
+  ScalingActive   True    ValidMetricFound     the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)
+  ScalingLimited  False   DesiredWithinRange   the desired count is within the acceptable range
+Events:
+  Type    Reason             Age   From                       Message
+  ----    ------             ----  ----                       -------
+  Normal  SuccessfulRescale  12m   horizontal-pod-autoscaler  New size: 1; reason: All metrics below target
+```
+**Note:** As we can see, the new size is 1 with the reason being 'All metrics below target.' This is how HPA works. We 
+observed that the HPA automatically scaled down the pods because the CPU usage was less than 70%.
+
+- **Now, let's try to add some load onto the pods and see what happens:**
+
+**Note:** For this, we are creating a simple traffic-generator Alpine pod that can easily communicate with the utility-api.
+
+### 12.Now create a manifest file for traffic-generator.yaml.
+```
+ubuntu@balasenapathi:~$ nano traffic-generator.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: traffic-generator
+spec:
+  containers:
+  - name: alpine
+    image: alpine
+    args:
+    - sleep
+    - "100000000"
+```    
+### 13.Now apply the changes in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f  traffic-generator.yaml
+pod/traffic-generator created
+```
+**Note:** It created a simple alpine pod.
+### 14.To get the list of pods running in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                           READY   STATUS    RESTARTS   AGE
+traffic-generator              1/1     Running   0          2m52s
+utility-api-5b4b9b5776-g2fkl   1/1     Running   0          32m
+```
+### 14.Now try to get into this pod:
+```
+ubuntu@balasenapathi:~$ kubectl exec -it traffic-generator -- sh
+/ # 
+```
+**Note:** Now we are in the traffic-generator alpine pod. Our job is to generate load on the utility-api pods so that the
+CPU utilization goes beyond 70%, allowing us to observe how the pods automatically scale up. To achieve this, we need to
+continuously call the stress API, causing the CPU usage to increase.
+
+Note: Here, we introduce the HTTP benchmarking tool called wrk. With wrk, we can seamlessly generate load on the pods by
+running a simple command in the Alpine pod. For more information, you can visit the wrk GitHub repository.
+```
+This is the link of wrk in GitHub ===> https://github.com/wg/wrk
+```
+### 15.To access the Traffic Generator Pod.
+```
+ubuntu@balasenapathi:~$ kubectl exec -it traffic-generator -- sh
+/ # apk add wrk
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.18/main/x86_64/APKINDEX.tar.gz
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.18/community/x86_64/APKINDEX.tar.gz
+(1/3) Installing libgcc (12.2.1_git20220924-r10)
+(2/3) Installing luajit (2.1_p20230410-r1)
+(3/3) Installing wrk (4.2.0-r0)
+Executing busybox-1.36.1-r2.trigger
+OK: 9 MiB in 18 packages
+```
+**Note:** We can see that the wrk tool is successfully installed in our alpine pod.
+
+### 16.Now lets simmulate the load with this command in the pod.
+```
+ubuntu@balasenapathi:~$ kubectl exec -it traffic-generator -- sh
+/ # apk add wrk  
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.18/main/x86_64/APKINDEX.tar.gz
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.18/community/x86_64/APKINDEX.tar.gz
+(1/3) Installing libgcc (12.2.1_git20220924-r10)
+(2/3) Installing luajit (2.1_p20230410-r1)
+(3/3) Installing wrk (4.2.0-r0)
+Executing busybox-1.36.1-r2.trigger
+OK: 9 MiB in 18 packages
+/ # wrk -c 5 -t 5 -d 300s -H "Connection: Close" http://utility-api-service:8080/api/stress
+Running 5m test @ http://utility-api-service:8080/api/stress
+  5 threads and 5 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    30.06ms   95.27ms   1.87s    96.95%
+    Req/Sec    58.17     26.37   160.00     63.21%
+  80420 requests in 5.00m, 18.56MB read
+  Socket errors: connect 0, read 0, write 480, timeout 4
+Requests/sec:    267.99
+Transfer/sec:     63.33KB  
+
+wrk -c 5 -t 5 -d 300s -H "Connection: Close" http://utility-api-service:8080/api/stress
+``` 
+**Note:** Here we are making 5 connections with five threads for a duration of 300 seconds to the utility-api-service/api
+service and finally, we are firing the stress endpoint.
+
+### 17.Now lets open the new tab and see the pod matrix.
+```
+ubuntu@balasenapathi:~$ kubectl top pods
+NAME                           CPU(cores)   MEMORY(bytes)   
+traffic-generator              112m         5Mi             
+utility-api-5b4b9b5776-g2fkl   277m         129Mi           
+```
+Note: As we can see, the CPU usage has increased to 112m millicores and memory usage to 129Mi. Let’s wait for a while 
+because it takes some time for cAdvisor to collect CPU metrics and for the metrics server to aggregate them before the 
+Autoscaler can take action.
+
+### 18.Now lets open the new tab and see the pod matrix.
+```
+ubuntu@balasenapathi:~$ kubectl top pods
+NAME                           CPU(cores)   MEMORY(bytes)   
+traffic-generator              112m         5Mi             
+utility-api-5b4b9b5776-g2fkl   277m         129Mi           
+utility-api-5b4b9b5776-hzqrj   447m         122Mi           
+utility-api-5b4b9b5776-kmc8w   275m         126Mi           
+utility-api-5b4b9b5776-rt5s6   434m         121Mi
+utility-api-5b4b9b5576-mr1ht   312m         123Mi
+```
+**Note:** We can see that the api pods are increased to 5.This is the power of HPA.
+
+### 19.Now lets try to list the HPA from the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get hpa
+NAME          REFERENCE                TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
+utility-api   Deployment/utility-api   143%/70%   1         5         5          47m
+```
+**Note:** We can see, the CPU usage is above 70%. Since we set the maximum number of replicas to 5, the deployment scaled
+up to 5 pods. If a higher maximum value had been set, more pods would have been created. The load is now distributed across
+these pods.
+
+### 20.We can also verify this by describing HPA.
+```
+ubuntu@balasenapathi:~$ kubectl describe hpa utility-api
+Name:                                                  utility-api
+Namespace:                                             default
+Labels:                                                <none>
+Annotations:                                           <none>
+CreationTimestamp:                                     Wed, 04 Oct 2023 01:57:11 +0530
+Reference:                                             Deployment/utility-api
+Metrics:                                               ( current / target )
+  resource cpu on pods  (as a percentage of request):  92% (231m) / 70%
+Min replicas:                                          1
+Max replicas:                                          5
+Deployment pods:                                       5 current / 5 desired
+Conditions:
+  Type            Status  Reason               Message
+  ----            ------  ------               -------
+  AbleToScale     True    ScaleDownStabilized  recent recommendations were higher than current one, applying the highest recent 
+  recommendation
+  ScalingActive   True    ValidMetricFound     the HPA was able to successfully calculate a replica count from cpu resource utilization 
+  (percentage of request)
+  ScalingLimited  True    TooManyReplicas      the desired replica count is more than the maximum replica count
+Events:
+  Type    Reason             Age    From                       Message
+  ----    ------             ----   ----                       -------
+  Normal  SuccessfulRescale  43m    horizontal-pod-autoscaler  New size: 1; reason: All metrics below target
+  Normal  SuccessfulRescale  5m20s  horizontal-pod-autoscaler  New size: 2; reason: cpu resource utilization (percentage of request) above target
+  Normal  SuccessfulRescale  4m20s  horizontal-pod-autoscaler  New size: 4; reason: cpu resource utilization (percentage of request) above target
+  Normal  SuccessfulRescale  2m20s  horizontal-pod-autoscaler  New size: 5; reason: cpu resource utilization (percentage of request) above target
+```
+**Note:** As we can see,the new size increased from 1 to 4,and then to 5,due to CPU resource utilization exceeding the
+target percentage.Now that the 300 seconds have elapsed and the wrk tool has stopped firing the stress API,we expect the
+CPU usage of the pods to decrease.Consequently,the extra pods created should be deleted as there is no longer high CPU
+usage.
+
+### 21.Now lets list down the metrics of the pod.
+```
+ubuntu@balasenapathi:~$ kubectl top pods
+NAME                           CPU(cores)   MEMORY(bytes)   
+traffic-generator              0m           5Mi             
+utility-api-5b4b9b5776-g2fkl   2m           129Mi           
+utility-api-5b4b9b5776-hzqrj   2m           122Mi           
+utility-api-5b4b9b5776-kmc8w   2m           126Mi           
+utility-api-5b4b9b5776-rt5s6   2m           121Mi
+utility-api-5b4b9b5576-mr1ht   2m           123Mi
+```
+**Note:** As we can see, the CPU usage has decreased to 2m millicores in each pod. The HPA controller should now take 
+action to scale the pods down to 1 replica, as this CPU usage is below the 70% threshold.
+
+### 22.Now lets get the HPA.
+```
+ubuntu@balasenapathi:~$ kubectl get hpa
+NAME          REFERENCE                TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+utility-api   Deployment/utility-api   0%/70%    1         5         1          132m
+```
+**Note:** We can see that the CPU usage is almost 0%, so now lets wait for the HPA Controller to take the action.
+
+### 23.Now list down the pods in cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                           READY   STATUS    RESTARTS   AGE
+traffic-generator              1/1     Running   0          109m
+utility-api-5b4b9b5776-g2fkl   1/1     Running   0          139m
+```
+**Note:** As we can see,we are left with only 1 pod running in the cluster due to the lack of CPU usage.This demonstrates
+how the HPA (Horizontal Pod Autoscaler) can effectively scale the number of replicas up and down based on load.
+
+### 24.Now lets get the HPA.
+```
+ubuntu@balasenapathi:~$ kubectl get hpa
+NAME          REFERENCE                TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+utility-api   Deployment/utility-api   0%/70%    1         5         1          21m
+```
+### 25.We can also verify this by describing HPA.
+```
+ubuntu@balasenapathi:~$ kubectl describe hpa utility-api
+Name:                                                  utility-api
+Namespace:                                             default
+Labels:                                                <none>
+Annotations:                                           <none>
+CreationTimestamp:                                     Wed, 04 Oct 2023 17:20:13 +0530
+Reference:                                             Deployment/utility-api
+Metrics:                                               ( current / target )
+  resource cpu on pods  (as a percentage of request):  0% (2m) / 70%
+Min replicas:                                          1
+Max replicas:                                          5
+Deployment pods:                                       1 current / 1 desired
+Conditions:
+  Type            Status  Reason            Message
+  ----            ------  ------            -------
+  AbleToScale     True    ReadyForNewScale  recommended size matches current size
+  ScalingActive   True    ValidMetricFound  the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)
+  ScalingLimited  True    TooFewReplicas    the desired replica count is less than the minimum replica count
+Events:
+  Type    Reason             Age                 From                       Message
+  ----    ------             ----                ----                       -------
+  Normal  SuccessfulRescale  12m                 horizontal-pod-autoscaler  New size: 4; reason: cpu resource utilization (percentage of request) above target
+  Normal  SuccessfulRescale  12m                 horizontal-pod-autoscaler  New size: 5; reason: cpu resource utilization (percentage of request) above target
+  Normal  SuccessfulRescale  3m5s (x2 over 16m)  horizontal-pod-autoscaler  New size: 1; reason: All metrics below target
+```
+
 
 
  
