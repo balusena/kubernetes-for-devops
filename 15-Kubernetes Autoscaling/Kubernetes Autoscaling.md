@@ -323,6 +323,7 @@ ubuntu@balasenapathi:~$ kubectl apply -f  traffic-generator.yaml
 pod/traffic-generator created
 ```
 **Note:** It created a simple alpine pod.
+
 ### 14.To get the list of pods running in the cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl get pods
@@ -358,7 +359,7 @@ OK: 9 MiB in 18 packages
 ```
 **Note:** We can see that the wrk tool is successfully installed in our alpine pod.
 
-### 16.Now lets simmulate the load with this command in the pod.
+### 16.Now lets simulate the load with this command in the pod.
 ```
 ubuntu@balasenapathi:~$ kubectl exec -it traffic-generator -- sh
 / # apk add wrk  
@@ -519,8 +520,21 @@ Events:
   Normal  SuccessfulRescale  12m                 horizontal-pod-autoscaler  New size: 5; reason: cpu resource utilization (percentage of request) above target
   Normal  SuccessfulRescale  3m5s (x2 over 16m)  horizontal-pod-autoscaler  New size: 1; reason: All metrics below target
 ```
+#### 2.Vertical Pod Autoscaler (VPA)
+Vertical Scaling involves increasing or decreasing the compute resources of a replica. Without Vertical Pod Autoscaler 
+(VPA), over-allocating resources with high requests and limits can lead to increased costs if the resources are not fully
+utilized. Conversely, under-allocating resources can degrade application performance and may result in Kubernetes killing
+the pods if they become resource-starved. Vertical Pod Autoscaler (VPA) helps address these issues by dynamically adjusting
+resource allocations based on actual usage.
 
+#### Vertical Pod Autoscaler (VPA) Workflow:
+Vertical Pod Autoscaler (VPA) performs three steps:
 
+![Kubernetes VPA Worflow](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/vpa_workflow.png)
+
+- **1.Reads Resource Metrics:** It monitors the resource metrics of your deployment, similar to how HPA does.
+- **Recommends Resources:** Based on these metrics, it provides recommendations for resource requests.
+- **Updates Resources (Optional):** If auto-update is enabled, it adjusts the resource allocations of the pods accordingly.
 
  
 
