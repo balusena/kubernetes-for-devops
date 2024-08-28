@@ -35,6 +35,8 @@ a 403 error; if we are authorized, we can complete the requested actions.
 1. **Authentication**: We prove that we are valid users.
 2. **Authorization**: We are checked to see if we can perform a specific task.
 
+![Kubernetes RBAC Authentication Authorization](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_authentication_authorization.png)
+
 
 
 
