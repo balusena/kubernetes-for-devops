@@ -37,6 +37,25 @@ a 403 error; if we are authorized, we can complete the requested actions.
 
 ![Kubernetes RBAC Authentication Authorization](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_authentication_authorization.png)
 
+There are different models through which we can achieve authorization, such as **Role-Based Access Control (RBAC)**, 
+**Attribute-Based Access Control (ABAC)**, and **Node Authorization (NA)**. However, the most popular authorization 
+model is **RBAC**. RBAC determines whether a user is allowed to perform a specific action on a given resource based 
+on their role. The level of access varies depending on the role. For example, if you are a developer, you can create, 
+read, and update resources; if you are from the monitoring team, you can only read resources; and if you are from the 
+admin team, you can do everything.
+
+**Note:** To understand how RBAC works, we first need to create a user.
+
+### 1.Create User:
+In Kubernetes, we cannot create users like we create pods or services because Kubernetes does not manage users internally.
+Instead, user management should be handled by external identity platforms like Keycloak, AWS IAM, etc. However, Kubernetes
+does handle authentication and authorization. When we perform any operation against our cluster, the request goes to the 
+API server. The API server first authenticates whether you are a valid user. If you are valid, it then authorizes whether
+you are allowed to perform that action. If authorized, you will receive the result of your request.
+
+![Kubernetes RBAC User](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_user.png)
+
+
 
 
 
