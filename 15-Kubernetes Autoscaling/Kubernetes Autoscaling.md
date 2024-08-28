@@ -723,6 +723,27 @@ autoscaling; it focuses on the unschedulable pods.
 
 ![Kubernetes CA Worflow](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/ca_workflow.png)
 
+**Note we are using AWS cloud provider example for Cluster Autoscaler (CA):**
+
+$ nano ca.yaml
+```
+apiVersion: cluster-autoscaler.k8s.io/v1
+kind: ClusterAutoscaler
+metadata:
+  name: cluster-autoscaler
+  labels:
+    k8s.io/cluster-autoscaler/enabled: "true"
+    k8s.io/cluster/eks-prod-cluster: "true"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cluster-autoscaler
+  minNodes: 1
+  maxNodes: 10
+  cloudProvider: aws
+```
+
 
 
 
