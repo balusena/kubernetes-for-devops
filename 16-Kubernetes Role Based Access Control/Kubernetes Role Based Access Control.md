@@ -17,6 +17,25 @@ management teams have read-only access for monitoring tasks, and administrators 
 
 ![Kubernetes RBAC Introduction](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_intro.png)
 
+**Note:** We can restrict access to Kubernetes resources using the Role-Based Access Control (RBAC) framework.
+
+### 1.Authentication and Authorization:
+In general, to access any resource—whether it's a Kubernetes resource, REST API, AWS service, or any other service we 
+must first prove that we are valid users by providing our credentials. This process is called **"authentication."** If
+we do not have access to the requested resource, we will encounter a 401 error. If we are valid users, we will receive 
+a 200 response.
+
+However, proving our authenticity with credentials does not grant us access to everything. There are various actions we
+may need to perform in the application, such as creating, updating, or deleting a resource. We must be authorized to 
+perform a specific action. Therefore, after authentication, we are checked against our role to see if we are authorized 
+to perform the requested action. This process is called **"authorization."** If we are not authorized, we will receive 
+a 403 error; if we are authorized, we can complete the requested actions.
+
+**Note:**
+1. **Authentication**: We prove that we are valid users.
+2. **Authorization**: We are checked to see if we can perform a specific task.
+
+
 
 
 
