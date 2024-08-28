@@ -781,7 +781,7 @@ Events:
 **To monitor how the Cluster Autoscaler reacts when it schedules new pods, you can follow these steps. This will include 
 checking the nodes before and after the autoscaler schedules a pod. Here's how you can do it with the expected outputs:**
 
-# Monitoring Cluster Autoscaler: Nodes Before and After Scheduling a Pod
+### Monitoring Cluster Autoscaler: Nodes Before and After Scheduling a Pod
 
 ### 1.Check Nodes Before Scheduling
 
