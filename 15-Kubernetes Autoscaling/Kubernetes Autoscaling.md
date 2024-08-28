@@ -723,7 +723,26 @@ autoscaling; it focuses on the unschedulable pods.
 
 ![Kubernetes CA Worflow](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/ca_workflow.png)
 
-**Note we are using AWS cloud provider example for Cluster Autoscaler (CA):**
+**Note: We are using AWS cloud provider example for Cluster Autoscaler (CA):**
+
+- **Steps to Configure and Use Cluster Autoscaler on AWS:**
+
+- **Set Up an EKS Cluster:**
+Create an EKS (Elastic Kubernetes Service) cluster on AWS using the AWS Management Console, CLI, or an Infrastructure as
+Code tool like Terraform.
+
+- **Install the Cluster Autoscaler on EKS:**
+Deploy the Cluster Autoscaler in your EKS cluster by applying a cluster-autoscaler.yaml configuration file, ensuring it's
+configured to work with your specific AWS environment.
+
+- **Update IAM Policy to Allow EKS Cluster Autoscaler to Modify Nodes:**
+Attach the necessary IAM (Identity and Access Management) policy to the EKS worker node role. This policy must grant 
+permissions to the Cluster Autoscaler to modify node groups, such as scaling nodes up or down.
+
+- **Verify the Setup of the Cluster Autoscaler on EKS:**
+Check the logs of the Cluster Autoscaler pod to ensure it's running correctly. Additionally, test the scaling behavior 
+by deploying resource-intensive workloads and observing whether the cluster scales up and down as expected.
+
 ### 1.Create a ca.yaml file.
 ```
 ubuntu@ip-172-31-47-64:~ $ nano ca.yaml
@@ -861,23 +880,6 @@ resource-intensive-deployment-5c5fbbcf5b-l9g76   1/1     Running     0         5
 ```
 **Note:** This shows that the pod is now running, confirming that the Cluster Autoscaler successfully scaled the cluster
 and the scheduler placed the pod on the new node.
-
-#### Summary:
-- **Set Up an EKS Cluster:**
-Create an EKS (Elastic Kubernetes Service) cluster on AWS using the AWS Management Console, CLI, or an Infrastructure as
-Code tool like Terraform.
-
-- **Install the Cluster Autoscaler on EKS:**
-Deploy the Cluster Autoscaler in your EKS cluster by applying a cluster-autoscaler.yaml configuration file, ensuring it's
-configured to work with your specific AWS environment.
-
-- **Update IAM Policy to Allow EKS Cluster Autoscaler to Modify Nodes:**
-Attach the necessary IAM (Identity and Access Management) policy to the EKS worker node role. This policy must grant 
-permissions to the Cluster Autoscaler to modify node groups, such as scaling nodes up or down.
-
-- **Verify the Setup of the Cluster Autoscaler on EKS:**
-Check the logs of the Cluster Autoscaler pod to ensure it's running correctly. Additionally, test the scaling behavior 
-by deploying resource-intensive workloads and observing whether the cluster scales up and down as expected.
 
 
 
