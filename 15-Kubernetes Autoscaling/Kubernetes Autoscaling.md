@@ -725,7 +725,7 @@ autoscaling; it focuses on the unschedulable pods.
 
 **Note: We are using AWS cloud provider example for Cluster Autoscaler (CA):**
 
-- **Steps to Configure and Use Cluster Autoscaler on AWS:**
+**Steps to Configure and Use Cluster Autoscaler on AWS:**
 
 - **Set Up an EKS Cluster:**
 Create an EKS (Elastic Kubernetes Service) cluster on AWS using the AWS Management Console, CLI, or an Infrastructure as
