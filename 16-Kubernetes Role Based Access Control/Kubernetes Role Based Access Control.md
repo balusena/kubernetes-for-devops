@@ -55,7 +55,288 @@ you are allowed to perform that action. If authorized, you will receive the resu
 
 ![Kubernetes RBAC User](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_user.png)
 
+### 1.Create a simple nginx pod in minikube.
+```
+ubuntu@balasenapathi:~$ nano nginx-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+```
+### 2.Apply the changes in the cluster.
+```      
+ubuntu@balasenapathi:~$ kubectl apply -f nginx-pod.yaml
+pod/nginx-pod created
+```
+                            
+**Users and Groups:**
 
+### 1.Creating a user:
+
+when we start the minikube cluster the information related to the cluster is stored in kube config file
+
+### 2.Open the config file in nano editor:
+```
+ubuntu@balasenapathi:~$ nano ~/.kube/config
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority: /home/ubuntu/.minikube/ca.crt
+    extensions:
+    - extension:
+        last-update: Fri, 06 Oct 2023 20:19:36 IST
+        provider: minikube.sigs.k8s.io
+        version: v1.31.1
+      name: cluster_info
+    server: https://192.168.49.2:8443
+  name: minikube
+contexts:
+- context:
+    cluster: minikube
+    extensions:
+    - extension:
+        last-update: Fri, 06 Oct 2023 20:19:36 IST
+        provider: minikube.sigs.k8s.io
+        version: v1.31.1
+      name: context_info
+    namespace: default
+    user: minikube
+  name: minikube
+current-context: minikube
+kind: Config
+preferences: {}
+users:
+- name: minikube
+  user:
+    client-certificate: /home/ubuntu/.minikube/profiles/minikube/client.crt
+    client-key: /home/ubuntu/.minikube/profiles/minikube/client.key
+```
+
+- Here we have list of clusters that we have accessed,and this is our minikube information:
+```
+clusters:
+- cluster:
+    certificate-authority: /home/ubuntu/.minikube/ca.crt
+    extensions:
+    - extension:
+        last-update: Fri, 06 Oct 2023 20:19:36 IST
+        provider: minikube.sigs.k8s.io
+        version: v1.31.1
+      name: cluster_info
+    server: https://192.168.49.2:8443
+  name: minikube
+``` 
+**Note:** We can have any number of clusters that we can connect it may be minikube, AWS EKS, Azure AKS etc...  
+
+- We have multiple users here:
+```
+users:
+- name: minikube
+  user:
+    client-certificate: /home/ubuntu/.minikube/profiles/minikube/client.crt
+    client-key: /home/ubuntu/.minikube/profiles/minikube/client.key
+```
+**Note:** When we start the Minikube cluster, a Minikube user is automatically created. So far, we've accessed everything
+in the cluster using this Minikube user.
+
+- These are the contexts:
+```
+contexts:
+- context:
+    cluster: minikube
+    extensions:
+    - extension:
+        last-update: Fri, 06 Oct 2023 20:19:36 IST
+        provider: minikube.sigs.k8s.io
+        version: v1.31.1
+      name: context_info
+    namespace: default
+    user: minikube
+  name: minikube
+current-context: minikube
+```
+**Note:**  
+A context in Kubernetes contains the cluster, the user, and the default namespace. The certificate authority is specified
+below as "certificate-authority: /home/ubuntu/.minikube/ca.crt." Any user that provides a valid certificate signed by this
+certificate authority is considered authenticated.
+
+- **To authenticate against our Minikube,let's generate a certificate and sign this certificate with this certificate authority:**
+
+### 3.First we should generate the users private key with openssl and store output file to the current folder:
+```
+ubuntu@balasenapathi:~$ openssl genrsa -out balu.key 2048
+Generating RSA private key, 2048 bit long modulus (2 primes)
+...............................................+++++
+.....................+++++
+e is 65537 (0x010001)
+```
+**Note:** We can see that the private key is generated
+
+### 4.Next we must create a certificate signing request for the user "balu" with above private key:
+```
+ubuntu@balasenapathi:~$ openssl req -new -key balu.key -out balu.csr -subj "/CN=balu/O=dev/O=example.org"
+```
+**Note:**
+```
+===> This is the command to generate CertificateSigningRequest (csr):
+ 
+openssl req -new -key balu.key -out balu.csr -subj "/CN=balu/O=dev/O=example.org"
+
+===> This is the private key we generated in the previous step:
+
+balu.key -out balu.csr
+
+===> CN stands for CommonName which acts like the username:
+
+CN=balu
+
+===> O acts like the groupname we can give multiple groups to the current user "balu" so now balu belongs to dev and example.org groups:
+
+O=dev/O=example.org
+```
+**Note:** We are saving this CertificateSigningRequest (csr) to the current folder see the current folder below.
+
+### 5.To get the details of present working directory.
+```
+ubuntu@balasenapathi:~$ pwd
+/home/ubuntu ===> Current Folder/directory path
+```
+### 6.Our private key and CertificateSigningRequest(csr) are ready now verify them using:
+```
+ubuntu@balasenapathi:~$ ls | grep balu
+balu.csr
+balu.key
+```
+**Note:** We can see private key and CertificateSigningRequest(csr) are in Current Folder.
+
+- Now this CertificateSigningRequest(csr) must be signed by the certificate authority .
+
+They can get CertificateSigningRequest(csr) details from kube config file : "certificate-authority: /home/ubuntu/.minikube/ca.crt"
+
+### 7.To sign it we should generate this command:
+```
+openssl x509 -req -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -days 730 -in balu.csr -out balu.crt
+```
+**Here are the details:** 
+```
+~/.minikube/ca.crt: This is Certificate Authority
+
+~/.minikube/ca.key: This is Certificate Authority Key details 
+
+balu.csr: This is CertificateSigningRequest(csr) that we generated 
+
+balu.crt: This is the certificate we will generate and store in current folder
+```
+```
+ubuntu@balasenapathi:~$ openssl x509 -req -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -days 730 -
+in balu.csr -out balu.crt
+Signature ok
+subject=CN = balu, O = dev, O = example.org
+Getting CA Private Key
+```
+### 8.Next we should add the user "balu" to the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl config set-credentials balu --client-certificate=balu.crt --client-key=balu.key
+User "balu" set.
+```
+**Here are the details:** 
+```
+user ====> balu
+
+certficate we generated ====> balu.crt
+
+private key we generated ====> balu.key
+```
+**Note:** We can see that balu user is set and we can verify that in kube config file:
+```
+ubuntu@balasenapathi:~$ nano ~/.kube/config
+users:
+- name: balu
+  user:
+    client-certificate: /home/ubuntu/balu.crt
+    client-key: /home/ubuntu/balu.key
+- name: minikube
+```
+### 9.We should create the context with the same command:
+```
+ubuntu@balasenapathi:~$ kubectl config set-context balu-minikube --cluster=minikube --user=balu --namespace=default
+Context "balu-minikube" created.
+```
+**Here are the details:**
+```
+context name ====> balu-minikube
+
+cluster ====> minikube
+
+user ====> balu
+
+namespace ====> default
+```
+**Note:** We can see that balu context is set and we can verify that in kube config file:
+```
+ubuntu@balasenapathi:~$ nano ~/.kube/config
+contexts:
+- context:
+    cluster: minikube
+    namespace: default
+    user: balu
+  name: balu-minikube
+```
+### 10.We can also verify that by using:
+```
+ubuntu@balasenapathi:~$ kubectl config get-contexts
+CURRENT   NAME            CLUSTER    AUTHINFO   NAMESPACE
+          balu-minikube   minikube   balu       default
+*         minikube        minikube   minikube   default
+```
+**Note:** These are the two contexts in the cluster, and the * indicates that we are currently working with the default 
+Minikube context. To use our newly created context, we need to switch to it, similar to switching between databases.
+
+### 11.To switch the context:
+```
+ubuntu@balasenapathi:~$ kubectl config get-contexts
+CURRENT   NAME            CLUSTER    AUTHINFO   NAMESPACE
+          balu-minikube   minikube   balu       default
+*         minikube        minikube   minikube   default
+
+ubuntu@balasenapathi:~$ kubectl config use-context balu-minikube
+Switched to context "balu-minikube".
+
+ubuntu@balasenapathi:~$ kubectl config get-contexts
+CURRENT   NAME            CLUSTER    AUTHINFO   NAMESPACE
+*         balu-minikube   minikube   balu       default
+          minikube        minikube   minikube   default
+```
+**Note:** The context has been switched from `minikube` to `balu-minikube`, as indicated by the *. Now, any request we 
+send will be made on behalf of the `balu` user instead of the `minikube` user.
+
+### 12.Now try to list down the pods in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+Error from server (Forbidden): pods is forbidden: User "balu" cannot list resource "pods" in API group "" in the namespace "default"
+```
+**Note:** As we can see, the `balu` user is forbidden from listing the pods. This is because we just created the user,
+and by default, they do not have any permissions to access cluster resources—they are just a skeleton user. This means 
+`balu` is a valid user but is not authorized to perform any actions. As an administrator, we need to grant this user 
+certain permissions. Let's switch back to the `minikube` user, who has access to everything, and then assign permissions
+ to the `balu` user.
+
+### 13.Now switch back to the minikube user:
+```
+ubuntu@balasenapathi:~$ kubectl config use-context minikube
+Switched to context "minikube".
+
+ubuntu@balasenapathi:~$ kubectl config get-contexts
+CURRENT   NAME            CLUSTER    AUTHINFO   NAMESPACE
+          balu-minikube   minikube   balu       default
+*         minikube        minikube   minikube   default
+```
 
 
 
