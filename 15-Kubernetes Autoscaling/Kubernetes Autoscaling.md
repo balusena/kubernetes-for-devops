@@ -724,9 +724,9 @@ autoscaling; it focuses on the unschedulable pods.
 ![Kubernetes CA Worflow](https://github.com/balusena/kubernetes-for-devops/blob/main/15-Kubernetes%20Autoscaling/ca_workflow.png)
 
 **Note we are using AWS cloud provider example for Cluster Autoscaler (CA):**
-
-$ nano ca.yaml
+### 1.Create a ca.yaml file.
 ```
+ubuntu@ip-172-31-47-64:~ $ nano ca.yaml
 apiVersion: cluster-autoscaler.k8s.io/v1
 kind: ClusterAutoscaler
 metadata:
@@ -743,7 +743,141 @@ spec:
   maxNodes: 10
   cloudProvider: aws
 ```
+### 2.Apply the ca.yaml File.
+```
+ubuntu@ip-172-31-47-64:~ $ kubectl apply -f ca.yaml
+clusterautoscaler.cluster-autoscaler.k8s.io/cluster-autoscaler created
+```
+### 3.Check the status of the Cluster Autoscaler.
+```
+ubuntu@ip-172-31-47-64:~ $ kubectl get clusterautoscaler
+NAME               AGE
+cluster-autoscaler 1m
+```
+### 4.Describe the Cluster Autoscaler.
+```
+ubuntu@ip-172-31-47-64:~ $ kubectl describe clusterautoscaler cluster-autoscaler
+Name:         cluster-autoscaler
+Namespace:    default
+Labels:       k8s.io/cluster-autoscaler/enabled=true
+              k8s.io/cluster/eks-prod-cluster=true
+Annotations:  <none>
+API Version:  cluster-autoscaler.k8s.io/v1
+Kind:         ClusterAutoscaler
+Spec:
+  Scale Target Ref:
+    Api Version:  apps/v1
+    Kind:         Deployment
+    Name:         cluster-autoscaler
+  Min Nodes:      1
+  Max Nodes:      10
+  Cloud Provider: aws
+Events:
+  Type    Reason              Age   From              Message
+  ----    ------              ----  ----              -------
+  Normal  Registered Nodes   1m    cluster-autoscaler  ClusterAutoscaler is watching the cluster for unschedulable pods
+```
 
+**To monitor how the Cluster Autoscaler reacts when it schedules new pods, you can follow these steps. This will include 
+checking the nodes before and after the autoscaler schedules a pod. Here's how you can do it with the expected outputs:**
+
+# Monitoring Cluster Autoscaler: Nodes Before and After Scheduling a Pod
+
+### 1.Check Nodes Before Scheduling
+
+Before triggering any action that would cause the Cluster Autoscaler to scale the cluster, check the current nodes in the cluster.
+```
+ubuntu@ip-172-31-47-64:~ $ kubectl get nodes
+NAME                                STATUS   ROLES    AGE   VERSION
+ip-172-31-47-64.ec2.internal          Ready    <role>   10m   v1.21.0
+ip-172-31-47-65.ec2.internal          Ready    <role>   10m   v1.21.0
+```
+**Note:** This output shows that there are currently two nodes in the cluster.
+
+### 2.Trigger Autoscaling by Scheduling a New Pod
+Now, deploy a pod that requires more resources than the current nodes can provide. This will trigger the Cluster Autoscaler
+to add new nodes.
+```
+ubuntu@ip-172-31-47-64:~ $ nano resource-intensive-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-intensive-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resource-intensive
+  template:
+    metadata:
+      labels:
+        app: resource-intensive
+    spec:
+      containers:
+      - name: stress-container
+        image: vish/stress
+        resources:
+          requests:
+            cpu: "2"        # Request 2 CPUs, which might be more than available on current nodes
+            memory: "2Gi"
+        args:
+          - "-cpus"
+          - "2"
+```
+### 3.Apply the Deployment.
+```
+ubuntu@ip-172-31-47-64:~ $ kubectl apply -f resource-intensive-deployment.yaml
+deployment.apps/resource-intensive-deployment created
+```
+### 4.To get the list of pods in the cluster.
+```
+ubuntu@ip-172-31-47-64:~ $ kubectl get pods
+NAME                                           READY   STATUS      RESTARTS   AGE
+resource-intensive-deployment-5c5fbbcf5b-l9g76   0/1     Pending     0          2m
+```
+**Note:** The pod will be in the Pending state if there aren't enough resources on the current nodes.
+
+### 5.Check the Cluster Autoscaler logs to see if it detected the unschedulable pod and started adding nodes.
+```
+ubuntu@ip-172-31-47-64:~ $ kubectl logs -f deployment/cluster-autoscaler -n kube-system
+I0827 12:00:00.000000       1 scale_up.go:145] Scale-up: finding node group to scale up
+I0827 12:00:00.000000       1 scale_up.go:185] Scale-up: scaling up node group <node-group> by 1
+```
+**Note:** This indicates that the Cluster Autoscaler has decided to scale up the cluster by adding a new node.
+
+### 6.After the Cluster Autoscaler adds a new node, check the nodes in the cluster again.
+```
+ubuntu@ip-172-31-47-64:~ $ kubectl get nodes
+NAME                                STATUS   ROLES    AGE   VERSION
+ip-172-31-47-64.ec2.internal          Ready    <role>   10m   v1.21.0
+ip-172-31-47-65.ec2.internal          Ready    <role>   10m   v1.21.0
+ip-172-31-47-66.ec2.internal          Ready    <role>   1m    v1.21.0
+```
+### 7.Finally, check that the previously unschedulable pod is now running.
+```
+ubuntu@ip-172-31-47-64:~ $ kubectl get pods
+NAME                                           READY   STATUS      RESTARTS   AGE
+resource-intensive-deployment-5c5fbbcf5b-l9g76   1/1     Running     0         5m
+```
+**Note:** This shows that the pod is now running, confirming that the Cluster Autoscaler successfully scaled the cluster
+and the scheduler placed the pod on the new node.
+
+#### Summary:
+- **Set Up an EKS Cluster:**
+Create an EKS (Elastic Kubernetes Service) cluster on AWS using the AWS Management Console, CLI, or an Infrastructure as
+Code tool like Terraform.
+
+- **Install the Cluster Autoscaler on EKS:**
+Deploy the Cluster Autoscaler in your EKS cluster by applying a cluster-autoscaler.yaml configuration file, ensuring it's
+configured to work with your specific AWS environment.
+
+- **Update IAM Policy to Allow EKS Cluster Autoscaler to Modify Nodes:**
+Attach the necessary IAM (Identity and Access Management) policy to the EKS worker node role. This policy must grant 
+permissions to the Cluster Autoscaler to modify node groups, such as scaling nodes up or down.
+
+- **Verify the Setup of the Cluster Autoscaler on EKS:**
+Check the logs of the Cluster Autoscaler pod to ensure it's running correctly. Additionally, test the scaling behavior 
+by deploying resource-intensive workloads and observing whether the cluster scales up and down as expected.
 
 
 
