@@ -15,6 +15,7 @@ resources based on specific roles.
 For example, we should ensure that developers can only deploy certain applications to a given namespace, our infrastructure
 management teams have read-only access for monitoring tasks, and administrators have full access to perform all actions.
 
+![Kubernetes RBAC Introduction](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_intro.png)
 
 
 
