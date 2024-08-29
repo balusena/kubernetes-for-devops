@@ -1,2 +1,0 @@
-# Kubernetes Jobs and CronJob:
-
