@@ -234,8 +234,7 @@ balu.csr: This is CertificateSigningRequest(csr) that we generated
 balu.crt: This is the certificate we will generate and store in current folder
 ```
 ```
-ubuntu@balasenapathi:~$ openssl x509 -req -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -days 730 -
-in balu.csr -out balu.crt
+ubuntu@balasenapathi:~$ openssl x509 -req -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -days 730 -in balu.csr -out balu.crt
 Signature ok
 subject=CN = balu, O = dev, O = example.org
 Getting CA Private Key
@@ -298,7 +297,7 @@ CURRENT   NAME            CLUSTER    AUTHINFO   NAMESPACE
 **Note:** These are the two contexts in the cluster, and the * indicates that we are currently working with the default 
 Minikube context. To use our newly created context, we need to switch to it, similar to switching between databases.
 
-### 11.To switch the context:
+### 11.To switch the context.
 ```
 ubuntu@balasenapathi:~$ kubectl config get-contexts
 CURRENT   NAME            CLUSTER    AUTHINFO   NAMESPACE
@@ -337,6 +336,105 @@ CURRENT   NAME            CLUSTER    AUTHINFO   NAMESPACE
           balu-minikube   minikube   balu       default
 *         minikube        minikube   minikube   default
 ```
+
+### 2.Role and RoleBinding:
+In Kubernetes RBAC (Role-Based Access Control), a Role defines a set of permissions within a namespace, specifying which
+actions (e.g., create, update, delete) can be performed on specific resources (e.g., pods, services). RoleBinding is used
+to assign these roles to users, groups, or service accounts, effectively binding the permissions to the specified entities.
+This means that a RoleBinding associates a Role with a user or group, allowing them to perform the actions defined in that
+Role within the namespace. Together, Role and RoleBinding control access to resources in Kubernetes.
+
+**Note:** Now we should give permissions to the balu user:
+
+In kubernetes we can give permissions to a user with Roles and RoleBindings.
+
+#### Creating a Role.
+
+### 1.Create a simple role manifest file.
+```
+ubuntu@balasenapathi:~$ nano role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  verbs: ["get", "watch", "list"]
+  resources: ["pods", "pods/log"]
+  # resourceNames: ["nginx"]
+```
+**Note:** The `apiGroups` field identifies which API groups to target. This is necessary because different API groups 
+can have the same resource names. You can compare this to packages in Java, where a package can have multiple classes,
+and different packages can have classes with the same name. The empty string `[""]` in the list represents the core 
+Kubernetes API.The `verbs` field `["get", "watch", "list"]`specifies the actions that can be performed on the specified
+resources `["pods", "pods/log"]`.
+
+### 2.To see what kind of verbs we can give for a particular user:
+```
+ubuntu@balasenapathi:~$ kubectl api-resources -o wide | grep pod
+pods                               po              v1                                     true         Pod                               
+create,delete,deletecollection,get,list,patch,update,watch   all
+podtemplates                                       v1                                     true         PodTemplate                       
+create,delete,deletecollection,get,list,patch,update,watch   
+horizontalpodautoscalers           hpa             autoscaling/v2                         true         HorizontalPodAutoscaler           
+create,delete,deletecollection,get,list,patch,update,watch   all
+verticalpodautoscalercheckpoints   vpacheckpoint   autoscaling.k8s.io/v1                  true         VerticalPodAutoscalerCheckpoint   
+delete,deletecollection,get,list,patch,create,update,watch   
+verticalpodautoscalers             vpa             autoscaling.k8s.io/v1                  true         VerticalPodAutoscaler             
+delete,deletecollection,get,list,patch,create,update,watch   
+pods                                               metrics.k8s.io/v1beta1                 true         PodMetrics                        
+get,list                                                     
+poddisruptionbudgets               pdb             policy/v1                              true         PodDisruptionBudget               
+create,delete,deletecollection,get,list,patch,update,watch   
+```
+**Note:** For pod we can give all these kind of verbs.
+
+**Note:** Let's assign some of these verbs to a role. In our role manifest, we’ve specified the verbs `"get"`, `"watch"`,
+and `"list"`. This means that anyone with this role can retrieve pod information, watch for pod changes, and list all 
+the pods.
+
+### 3.To switch the context.
+```
+ubuntu@balasenapathi:~$ kubectl config use-context minikube
+Switched to context "minikube".
+
+ubuntu@balasenapathi:~$ kubectl config get-contexts
+CURRENT   NAME            CLUSTER    AUTHINFO   NAMESPACE
+          balu-minikube   minikube   balu       default
+*         minikube        minikube   minikube   default
+```
+### 4.Now apply this manifest in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f role.yaml
+role.rbac.authorization.k8s.io/pod-reader created
+```
+**Note:** The role is get created.
+
+### 5.To verify the roles in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl get roles
+NAME         CREATED AT
+pod-reader   2023-10-08T18:35:37Z
+```
+**Note:** As we can see, the `pod-reader` role has been created. Now that we have both the user and the role ready, we 
+need to connect them. This connection is made through a `RoleBinding`, which links the subject (user) to the role. This
+ensures that the user has the specified permissions defined in the role.
+
+#### Creating a RoleBinding and Attaching the Role and Subject to User "balu".
+
+### Granting Permissions to the User "balu" Using RoleBinding.
+
+In this RoleBinding, we connect both the Subject and the Role. The Subject can be a user, user group, or even a service 
+account, and the Role defines what resources and actions the Subject can access or perform. When we attach the Subject 
+and Role using RoleBinding, we are granting permissions to the user. In this case, we are giving the "balu" user the 
+permission to read pods.
+
+![Kubernetes RBAC Role RoleBinding](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_role_rolebinding.png)
+
+
+
+
+
 
 
 
