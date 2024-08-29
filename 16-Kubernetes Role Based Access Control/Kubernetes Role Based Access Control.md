@@ -737,6 +737,202 @@ Kubernetes resources.
 
 ![Kubernetes RBAC Service Accounts](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_service_accounts.png)
 
+Service Accounts are special types of users in Kubernetes, often referred to as application users. When a namespace is 
+created, a default service account is automatically generated within it. Pods, where our applications run, use these 
+default service accounts to authenticate with the API server. If no specific service account is mentioned, all pods will
+use this default account. However, you can also create custom service accounts within these namespaces to provide more 
+tailored access control for different applications.
+
+### 1.To get the service account in cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get sa
+Error from server (Forbidden): serviceaccounts is forbidden: User "balu" cannot list resource "serviceaccounts" in API group "" in the 
+namespace "default"
+```
+### 2.Now switch back to the minikube context.
+```
+ubuntu@balasenapathi:~$ kubectl config use-context minikube
+Switched to context "minikube".
+```
+```
+ubuntu@balasenapathi:~$ kubectl get sa
+NAME      SECRETS   AGE
+default   0         5d1h
+``` 
+**Note:** We can see that the default service account is there in default namespace in minikube.
+
+### 3.We can also find this namespace in test namespace.
+```
+ubuntu@balasenapathi:~$ kubectl get sa -n test
+NAME      SECRETS   AGE
+default   0         4h52m
+```
+### 4.To create a service account in minikube.
+```
+ubuntu@balasenapathi:~$ kubectl create sa test-sa
+serviceaccount/test-sa created
+```
+### 5.To get the service account in cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get sa
+NAME      SECRETS   AGE
+default   0         5d1h
+test-sa   0         9s
+```
+**Note:** A new service account "test-sa" is created in the minikube.
+
+### 6.Now create a simple kubectl-pod and try to get the list of pods from this pod:
+```
+ubuntu@balasenapathi:~$ nano kubectl-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kubectl-pod
+spec:  
+  containers:
+  - name: kubectl
+    image: bitnami/kubectl
+    command: ["sleep", "20000"]
+```
+### 7.Apply the changes in the minikube.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f kubectl-pod.yaml
+pod/kubectl-pod created
+```
+### 8.Now get into the kubectl-pod.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                           READY   STATUS    RESTARTS      AGE
+kubectl-pod                    1/1     Running   0             92s
+nginx                          1/1     Running   0             5h11m
+traffic-generator              1/1     Running   3 (23h ago)   5d1h
+utility-api-5b4b9b5776-srjfv   1/1     Running   0             6h16m
+```
+### 9.Now try to list down the pods.
+```
+ubuntu@balasenapathi:~$ kubectl exec -it kubectl-pod -- bash
+I have no name!@kubectl-pod:/$ kubectl get pods
+Error from server (Forbidden): pods is forbidden: User "system:serviceaccount:default:default" cannot list resource "pods" in API group 
+"" in the namespace "default"
+```
+**Note:** The error with the reason "forbidden" occurred because the pod is trying to use the default service account,
+which does not have permission to list pods. To resolve this, we should use a custom service account, such as the `test`
+service account, which has the necessary permissions for this pod.
+
+### 10.Now make changes in kubectl-pod.
+```
+ubuntu@balasenapathi:~$ nano kubectl-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kubectl-pod
+spec:
+  serviceAccount: test-sa
+  containers:
+  - name: kubectl
+    image: bitnami/kubectl
+    command: ["sleep", "20000"]
+```    
+**Note:** To use custom service account "test-sa" we need to specify this spec: section in kubectl-pod manifest file.
+### 11.Now delete the pod in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl delete -f kubectl-pod.yaml
+pod "kubectl-pod" deleted
+```
+### 12.Now apply the changes in the cluster to create the pod.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f kubectl-pod.yaml
+pod/kubectl-pod created
+```
+### 13.Now try to get into the pods and try to list down the pods.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                           READY   STATUS    RESTARTS      AGE
+kubectl-pod                    1/1     Running   0             33s
+nginx                          1/1     Running   0             5h54m
+traffic-generator              1/1     Running   3 (24h ago)   5d2h
+utility-api-5b4b9b5776-srjfv   1/1     Running   0             6h59m
+
+ubuntu@balasenapathi:~$ kubectl exec -it kubectl-pod -- bash
+I have no name!@kubectl-pod:/$ kubectl get pods
+Error from server (Forbidden): pods is forbidden: User "system:serviceaccount:default:test-sa" cannot list resource "pods" in API group 
+"" in the namespace "default"
+```
+**Note:** The error persists, but this time it is using the `test-sa` service account in the default namespace. The issue
+is that although we created the service account, we did not attach any roles to it, which means it still lacks the necessary
+permissions.
+
+### 14.To add permissions to this service account "test-sa" for this make changes in role-binding.yaml:
+```
+ubuntu@balasenapathi:~$ nano role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+# This role binding allows user "balu" to read pods in the "default" namespace.
+# You need to already have a Role named "pod-reader" in that namespace.
+kind: RoleBinding
+metadata:
+  name: read-pods
+subjects:
+# You can specify more than one "subject"
+- kind: User
+  name: balu # "name" is case sensitive
+  apiGroup: rbac.authorization.k8s.io
+- kind: ServiceAccount
+  name: test-sa
+roleRef:
+  # "roleRef" specifies the binding to a Role / ClusterRole
+  kind: Role #this must be Role or ClusterRole
+  name: pod-reader # this must match the name of the Role or ClusterRole you wish to bind to
+  apiGroup: rbac.authorization.k8s.io
+# roleRef:
+#   kind: ClusterRole
+#   name: secret-reader
+#   apiGroup: rbac.authorization.k8s.io
+```
+**Note:** We have added the Kind: ServiceAccount and name: test-sa in role-binding.yaml
+
+### 15.Apply the changes in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f role-binding.yaml
+rolebinding.rbac.authorization.k8s.io/read-pods configured
+```
+### 16.Now try to list down the pods after updating the role-binding.yaml:
+```
+ubuntu@balasenapathi:~$ kubectl exec -it kubectl-pod -- bash
+I have no name!@kubectl-pod:/$ kubectl get pods
+Error from server (Forbidden): pods is forbidden: User "system:serviceaccount:default:test-sa" cannot list resource "pods" in API group 
+"" in the namespace "default"
+I have no name!@kubectl-pod:/$ kubectl get pods
+NAME                           READY   STATUS    RESTARTS      AGE
+kubectl-pod                    1/1     Running   0             12m
+nginx                          1/1     Running   0             6h5m
+traffic-generator              1/1     Running   3 (24h ago)   5d2h
+utility-api-5b4b9b5776-srjfv   1/1     Running   0             7h10m
+```
+**Note:** Now we are able to list down the pods with the `test-sa` service account. This demonstrates that pods use 
+service accounts to access Kubernetes resources, with appropriate permissions configured.
+
+### 17.Now come out of pod and see if we can perform action with a command.
+```
+ubuntu@balasenapathi:~$ kubectl auth can-i create pods
+yes
+```
+**Note:** It is saying that we can able to create pods because we are in minikube context.
+
+### 18.To test if a service account is having permission or not.
+```
+ubuntu@balasenapathi:~$ kubectl auth can-i create pods --as="system:serviceaccount:default:test-sa"
+no
+```
+**Note:** Here swe got the response no that means we cannot create pods with this service account "test-sa"
+
+### 19.Now lets try to see if we can get the pods.
+```
+ubuntu@balasenapathi:~$ kubectl auth can-i get pods --as="system:serviceaccount:default:test-sa"
+yes
+```
+**Note:** We can get the pods with this service account "test-sa".
+
+So if you want a real quick check if a user or service account is having a permission or not we can give this "auth can-i".
 
 
 
