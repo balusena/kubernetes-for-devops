@@ -1704,7 +1704,7 @@ daemonset.apps "node-exporter" deleted
 ubuntu@balasenapathi:~$ kubectl delete ds node-exporter --cascade=orphan
 daemonset.apps "node-exporter" deleted
 ```
-This way, whenever we delete the DaemonSet, the pods managed by the DaemonSet will not be deleted by using `--cascade=orphan`.
+Whenever we delete the DaemonSet, the pods managed by the DaemonSet will not be deleted by using `--cascade=orphan`.
 
 
 
