@@ -431,6 +431,124 @@ permission to read pods.
 
 ![Kubernetes RBAC Role RoleBinding](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_role_rolebinding.png)
 
+### 1.Create a rolebinding in the cluster:
+```
+ubuntu@balasenapathi:~$ nano role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+# This role binding allows user "balu" to read pods in the "default" namespace.
+# You need to already have a Role named "pod-reader" in that namespace.
+kind: RoleBinding
+metadata:
+  name: read-pods
+subjects:
+# You can specify more than one "subject"
+- kind: User
+  name: balu # "name" is case sensitive
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  # "roleRef" specifies the binding to a Role / ClusterRole
+  kind: Role #this must be Role or ClusterRole
+  name: pod-reader # this must match the name of the Role or ClusterRole you wish to bind to
+  apiGroup: rbac.authorization.k8s.io
+# roleRef:
+#   kind: ClusterRole
+#   name: secret-reader
+#   apiGroup: rbac.authorization.k8s.io
+```
+**Note:** We are specifying `kind: RoleBinding` and assigning the user "balu" that we created earlier. The 
+`apiGroup: rbac.authorization.k8s.io` identifies the RBAC group for the user, in this case, "balu." We are 
+attaching this user to the role named "pod-reader" that we created previously. Essentially, a RoleBinding 
+connects the user "balu" to the Role named "pod-reader."
+
+### 2.Now apply this rolebinding in the cluster:
+```
+ubuntu@balasenapathi:~$ kubectl apply -f role-binding.yaml
+rolebinding.rbac.authorization.k8s.io/read-pods created
+```
+### 3.Now lets witch back to the user balu-minikube:
+```
+ubuntu@balasenapathi:~$ kubectl config get-contexts
+CURRENT   NAME            CLUSTER    AUTHINFO   NAMESPACE
+          balu-minikube   minikube   balu       default
+*         minikube        minikube   minikube   default
+
+ubuntu@balasenapathi:~$ kubectl config use-context balu-minikube
+Switched to context "balu-minikube".
+
+ubuntu@balasenapathi:~$ kubectl config get-contexts
+CURRENT   NAME            CLUSTER    AUTHINFO   NAMESPACE
+*         balu-minikube   minikube   balu       default
+          minikube        minikube   minikube   default
+```
+### 4.Now list down the pods to see whether balu-minikube is having permissions to list down the pods:          
+```      
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                           READY   STATUS    RESTARTS      AGE
+nginx                          1/1     Running   0             77s
+traffic-generator              1/1     Running   3 (18h ago)   4d20h
+utility-api-5b4b9b5776-srjfv   1/1     Running   0             66m
+```
+**Note:** We can now list down the pods because we attached the `pod-reader` role to the `balu` user.
+
+### 5.Now lets create a pod in balu-minikube with user balu and see we can create a pod here:
+```
+ubuntu@balasenapathi:~$ kubectl run nginx --image=nginx
+Error from server (Forbidden): pods is forbidden: User "balu" cannot create resource "pods" in API group "" in the namespace "default"
+```
+**Note:** As you can see, the user `balu` is forbidden to create pods. In the RoleBinding manifest file, we granted the 
+`balu` user the verbs `"get"`, `"watch"`, and `"list"`, but not the `"create"` permission.
+
+### 6.Now lets switch back to the minikube user:
+```
+ubuntu@balasenapathi:~$ kubectl config use-context minikube
+Switched to context "minikube".
+```
+### 7.Now create a namespace "ns" and with namespace name "test" in minikube:
+```
+ubuntu@balasenapathi:~$ kubectl create ns test
+namespace/test created
+```
+### 8.Now create a new pod in this namespace:
+```
+ubuntu@balasenapathi:~$ kubectl get ns
+NAME              STATUS   AGE
+default           Active   4d20h
+kube-node-lease   Active   4d20h
+kube-public       Active   4d20h
+kube-system       Active   4d20h
+test              Active   65s =====> newly created namespace with name test
+
+ubuntu@balasenapathi:~$ kubectl run nginx --image=nginx -n test
+pod/nginx created
+```
+**Note:** Now the same nginx pod is created in the test namespace also:
+
+### 9.To verify this list down the pods in test namespace:
+```
+ubuntu@balasenapathi:~$ kubectl get pods -n test
+NAME    READY   STATUS    RESTARTS   AGE
+nginx   1/1     Running   0          4m49s
+```
+### 10.Now switch back to balu-minikube of user balu and try to access this pod in the test namespace:
+```
+ubuntu@balasenapathi:~$ kubectl config use-context balu-minikube
+Switched to context "balu-minikube".
+
+ubuntu@balasenapathi:~$ kubectl get pods -n test
+Error from server (Forbidden): pods is forbidden: User "balu" cannot list resource "pods" in API group "" in the namespace "test"
+``` 
+
+**Note:** We received the same forbidden error because `Role` and `RoleBinding` are namespaced.This means a user will only
+have permissions for the namespace where the `RoleBinding` is defined. If the user tries to access resources in another 
+namespace where a `RoleBinding` does not exist, they will encounter an error. Previously, we defined the `RoleBinding` in 
+the default namespace, but we attempted to access resources in the test namespace, where the `RoleBinding` was not created. 
+
+![Kubernetes RBAC Role RoleBinding Issues](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_role_rolebinding_issues.png)
+
+Managing `RoleBinding` for each namespace can be tedious, and some resources, such as `PersistentVolumes`, are not namespaced
+and cannot have `RoleBindings`. To address this, Kubernetes provides `ClusterRole` and `ClusterRoleBinding`, which operate at
+the cluster level rather than the namespace level. Unlike `RoleBinding`, which is restricted to a specific namespace, 
+`ClusterRoleBinding` grants permissions across all namespaces in the cluster.
 
 
 
