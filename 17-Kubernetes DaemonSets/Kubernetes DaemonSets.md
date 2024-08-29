@@ -32,6 +32,8 @@ for node-specific tasks where uniform distribution across all nodes is crucial. 
 DaemonSets ensure that as new nodes are added, the specified pod is automatically scheduled on these new nodes, maintaining
 the required node-specific functionality across the entire cluster.
 
-![Kubernetes DaemonSets]()
+![Kubernetes DaemonSets](https://github.com/balusena/kubernetes-for-devops/blob/main/17-Kubernetes%20DaemonSets/daemonsets_intro.png)
+
+
 
 
