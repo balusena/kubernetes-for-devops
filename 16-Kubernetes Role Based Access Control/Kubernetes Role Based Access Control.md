@@ -337,6 +337,8 @@ CURRENT   NAME            CLUSTER    AUTHINFO   NAMESPACE
 *         minikube        minikube   minikube   default
 ```
 
+**Role and RoleBinding**
+
 ### 2.Role and RoleBinding:
 In Kubernetes RBAC (Role-Based Access Control), a Role defines a set of permissions within a namespace, specifying which
 actions (e.g., create, update, delete) can be performed on specific resources (e.g., pods, services). RoleBinding is used
@@ -431,7 +433,7 @@ permission to read pods.
 
 ![Kubernetes RBAC Role RoleBinding](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_role_rolebinding.png)
 
-### 1.Create a rolebinding in the cluster:
+### 1.Create a rolebinding in the cluster.
 ```
 ubuntu@balasenapathi:~$ nano role-binding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -549,6 +551,8 @@ and cannot have `RoleBindings`. To address this, Kubernetes provides `ClusterRol
 the cluster level rather than the namespace level. Unlike `RoleBinding`, which is restricted to a specific namespace, 
 `ClusterRoleBinding` grants permissions across all namespaces in the cluster.
 
+**ClusterRole and ClusterRoleBinding**
+
 ### 3.ClusterRole and ClusterRoleBinding:
 
 **ClusterRole** and **ClusterRoleBinding** are Kubernetes resources used for managing access across the entire cluster.
@@ -562,6 +566,179 @@ permissions across the entire cluster. It provides a way to bind roles to subjec
 access control across all namespaces.
 
 ![Kubernetes RBAC Cluster Role Cluster RoleBinding](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_cluster_role_cluster_rolebinding.png)
+
+### 1.Create a clusterrole in the cluster.
+```
+ubuntu@balasenapathi:~$ nano cluster-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  # at the HTTP level, the name of the resource for accessing Secret
+  # objects is "secrets"
+  verbs: ["get", "watch", "list"]
+  resources: ["pods", "pods/log"]
+```
+**Note:** As we can see, the `ClusterRole` is similar to the `Role` where we define the verbs (e.g., ["get", "watch", "list"])
+and resources (e.g., ["pods", "pods/log"]). However, `ClusterRole` operates at the cluster level rather than being confined to
+a specific namespace. Similarly to how we attached a `Role` to the user `balu`, a `ClusterRole` can be attached to users or 
+service accounts to grant permissions across the entire cluster.
+
+### 2.Create a clusterrolebinding in the cluster.
+```
+ubuntu@balasenapathi:~$ nano cluster-role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+# This cluster role binding allows anyone in the "dev" group to read secrets in any namespace.
+kind: ClusterRoleBinding
+metadata:
+  name: pod-reader-global
+subjects:
+- kind: User
+  name: balu # "name" is case sensitive
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+```
+**Note:** Now we need to attach the `ClusterRole` to the user `balu`. For that, we use a `ClusterRoleBinding`, which 
+references both the `ClusterRole` and the user `balu`. Apply these configurations to the cluster to grant the specified
+permissions to the user.
+
+### 3.Now apply the ClusterRole changes in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f  cluster-role.yaml
+Error from server (Forbidden): error when retrieving current configuration of:
+Resource: "rbac.authorization.k8s.io/v1, Resource=clusterroles", GroupVersionKind: "rbac.authorization.k8s.io/v1, Kind=ClusterRole"
+Name: "pod-reader", Namespace: ""
+from server for: "cluster-role.yaml": clusterroles.rbac.authorization.k8s.io "pod-reader" is forbidden: User "balu" cannot get resource 
+"clusterroles" in API group "rbac.authorization.k8s.io" at the cluster scope
+```
+**Note:** The error occurs because the `balu-minikube` context does not have the necessary permissions to create a `ClusterRole`.
+Ensure that you are using a context with sufficient privileges, such as an admin context, to create cluster-wide resources like
+`ClusterRole`.
+
+### 4.Now switch back to the minikube context.
+```
+ubuntu@balasenapathi:~$ kubectl config use-context minikube
+Switched to context "minikube".
+```
+### 5.Now apply the ClusterRole changes in the minikube context.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f cluster-role.yaml
+clusterrole.rbac.authorization.k8s.io/pod-reader created
+```
+**Note:** We can see that the ClusterRole is created.
+
+### 6.Now apply the ClusterRoleBinding changes in the minikube context.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f cluster-role-binding.yaml
+clusterrolebinding.rbac.authorization.k8s.io/pod-reader-global created
+```
+**Note:** We can see that the ClusterRoleBinding is also created.
+
+### 7.Now switch back to the balu-minikube context.
+```
+ubuntu@balasenapathi:~$ kubectl config use-context balu-minikube
+Switched to context "balu-minikube".
+```
+### 8.Now try to access or get the pod from test namespace we created.
+```
+ubuntu@balasenapathi:~$ kubectl get pod -n test
+NAME    READY   STATUS    RESTARTS   AGE
+nginx   1/1     Running   0          152m
+```
+**Note:** As we can see, we are now able to list pods from different namespaces, not just the "test" namespace. The 
+`ClusterRole` and `ClusterRoleBinding` allow us to access pods across all namespaces.
+
+### 9.To get the pods from all the namespaces in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get pods -A
+NAMESPACE     NAME                                        READY   STATUS    RESTARTS        AGE
+default       nginx                                       1/1     Running   0               170m
+default       traffic-generator                           1/1     Running   3 (20h ago)     4d23h
+default       utility-api-5b4b9b5776-srjfv                1/1     Running   0               3h55m
+kube-system   coredns-5d78c9869d-k9glg                    1/1     Running   3 (20h ago)     4d23h
+kube-system   etcd-minikube                               1/1     Running   3 (20h ago)     4d23h
+kube-system   kube-apiserver-minikube                     1/1     Running   3 (20h ago)     4d23h
+kube-system   kube-controller-manager-minikube            1/1     Running   4 (20h ago)     4d23h
+kube-system   kube-proxy-m7mpq                            1/1     Running   3 (20h ago)     4d23h
+kube-system   kube-scheduler-minikube                     1/1     Running   3 (20h ago)     4d23h
+kube-system   metrics-server-844d8db974-j67w4             1/1     Running   6 (3h56m ago)   4d23h
+kube-system   storage-provisioner                         1/1     Running   7 (3h57m ago)   4d23h
+kube-system   vpa-admission-controller-754ccfdf99-2fd6t   1/1     Running   3 (20h ago)     4d23h
+kube-system   vpa-recommender-667f9769fb-lsfkd            1/1     Running   3 (20h ago)     4d23h
+kube-system   vpa-updater-696b8787f9-rt95f                1/1     Running   3 (20h ago)     4d23h
+test          nginx                                       1/1     Running   0               155m
+```
+**Note:** This is because we have defined the `ClusterRoleBinding` for the "balu" user. Now, we know how to grant access
+to a user across the cluster.
+
+**Groups**
+
+### 4.Groups:
+RBAC groups in Kubernetes allow you to define permissions for multiple users collectively. By creating a group and assigning
+roles to it, you can manage access for all members of that group at once, simplifying the administration of permissions and 
+ensuring consistency across users with similar responsibilities.
+
+**Note:**
+Handling hundreds of users individually in a Kubernetes cluster can be cumbersome, especially when assigning permissions.
+Instead of managing each user separately, you can use Groups. A Group is essentially a collection of users. By assigning
+users to a Group, you can manage their permissions collectively.
+
+For example, instead of assigning permissions to the user "balu" directly, you can assign them to a Group, such as "dev".
+When you create the user "balu", you associate them with the "dev" Group. This way, any permissions granted to the "dev"
+Group automatically apply to "balu" and any other users in that group.
+
+### 1.Create cluster-role-binding in the cluster.
+```
+ubuntu@balasenapathi:~$ nano cluster-role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+# This cluster role binding allows anyone in the "dev" group to read secrets in any namespace.
+kind: ClusterRoleBinding
+metadata:
+  name: pod-reader-global
+subjects:
+- kind: User
+  name: balu # "name" is case sensitive
+  apiGroup: rbac.authorization.k8s.io
+- kind: Group
+  name: dev # "name" is case sensitive
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+```
+**Note:**
+As a homework assignment, try creating multiple users and attaching them to the same group, such as "dev". After setting
+this up, check if these users can access the resources assigned to the "dev" group. This will help you understand how 
+Group-based permissions work in Kubernetes RBAC and how they can simplify managing access for multiple users.
+
+### 2.Now apply the cluster-role-binding changes in the cluster
+```
+ubuntu@balasenapathi:~$ kubectl apply -f cluster-role-binding.yaml
+clusterrolebinding.rbac.authorization.k8s.io/pod-reader-global configured
+```
+**Note:** We have seen how a physical user like "balu" can access Kubernetes resources, but what if a Spring Boot or 
+Python application wants to access the same resources? Providing our credentials directly in the application isn't safe.
+To securely manage access for applications, Kubernetes provides **Service Accounts**.
+
+**Service Accounts**
+
+### 5.Service Accounts:
+In Kubernetes, **Service Accounts** are used to grant specific permissions to applications or processes running inside pods.
+Unlike user accounts, which are for human users, service accounts are designed for system components and applications. With
+RBAC (Role-Based Access Control), you can assign roles to service accounts, controlling what resources and actions the 
+applications can access within the cluster. This ensures secure, fine-grained control over how applications interact with
+Kubernetes resources.
+
+![Kubernetes RBAC Service Account](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_service_account.png)
+
+
+
 
 
 
