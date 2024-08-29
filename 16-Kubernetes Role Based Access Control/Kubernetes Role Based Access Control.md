@@ -932,7 +932,7 @@ yes
 ```
 **Note:** We can get the pods with this service account "test-sa".
 
-So if you want a real quick check if a user or service account is having a permission or not we can give this "auth can-i".
+**So if you want a real quick check if a user or service account is having a permission or not we can give this "auth can-i".**
 
 
 
