@@ -32,8 +32,26 @@ for node-specific tasks where uniform distribution across all nodes is crucial. 
 DaemonSets ensure that as new nodes are added, the specified pod is automatically scheduled on these new nodes, maintaining
 the required node-specific functionality across the entire cluster.
 
-![Kubernetes DaemonSets](https://github.com/balusena/kubernetes-for-devops/blob/main/17-Kubernetes%20DaemonSets/daemonsets_intro.png)
+![Kubernetes DaemonSets Intro](https://github.com/balusena/kubernetes-for-devops/blob/main/17-Kubernetes%20DaemonSets/daemonsets_intro.png)
 
+### Monitoring Nodes with DaemonSets
 
+In a Kubernetes cluster with multiple nodes, it's essential to monitor node health, such as memory usage and CPU load. 
+To achieve this, we need to deploy an agent on each node to collect and store metrics. 
 
+**DaemonSets** are the ideal solution for this requirement. Unlike Deployments or ReplicaSets, which might not automatically
+schedule pods on newly added nodes, DaemonSets ensure that a pod runs on every node in the cluster. 
+
+Here's how DaemonSets address the challenge:
+- **Automatic Scheduling:** As new nodes are added to the cluster, a new pod is automatically scheduled on the new node.
+  Conversely, if a node is removed, the corresponding pod is garbage collected.
+- **Consistency:** DaemonSets ensure there is always one pod per node, handling node-specific tasks like log collection 
+  or metric gathering consistently across the entire cluster.
+- **Difference from Deployments:** While Deployments are used for stateless services and can scale replicas up and down 
+  with rolling updates, DaemonSets ensure that a pod runs on all or selected nodes, maintaining uniform coverage for cluster-level tasks.
+
+Using DaemonSets for node monitoring guarantees that the necessary agents are deployed on every node, adapting dynamically
+as nodes are added or removed from the cluster.
+ 
+![Kubernetes DaemonSets](https://github.com/balusena/kubernetes-for-devops/blob/main/17-Kubernetes%20DaemonSets/daemonsets.png)
 
