@@ -55,3 +55,25 @@ as nodes are added or removed from the cluster.
  
 ![Kubernetes DaemonSets](https://github.com/balusena/kubernetes-for-devops/blob/main/17-Kubernetes%20DaemonSets/daemonsets.png)
 
+### Common Use Cases for DaemonSets
+
+DaemonSets are commonly used in Kubernetes to ensure that certain types of agents are deployed across all nodes in the 
+cluster. This guarantees that essential tasks are performed consistently on every node. Here are some common use cases:
+
+1. **Logging Agents:**
+   - **Example:** Fluentd, Logstash
+   - **Purpose:** Collect logs from all nodes and centralize them in a single location for analysis.
+
+2. **Monitoring Agents:**
+   - **Example:** Prometheus, Datadog
+   - **Purpose:** Collect metrics from all nodes and centralize them for monitoring and analysis.
+
+3. **Network Agents:**
+   - **Example:** Cilium, Weave Net
+   - **Purpose:** Enforce network policies and manage networking across all nodes.
+
+By deploying these agents as DaemonSets, you ensure that each node in the Kubernetes cluster has the necessary tools for
+logging, monitoring, and networking, adapting dynamically as nodes are added or removed.
+
+![Kubernetes DaemonSets Usecases](https://github.com/balusena/kubernetes-for-devops/blob/main/17-Kubernetes%20DaemonSets/daemonsets_usecases.png)
+
