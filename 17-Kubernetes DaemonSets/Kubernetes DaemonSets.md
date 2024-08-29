@@ -1675,7 +1675,7 @@ vpa-admission-controller-754ccfdf99-2fd6t   1/1     Running   4 (14h ago)     5d
 vpa-recommender-667f9769fb-lsfkd            1/1     Running   4 (14h ago)     5d20h
 vpa-updater-696b8787f9-rt95f                1/1     Running   4 (138m ago)    5d20h
 ```
-**Note:** As we can see, one `kube-proxy-m7mpq` pod is running in the `kube-system` namespace, which is created by the 
+**Note:** We can see, one `kube-proxy-m7mpq` pod is running in the `kube-system` namespace, which is created by the 
 `kube-proxy` DaemonSet. The `kube-proxy` is a component of the Kubernetes cluster responsible for implementing the 
 Kubernetes service abstraction. `kube-proxy` runs on every node and maintains network rules on each node to allow network
 communication to pods and services running on that node.
