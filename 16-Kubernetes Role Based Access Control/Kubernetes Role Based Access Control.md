@@ -537,7 +537,6 @@ Switched to context "balu-minikube".
 ubuntu@balasenapathi:~$ kubectl get pods -n test
 Error from server (Forbidden): pods is forbidden: User "balu" cannot list resource "pods" in API group "" in the namespace "test"
 ``` 
-
 **Note:** We received the same forbidden error because `Role` and `RoleBinding` are namespaced.This means a user will only
 have permissions for the namespace where the `RoleBinding` is defined. If the user tries to access resources in another 
 namespace where a `RoleBinding` does not exist, they will encounter an error. Previously, we defined the `RoleBinding` in 
@@ -549,6 +548,20 @@ Managing `RoleBinding` for each namespace can be tedious, and some resources, su
 and cannot have `RoleBindings`. To address this, Kubernetes provides `ClusterRole` and `ClusterRoleBinding`, which operate at
 the cluster level rather than the namespace level. Unlike `RoleBinding`, which is restricted to a specific namespace, 
 `ClusterRoleBinding` grants permissions across all namespaces in the cluster.
+
+### 3.ClusterRole and ClusterRoleBinding:
+
+**ClusterRole** and **ClusterRoleBinding** are Kubernetes resources used for managing access across the entire cluster.
+
+**ClusterRole** defines a set of permissions, including actions (verbs) on resources (like pods, services) across all 
+namespaces or at the cluster level. Unlike `Role`, which is namespace-scoped, `ClusterRole` is not limited to a specific
+namespace.
+
+**ClusterRoleBinding** associates a `ClusterRole` with users, groups, or service accounts, granting them the defined 
+permissions across the entire cluster. It provides a way to bind roles to subjects at the cluster level, ensuring consistent
+access control across all namespaces.
+
+![Kubernetes RBAC Cluster Role Cluster RoleBinding](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_cluster_role_cluster_rolebinding.png)
 
 
 
