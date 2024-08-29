@@ -735,7 +735,7 @@ RBAC (Role-Based Access Control), you can assign roles to service accounts, cont
 applications can access within the cluster. This ensures secure, fine-grained control over how applications interact with
 Kubernetes resources.
 
-![Kubernetes RBAC Service Account](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_service_account.png)
+![Kubernetes RBAC Service Accounts](https://github.com/balusena/kubernetes-for-devops/blob/main/16-Kubernetes%20Role%20Based%20Access%20Control/rbac_service_accounts.png)
 
 
 
