@@ -1701,8 +1701,6 @@ mongo-2   1/1     Running   1          21h
 ```
 
 
-uiu
-
 
 
 
