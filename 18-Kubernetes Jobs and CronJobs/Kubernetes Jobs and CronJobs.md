@@ -73,7 +73,8 @@ These resources can be utilized for data processing tasks such as parsing logs, 
 particularly useful for tasks that need to be performed on an ad-hoc basis or on a schedule. Beyond these examples, Jobs and 
 CronJobs can be applied to many more use cases.
 
-## Now let us see how we can take the backup of the mongodb using job and then schedule it with cronjob:
+- Now let us see how we can take the backup of the mongodb using job and then schedule it with cronjob:
+
 ### 1.To get the information about StatefulSets.
 ```
 ubuntu@balasenapathi:~$ kubectl get sts
@@ -219,12 +220,12 @@ spec:
   selector:
     app: mongo
 ```    
-### 12.Apply the changes in the local-cluster:
+### 12.Apply the changes in the local-cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl apply -f headless-service.yaml
 service/mongo created
 ```
-### 13.To verify that the headless services are created in the local-cluster:
+### 13.To verify that the headless services are created in the local-cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl get svc
 NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)     AGE
@@ -565,7 +566,7 @@ rs0:PRIMARY> db.todos.find()
 rs0:PRIMARY>exit 
 bye
 ```
-### 20.Now log into the second node of the pod and see that it have the same data as primary node
+### 20.Now log into the second node of the pod and see that it have the same data as primary node.
 ```
 ubuntu@balasenapathi:~$ kubectl exec -it mongo-1 -- mongo
 rs0:SECONDARY> db.todos.find()
@@ -642,7 +643,7 @@ mongo   3/3     111s
 ```
 **Note:** This is the MongoDB StatefulSet we deployed. As a result, we have 3 replicas of MongoDB running, deployed using StatefulSets.
 
-### 24.Now create the pvc.yaml manifest file:
+### 24.Now create the pvc.yaml manifest file.
 ```
 ubuntu@balasenapathi:~$ nano pvc.yaml
 apiVersion: v1
@@ -667,7 +668,7 @@ persistentvolumeclaim/mongodump created
 
 - Now let us write a kubernetes job that takes the backup of this mongodb:
 
-### 1.Now create a job manifest file in cluster:
+### 1.Now create a job manifest file in cluster.
 ```
 ubuntu@balasenapathi:~$ nano job.yaml
 apiVersion: batch/v1
@@ -954,7 +955,7 @@ rs0:PRIMARY> rs.status()
 	}
 }
 ```
-4.**Check Users and Roles:** To see the list of users and their roles, you can run:
+4.**Check Users and Roles:** To see the list of users and their roles, you can run.
 
 **Note:**This will list all users in the admin database along with their roles.
 ```
@@ -966,7 +967,7 @@ rs0:PRIMARY> db.getUsers()
 ```
 
 5.**Test Authentication:** To test authentication with a specific username and password, you can authenticate using the db.auth() method. 
-Replace yourUsername and yourPassword with the actual username and password:
+Replace yourUsername and yourPassword with the actual username and password.
 
 **Note:** If authentication is successful, it will return 1.
 ```
@@ -988,7 +989,6 @@ authenticate using db.auth("yourUsername", "yourPassword"), it failed with "Auth
 
 **Note:** As it is clear, we haven't provided the username and password for the MongoDB database. This is the reason we are 
 unable to connect or authenticate to this database and, consequently, unable to create the job.
-
 
 7.**Create the Username and Password in the mongodb:**
 ```
@@ -1017,12 +1017,12 @@ Successfully added user: {
 It looks like we have successfully created a user with the username "admin" and the password "password" with the necessary roles.
 Now we should be able to use these credentials for authentication in our application or job manifest for dbbackup.
 
-### 7.Now apply the job.yaml again in the cluster:
+### 7.Now apply the job.yaml again in the cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl apply -f job.yaml
 job.batch/mongodb-backup-job created
 ```
-### 8.Now try to list down the pods in the cluster:
+### 8.Now try to list down the pods in the cluster.
 ```
 ubuntu@balasenapathi:~$ kubectl get pods -w
 NAME                       READY   STATUS      RESTARTS   AGE
@@ -1046,7 +1046,7 @@ mongodb-backup-job   1/1           7s         34s
 ```
 **Note:** We can see that the mongodb-backup-job COMPLETIONS status is 1/1 means one backup job is finished/completed.
 
-### 10. Now see whether our data is exported or not.This data should be exported to volumes,so list down the volumes:
+### 10. Now see whether our data is exported or not.This data should be exported to volumes,so list down the volumes.
 ### To get PVC.
 ```
 ubuntu@balasenapathi:~$ kubectl get pvc
@@ -1072,7 +1072,7 @@ storage            40m
 ```
 Note: This is the volume "pvc-cc9fc3d5-2d06-42d5-aad7-d3b7ef1459bf " that is created.
 
-### 11.Now describe this volume where the data is getting stored: 
+### 11.Now describe this volume where the data is getting stored. 
 ```
 ubuntu@balasenapathi:~$ kubectl describe pv pvc-cc9fc3d5-2d06-42d5-aad7-d3b7ef1459bf
 Name:            pvc-cc9fc3d5-2d06-42d5-aad7-d3b7ef1459bf
@@ -1128,7 +1128,7 @@ todos.bson  todos.metadata.json
 ```
 **Note:** We can see that the system.users.bson, todos.bson are the collections of the database.
 
-### 15.If we are doubtful, let’s get into the MongoDB pod and check if that collection exists:
+### 15.If we are doubtful, let’s get into the MongoDB pod and check if that collection exists.
 ```
 ubuntu-dsbda@ubuntudsbda-virtual-machine:~$ kubectl exec -it mongo-0 -- mongo
 MongoDB shell version v4.0.8
@@ -1193,7 +1193,7 @@ test    0.000GB
 ```
 **Note:** We can see the admin and test databases in the databases list:
 
-### 17.Now try to list down the collections in the database as we have created collections in test not in admin database:
+### 17.Now try to list down the collections in the database as we have created collections in test not in admin database.
 ```
 rs0:SECONDARY> use admin
 switched to db admin
@@ -1389,7 +1389,7 @@ From the logs, it's clear that the pods are indeed running and executing the spe
 ubuntu@balasenapathi:~$ kubectl delete job example-job
 job.batch "example-job" deleted
 ```
-### 29.To list down the pods:
+### 29.To list down the pods.
 ```
 ubuntu@balasenapathi:~$ kubectl get pods
 NAME      READY   STATUS    RESTARTS   AGE
@@ -1402,6 +1402,304 @@ mongo-2   1/1     Running   1          17h
 ubuntu@balasenapathi:~$ kubectl get jobs
 No resources found in default namespace.
 ```
+
+**CronJobs:**
+
+Now that we have created the job that takes database backups, let's write a simple CronJob to take database backups on a
+regular schedule instead of just once.
+
+### 1.Now create a cronjob manifest in cluster.
+```
+ubuntu@balasenapathi:~$ nano cronjob.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongodb-backup-cronjob
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Allow
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 60 # delete job after 60 seconds
+      template:
+        spec:
+          containers:
+            - name: mongodb
+              image: mongo
+              command: ["/bin/sh", "-c"]
+              args:
+                [
+                  'mongodump --uri "mongodb://admin:${MONGO_PASSWORD}@mongo-0.mongo.default.svc.cluster.local:
+                  27017,mongo-1.mongo.default.svc.cluster.local:27017,mongo-2.mongo.default.svc.cluster.local:27017/?
+                  replicaSet=rs0&readPreference=secondaryPreferred&authSource=admin&ssl=false" -o /usr/share/mongodump/$(date +"%d%m%Y-
+                  %H%M%S")',
+                ]
+              volumeMounts:
+                - mountPath: "/usr/share/mongodump/"
+                  name: mongodump
+              env:
+                - name: MONGO_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: password
+                      name: mongodb-secret
+          volumes:
+            - name: mongodump
+              persistentVolumeClaim:
+                claimName: mongodump
+          restartPolicy: Never
+```
+**Note:** We have given:
+
+- `apiVersion: batch/v1`
+- `kind: CronJob`
+- `name: mongodb-backup-job` — the name of the job we are creating.
+- `schedule: "* * * * *"` — the cron expression is the heart of the CronJob. It defines the time-based schedule for running recurring jobs.
+
+**Note:** We can use online tools like Crontab Guru to get the cron expression. Here `"* * * * *"` means the CronJob runs every minute. If you want the CronJob to run every midnight, replace the first two stars with `00`, i.e., `"0 0 * * *"`, which means it runs every day at midnight. In our case, the CronJob runs every minute.
+
+**CronJobs Concurrency Policy:**
+
+We have discussed that CronJobs create jobs based on a schedule. The concurrency policy determines the number of concurrent
+job instances allowed to run at any given time. By default, a CronJob will create only one job instance at a time. If a job
+is still running when the next scheduled run time arrives, the new job instance will be queued until the first one completes.
+However, you can set the concurrency policy field in a CronJob to control how concurrent jobs are handled. 
+
+The available options are:
+
+- **Allow:** This option allows multiple job instances to run concurrently. It is useful for handling overlapping tasks or if you want to run multiple instances of the same job in parallel.
+
+- **Forbid:** This option prevents any new job instances from starting while an existing one is still running.
+
+- **Replace:** This option stops the currently running job and creates a new job instance. 
+
+The default concurrency policy is **Forbid**.
+
+- `concurrencyPolicy: Allow` — we are setting the concurrency policy to `Allow` for now.
+- `successfulJobsHistoryLimit: 2` — this limit specifies how many completed jobs should be stored for reference in the future. With a limit of 2, only the two most recent completed jobs will be kept; older jobs will be automatically deleted.
+- `failedJobsHistoryLimit: 3` — this limit is similar to `successfulJobsHistoryLimit` but stores the 3 most recent failed jobs.
+
+`template:` — This is the template of the job because the CronJob ultimately creates the job. This is similar to the job manifest we have seen before. Here we provide the container information, just like we do in a Pod.
+
+- `image: mongo` — We are using the MongoDB image, and in this container, we are running the `mongodump` command.
+
+**Note:** `mongodump` is a utility that creates a binary export of our database.
+```
+'mongodump --uri "mongodb://admin:${MONGO_PASSWORD}@mongo-0.mongo.default.svc.cluster.local:27017,mongo-1.mongo.default.svc.cluster.local:27017,mongo-2.mongo.default.svc.cluster.local:27017/?replicaSet=rs0&readPreference=secondaryPreferred&authSource=admin&ssl=false" -o /usr/share/mongodump/$(date +"%d%m%Y-%H%M%S")'
+```
+**The above is the connection string of our database:**
+
+- `admin` is the username.
+- `${MONGO_PASSWORD}` is taken from a secret.
+- `@mongo-0` is our first pod name.
+- `mongo` is our headless service.
+- `default` is the namespace.
+- `svc.cluster.local` is the service DNS.
+- `27017` is the port number on which our MongoDB is running.
+- `@mongo-1` is our second pod name.
+- `@mongo-2` is our third pod name.
+- `/usr/share/mongodump/$(date +"%d%m%Y-%H%M%S")` — Finally, we are giving the path to which the exported dump should be saved in the container.
+
+**Volume Mounts:**
+
+- `mountPath: "/usr/share/mongodump/"`
+- `name: mongodump`
+
+To store this volume, we are mounting this volume at `/usr/share/mongodump/` with the name `mongodump`.
+
+**Volumes:**
+
+- `name: mongodump`
+- `persistentVolumeClaim:`
+  - `claimName: mongodump`
+
+**restartPolicy: Never** — As we are using `mongodump` with PersistentVolumeClaim.
+
+### 2.Now apply the changes in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f cronjob.yaml
+cronjob.batch/mongodb-backup-cronjob created
+```
+**Note:** As the cronjob is created.
+
+### 3.Now list down the all the cronjobs in cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get cj
+NAME                     SCHEDULE    SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+mongodb-backup-cronjob   * * * * *   False     0        <none>          13s
+```
+**Note:** The cj is shortform of cronjobs and our schedule is "* * * * * " the job runs for every second.
+
+### 4. Now list down the pods.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                                    READY   STATUS              RESTARTS   AGE
+mongo-0                                 1/1     Running             1          20h
+mongo-1                                 1/1     Running             1          20h
+mongo-2                                 1/1     Running             1          20h
+mongodb-backup-cronjob-28287113-2gqdf   0/1     ContainerCreating   0          16s
+
+ubuntu@balasenapathi:~$ kubectl get pods -w
+NAME                                    READY   STATUS              RESTARTS   AGE
+mongo-0                                 1/1     Running             1          20h
+mongo-1                                 1/1     Running             1          20h
+mongo-2                                 1/1     Running             1          20h
+mongodb-backup-cronjob-28287113-2gqdf   0/1     ContainerCreating   0          76s
+mongodb-backup-cronjob-28287114-bw7wk   0/1     ContainerCreating   0          16s
+mongodb-backup-cronjob-28287113-2gqdf   1/1     Running             0          107s
+mongodb-backup-cronjob-28287114-bw7wk   1/1     Running             0          47s
+mongodb-backup-cronjob-28287114-bw7wk   0/1     Completed           0          52s
+```
+**Note:** After every one minute scheduled time our job is running as specified/scheduled.
+
+### 5.Now list down the jobs.
+```
+ubuntu@balasenapathi:~$ kubectl get jobs
+NAME                              COMPLETIONS   DURATION   AGE
+mongodb-backup-cronjob-28287114   1/1           55s        113s
+mongodb-backup-cronjob-28287115   1/1           8s         53s
+```
+**Note:** Our jobs are being created according to the schedule and are completing in a timely manner. They are being 
+deleted after completion, and new jobs are being created as per the defined schedule.
+
+### 6.Now verify the list of pods in cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                                    READY   STATUS              RESTARTS   AGE
+mongo-0                                 1/1     Running             1          20h
+mongo-1                                 1/1     Running             1          20h
+mongo-2                                 1/1     Running             1          20h
+mongodb-backup-cronjob-28287115-mk3we   0/1     Completed           0          63s
+mongodb-backup-cronjob-28287116-bk6kv   0/1     Completed           0          3s
+```
+### 7.Now get the list of jobs in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get jobs
+NAME                              COMPLETIONS   DURATION   AGE
+mongodb-backup-cronjob-28287115   1/1           7s         10s
+mongodb-backup-cronjob-28287116   1/1           8s         53s
+```
+**Note:** Now comment #ttlSecondsAfterFinished: 60 # delete job after 60 seconds in cronjob.yaml maniifest and apply this again:
+
+### 8.Now apply the changes in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl apply -f cronjob.yaml
+cronjob.batch/mongodb-backup-cronjob configured
+```
+### 9.Now list down the jobs in cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get jobs
+NAME                              COMPLETIONS   DURATION   AGE
+mongodb-backup-cronjob-28287130   1/1           6s         72s
+mongodb-backup-cronjob-28287131   1/1           11s        12s
+```
+### 10.Now get into the minikube and see whether data is being exported to the file specified i.e, mongodump:
+```
+ubuntu@balasenapathi:~$ minikube ssh
+docker@minikube:~$ ls /tmp/hostpath-provisioner/default/mongodump
+13102023-002517  13102023-195603  13102023-195904  13102023-200203  13102023-200503  13102023-200804  13102023-201108
+13102023-195447  13102023-195703  13102023-200004  13102023-200303  13102023-200603  13102023-200904  13102023-201208
+13102023-195505  13102023-195803  13102023-200103  13102023-200404  13102023-200703  13102023-201003
+```
+**Note:** We can see multiple folders are getting created because for every one minute a new job is getting created.
+
+### 11.Now list down the jobs.
+```
+ubuntu@balasenapathi:~$ kubectl get jobs
+NAME                              COMPLETIONS   DURATION   AGE
+mongodb-backup-cronjob-28287132   1/1           12s        98s
+mongodb-backup-cronjob-28287133   1/1           7s         38s
+```
+**Note:** We can observe that old jobs are being deleted, and in the job history, we configured the system to display 
+only the two most recent jobs in the manifest by setting `successfulJobsHistoryLimit: 2`.
+
+### 12.We can also suspend the CronJob to stop creating jobs temporarily. To do this, edit the CronJob.
+```
+ubuntu@balasenapathi:~$ kubectl edit mongodb-backup-cronjob
+
+or
+
+ubuntu@balasenapathi:~$ kubectl patch cj mongodb-backup-cronjob --patch '{"spec":{"suspend":true}}'
+cronjob.batch/mongodb-backup-cronjob patched
+```
+**Note:** We can see that the cronjob is patched.
+
+### 13.Jobs created before applying patching
+```
+ubuntu@balasenapathi:~$ kubectl get jobs
+NAME                              COMPLETIONS   DURATION   AGE
+mongodb-backup-cronjob-28287139   1/1           6s         94s
+mongodb-backup-cronjob-28287140   1/1           6s         34s
+
+ubuntu@balasenapathi:~$ kubectl get jobs
+NAME                              COMPLETIONS   DURATION   AGE
+mongodb-backup-cronjob-28287139   1/1           6s         3m6s
+mongodb-backup-cronjob-28287140   1/1           6s         2m6s
+```
+**Note:** We can see that no new jobs were created after applying patching because we have suspended the cronjob.
+
+### 14.Now get the last schedule of the cronjob.
+```
+ubuntu@balasenapathi:~$ kubectl get cj
+NAME                     SCHEDULE    SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+mongodb-backup-cronjob   * * * * *   True      0        4m14s           31m
+```
+**Note:** The last schedule was done at 4m14s till now no new pod is created because we have suspended the cronjob.
+
+### 15.Now lets try to rollback the suspend patch so that the pods will be created normally.
+```
+ubuntu@balasenapathi:~$ kubectl patch cj mongodb-backup-cronjob --patch '{"spec":{"suspend":false}}'
+cronjob.batch/mongodb-backup-cronjob patched
+```
+### 16.To get the list of CronJobs.
+```
+ubuntu@balasenapathi:~$ kubectl get cj
+NAME                     SCHEDULE    SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+mongodb-backup-cronjob   * * * * *   True      0        7m5s            34m
+```
+### 17.To get the list of jobs in the cluster.
+```
+ubuntu@balasenapathi:~$ kubectl get jobs
+NAME                              COMPLETIONS   DURATION   AGE
+mongodb-backup-cronjob-28287139   1/1           6s         8m16s
+mongodb-backup-cronjob-28287140   1/1           6s         7m16s
+```
+### 18.To get the list of pods.
+```
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME                                    READY   STATUS      RESTARTS   AGE
+mongo-0                                 1/1     Running     1          21h
+mongo-1                                 1/1     Running     1          21h
+mongo-2                                 1/1     Running     1          21h
+mongodb-backup-cronjob-28287139-nn6n7   0/1     Completed   0          8m25s
+mongodb-backup-cronjob-28287140-kfxtl   0/1     Completed   0          7m25s
+
+ubuntu@balasenapathi:~$ kubectl patch cj mongodb-backup-cronjob --patch '{"spec":{"suspend":false}}'
+cronjob.batch/mongodb-backup-cronjob patched
+
+ubuntu@balasenapathi:~$ kubectl get jobs
+NAME                              COMPLETIONS   DURATION   AGE
+mongodb-backup-cronjob-28287147   1/1           7s         33s
+mongodb-backup-cronjob-28287148   1/1           6s         23s
+```
+
+### 19.Now, to delete the CronJob we created: when we delete the CronJob, the associated jobs will also be deleted.
+```
+ubuntu@balasenapathi:~$ kubectl delete cj mongodb-backup-cronjob
+cronjob.batch "mongodb-backup-cronjob" deleted
+
+ubuntu@balasenapathi:~$ kubectl get jobs
+No resources found in default namespace.
+
+ubuntu@balasenapathi:~$ kubectl get pods
+NAME      READY   STATUS    RESTARTS   AGE
+mongo-0   1/1     Running   1          21h
+mongo-1   1/1     Running   1          21h
+mongo-2   1/1     Running   1          21h
+```
+
 
 
 
