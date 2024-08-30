@@ -19,5 +19,5 @@ Using controllers like Deployments for such tasks is not ideal, as they ensure t
 kinds of batch jobs, you can use Jobs and CronJobs in Kubernetes. Jobs allow you to run processes only once, while CronJobs enable
 you to schedule them to run at specific intervals.
 
-![Kubernetes Jobs CronJobs]()
+![Kubernetes Jobs CronJobs](https://github.com/balusena/kubernetes-for-devops/blob/main/18-Kubernetes%20Jobs%20and%20CronJobs/jobs_cronjobs_intro.png)
 
