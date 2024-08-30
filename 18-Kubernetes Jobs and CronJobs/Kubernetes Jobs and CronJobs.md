@@ -1,4 +1,4 @@
-# Kubernetes Jobs and CronJobs:
+## Kubernetes Jobs and CronJobs:
 Kubernetes Jobs are used to manage tasks that need to run to completion. They ensure that a specified number of pods 
 execute successfully. This makes Jobs ideal for batch processing tasks, running scripts, or any task that needs to run
 once until completion. Kubernetes will create the necessary pods and manage their execution to ensure the job completes
@@ -21,7 +21,7 @@ you to schedule them to run at specific intervals.
 
 ![Kubernetes Jobs CronJobs](https://github.com/balusena/kubernetes-for-devops/blob/main/18-Kubernetes%20Jobs%20and%20CronJobs/jobs_cronjobs_intro.png)
 
-# Kubernetes Jobs Lifecycle:
+## Kubernetes Jobs Lifecycle:
 When a Kubernetes job is created, it launches a pod with the image specified in the manifest. This image can be any application
 that contains the logic for our use case. If there are errors in running the application in the pod due to reasons such as memory
 or CPU issues, the job retries a given number of times by recreating the pod. The number of retries can be specified using the 
@@ -57,7 +57,7 @@ Jobs and CronJobs can be used in multiple use cases.
 
 ![Kubernetes Jobs Lifecycle](https://github.com/balusena/kubernetes-for-devops/blob/main/18-Kubernetes%20Jobs%20and%20CronJobs/kubernetes_jobs_lifecycle.png)
 
-# Use Cases:
+## Use Cases:
 
 ![Kubernetes Jobs CronJobs Usecases](https://github.com/balusena/kubernetes-for-devops/blob/main/18-Kubernetes%20Jobs%20and%20CronJobs/jobs_cronjobs_usecases.png)
 
