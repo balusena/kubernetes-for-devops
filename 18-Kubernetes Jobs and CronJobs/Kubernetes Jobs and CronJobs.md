@@ -9,7 +9,15 @@ in Unix-like systems. They are useful for automating repetitive tasks such as ba
 operations. CronJobs ensure that these tasks run automatically at the scheduled times, without the need for manual 
 intervention. This makes them powerful tools for maintaining the regular operations of a Kubernetes cluster.
 
+In Kubernetes, we have different controllers for managing pods, such as ReplicaSets, Deployments, StatefulSets, and DaemonSets.
+These controllers ensure that their pods are always running. If a pod fails, the controller restarts it or reschedules it to 
+another node to maintain the desired number of running pods. However, there are scenarios where you may want to run your pods 
+only once, such as taking database backups or sending emails in a batch. These processes should not be running continuously; 
+they should run for a specific amount of time and at particular intervals.
 
+Using controllers like Deployments for such tasks is not ideal, as they ensure that the pod runs continuously. Instead, for these
+kinds of batch jobs, you can use Jobs and CronJobs in Kubernetes. Jobs allow you to run processes only once, while CronJobs enable
+you to schedule them to run at specific intervals.
 
-
+![Kubernetes Jobs CronJobs]()
 
