@@ -59,6 +59,8 @@ Jobs and CronJobs can be used in multiple use cases.
 
 # Use Cases:
 
+![Kubernetes Jobs CronJobs Usecases](https://github.com/balusena/kubernetes-for-devops/blob/main/18-Kubernetes%20Jobs%20and%20CronJobs/jobs_cronjobs_usecases.png)
+
 **1. DB Backups:**
 This ensures that our database is always backed up and can be restored later when needed.
 
@@ -71,7 +73,6 @@ These resources can be utilized for data processing tasks such as parsing logs, 
 particularly useful for tasks that need to be performed on an ad-hoc basis or on a schedule. Beyond these examples, Jobs and 
 CronJobs can be applied to many more use cases.
 
-![Kubernetes Jobs CronJobs Usecases](https://github.com/balusena/kubernetes-for-devops/blob/main/18-Kubernetes%20Jobs%20and%20CronJobs/jobs_cronjobs_usecases.png)
 
 
 
