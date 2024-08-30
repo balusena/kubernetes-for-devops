@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodump
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: "demo-storage"  # Use the appropriate storage class name
+  resources:
+    requests:
+      storage: 1G
