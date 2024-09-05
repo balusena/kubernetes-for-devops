@@ -71,6 +71,17 @@ This repository covers the complete Kubernetes fundamentals along with examples 
    - **Install the Downloaded Minikube Binary**
    - **Configure Minikube to Use the "none" Driver**
    - **Start the Minikube Cluster**
+3. **Install the Latest 'kubectl' Stable Release on x86-64 Linux Using Binary Download**
+   - **Download the Latest Kubectl Binary for Linux**
+   - **Navigate to the Present Working Directory**
+   - **Download the Kubectl Binary**
+   - **Install the Downloaded Kubectl Binary**
+   - **Verify the Installed Version**
+4. **Interact with Your Minikube Cluster and Access Your Cluster with `kubectl`**
+5. **Access the Kubernetes Dashboard**
+   - **To Get Information About Kubernetes Cluster**
+   - **To Get Information About Number of Nodes**
+6. **Stop Your Minikube Cluster**
 
 ## Multi-node Minikube Kubernetes Cluster
 1. **Start Minikube with Multiple Nodes**
