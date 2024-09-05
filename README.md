@@ -207,7 +207,7 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 
 ## 13.Deleting Pods
    - **Deleting Pods Using a YAML File**
-      - **After running this command, you can check the remaining pods in the cluster**
+      - **Checking the remaining pods in the cluster**
    - **Deleting Pods Created with kubectl**
       - **Incorrect Command**
       - **Correct Command**
