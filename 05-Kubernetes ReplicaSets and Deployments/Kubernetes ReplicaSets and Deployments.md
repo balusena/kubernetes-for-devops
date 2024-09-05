@@ -331,7 +331,7 @@ nginx-deployment-85dd4d599f-vr2bb   1/1     Running   0          22m
 **Note:** We currently have two pods, as specified in the deployment file. This is automatically managed
 by the ReplicaSet created by the deployment.
 
-### 10.Scaling an Application Using `kubectl`
+### 11.Scaling an Application Using `kubectl`
 You can scale the application without modifying the deployment file by using the `kubectl scale` command. 
 For example, to scale the application to 4 replicas:
 ```
@@ -340,7 +340,7 @@ deployment.apps/nginx-deployment scaled
 ```
 **Note:** The output confirms that the deployment has been scaled.
 
-### 11.Listing All Pods after applying scaling using kubectl.
+### 12.Listing All Pods after applying scaling using kubectl.
 ```
 ubuntu@balasenapathi:~$ kubectl get pods
 NAME                                READY   STATUS    RESTARTS   AGE
@@ -355,7 +355,7 @@ the cluster, but the deployment file specifies only 2 replicas. This can cause c
 recommended to make changes in the deployment file and apply them using the kubectl apply command to 
 maintain consistency.
 
-### 12.Changing the version from 1.21.3 to 1.21 using kubectl command without using deployment file:
+### 13.Changing the version from 1.21.3 to 1.21 using kubectl command without using deployment file:
 ```
 ubuntu@balasenapathi:~$ kubectl set image deployment/nginx-deployment nginx-container=nginx:1.21
 deployment.apps/nginx-deployment image updated
@@ -365,7 +365,7 @@ so we should specify in which container  we want to apply this image.
 
 **Note:** The output confirms that the image is updated.
 
-### 13.Now try to list down the resources:
+### 14.Now try to list down the resources:
 ```
 ubuntu@balasenapathi:~$ kubectl get all
 NAME                                    READY   STATUS    RESTARTS   AGE
@@ -388,7 +388,7 @@ replicaset.apps/nginx-deployment-865f6b58b8   4         4         4       2m10s
 **Note:** As we can see 4 replicas are running and we can check if the image is updated or not by using
 the below command.
 
-### 14.Inspecting Pod Details
+### 15.Inspecting Pod Details
 ```
 ubuntu@balasenapathi:~$ kubectl describe pod/nginx-deployment-865f6b58b8-42w86
 Name:             nginx-deployment-865f6b58b8-42w86
@@ -450,7 +450,7 @@ either by directly using kubectl commands or by updating the deployment file, it
 practice to use the deployment file. This ensures that changes are managed consistently and in a controlled
 manner.
 
-### 15.Viewing Rollout History of a Deployment
+### 16.Viewing Rollout History of a Deployment
 ```
 ubuntu@balasenapathi:~$ kubectl rollout history deployment/nginx-deployment
 deployment.apps/nginx-deployment 
@@ -464,7 +464,7 @@ REVISION  CHANGE-CAUSE
 You can specify a change cause using the --record flag when applying changes with kubectl. This way, 
 each revision will have a meaningful description of the changes made.
 
-### 16.Now change the image from version 1.21 to version 1.20 using --record:
+### 17.Now change the image from version 1.21 to version 1.20 using --record:
 ```
 ubuntu@balasenapathi:~$ kubectl set image deployment/nginx-deployment nginx-container=nginx:1.20 --record
 Flag --record has been deprecated, --record will be removed in the future
@@ -472,7 +472,7 @@ deployment.apps/nginx-deployment image updated
 ```
 **Note:** Now the CHANGE-CAUSE will be recorded because of the above command
 
-### 17.To get the history of revisions done by rollouts:
+### 18.To get the history of revisions done by rollouts:
 ```
 ubuntu@balasenapathi:~$ kubectl rollout history deployment/nginx-deployment
 deployment.apps/nginx-deployment
@@ -518,12 +518,12 @@ spec:
 - **Annotations**: Added `kubernetes.io/change-cause: "Updating to alpine version"`
 - **Spec**: Updated the `image` to `nginx:alpine`
 
-### 18.Attempting to Create the Deployment
+### 19.Attempting to Create the Deployment
 ```
 ubuntu@balasenapathi:~$ kubectl apply -f nginx-deployment.yaml
 Error from server (NotFound): error when creating "nginx-deployment.yaml": namespaces "nginx" not found
 ```
-### 19.To check the available namespaces:
+### 20.To check the available namespaces:
 ```
 ubuntu@balasenapathi:~$ kubectl get namespaces
 NAME                   STATUS   AGE
@@ -533,13 +533,13 @@ kube-public            Active   2d19h
 kube-system            Active   2d19h
 kubernetes-dashboard   Active   2d16h
 ```
-### 20.Creating the Namespace
+### 21.Creating the Namespace
 Create the "nginx" namespace if it does not exist:
 ```
 ubuntu@balasenapathi:~$ kubectl create namespace nginx
 namespace/nginx created
 ```
-### 21.Reapply nginx deployment configuration, after creating the namespace.
+### 22.Reapply nginx deployment configuration, after creating the namespace.
 ```
 ubuntu@balasenapathi:~$ kubectl apply -f nginx-deployment.yaml
 deployment.apps/nginx-deployment created
@@ -575,7 +575,7 @@ spec:
           ports:
             - containerPort: 80
 ```
-### 22.Viewing Rollout History of Revisions
+### 23.Viewing Rollout History of Revisions
 ```
 ubuntu@balasenapathi:~$ kubectl rollout history deployment/nginx-deployment
 deployment.apps/nginx-deployment 
