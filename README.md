@@ -113,7 +113,7 @@ This repository covers the complete Kubernetes fundamentals along with examples 
    - **Start the Minikube Cluster**
    - **Set Docker Environment: Configure Your Local Docker Client to Use the Docker Daemon Inside Minikube**
    
-# 2: Kubernetes Introduction to YAML (YAML Ain't Markup Language)
+# 2: Introduction to YAML (YAML Ain't Markup Language)
 
 ## 1.Key Features
 1. **Human-Readable**
