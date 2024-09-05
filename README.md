@@ -113,6 +113,7 @@ This repository covers the complete Kubernetes fundamentals along with examples 
    - **Start the Minikube Cluster**
    - **Set Docker Environment: Configure Your Local Docker Client to Use the Docker Daemon Inside Minikube**
    
+
 # 2: Introduction to YAML (YAML Ain't Markup Language)
 
 ## 1.Key Features
@@ -132,6 +133,7 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 3. **XML**
 
 ## 5.Summary
+
 
 # 3: Kubernetes Pods
 
@@ -215,6 +217,7 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 ## 14.Verifying Deletion
    - **To ensure the pod has been deleted, you can run**
    
+
 # 4: Kubernetes Nodes
 
 ## 1.Types of Nodes
@@ -246,7 +249,7 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 ## 4.Node Overview
 
 ## 5.Comprehensive List of Commands
-   - **To view nodes in your cluster**
+   - **To view nodes in a cluster**
    - **To get detailed information about a specific node**
    - **Cordon a Node - To mark the node as unschedulable**
    - **Uncordon a Node - To mark the node as schedulable**
