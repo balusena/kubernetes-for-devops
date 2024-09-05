@@ -201,16 +201,16 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 
 ## 12.Checking Pod Logs
    - **Log Analysis**
-     - **Initialization Logs**
-     - **Access Logs**
-     - **Error Logs**
+      - **Initialization Logs**
+      - **Access Logs**
+      - **Error Logs**
 
 ## 13.Deleting Pods
    - **Deleting Pods Using a YAML File**
-     - **After running this command, you can check the remaining pods in the cluster**
+      - **After running this command, you can check the remaining pods in the cluster**
    - **Deleting Pods Created with kubectl**
-     - **Incorrect Command**
-     - **Correct Command**
+      - **Incorrect Command**
+      - **Correct Command**
 
 ## 14.Verifying Deletion
    - **To ensure the pod has been deleted, you can run**
