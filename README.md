@@ -3,11 +3,11 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 
 # 1: Kubernetes Introduction and Setup
 
-## Kubernetes
+## 1.Kubernetes
 
-## Need of Kubernetes
+## 2.Need of Kubernetes
 
-## Features of Kubernetes
+## 3.Features of Kubernetes
 1. **Automatic Bin Packing**
 2. **Service Discovery**
 3. **Load Balancing**
@@ -21,21 +21,21 @@ This repository covers the complete Kubernetes fundamentals along with examples 
    - **Vertical Pod Autoscaler (VPA)**
    - **Cluster Autoscaler (CA)**
 
-## Kubernetes Architecture
+## 4.Kubernetes Architecture
 
-## Master Node (Control Plane) Components
+## 5.Master Node (Control Plane) Components
 1. **API Server (`kube-apiserver`)**
 2. **Controller Manager (`kube-controller-manager`)**
 3. **Scheduler (`kube-scheduler`)**
 4. **etcd**
 5. **Cloud Controller Manager (`cloud-controller-manager`)**
 
-## Worker Node Components
+## 6.Worker Node Components
 1. **Kubelet**
 2. **Kube-Proxy**
 3. **Container Runtime**
 
-## Additional Components and Resources
+## 7.Additional Components and Resources
 1. **Pods**
 2. **Services**
 3. **Deployments**
@@ -45,11 +45,11 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 7. **Ingress**
 8. **Volumes**
 
-## Visual Representation
+## 8.Visual Representation
 1. **Master Node**
 2. **Worker Nodes**
 
-## Kubernetes Setup
+## 9.Kubernetes Setup
 1. **Checking KVM Support on Ubuntu 20.04**
 2. **Steps to Enable Virtualization and Check KVM Support**
    - **Enable Virtualization in VMware Workstation**
@@ -62,7 +62,7 @@ This repository covers the complete Kubernetes fundamentals along with examples 
    - **To Check CPU for Virtualization (VT-x/AMD-V) Support Using the grep Command**
    - **To Display the Number of Processing Units (CPU Cores) Available on the System**
 
-## Single-node Minikube Kubernetes Cluster
+## 10.Single-node Minikube Kubernetes Cluster
 1. **Single-node Minikube Kubernetes Cluster**
 2. **Install the Latest Minikube Stable Release on x86-64 Linux Using Binary Download**
    - **Download the Latest Minikube Binary for Linux**
@@ -83,7 +83,7 @@ This repository covers the complete Kubernetes fundamentals along with examples 
    - **To Get Information About Number of Nodes**
 6. **Stop Your Minikube Cluster**
 
-## Multi-node Minikube Kubernetes Cluster
+## 11.Multi-node Minikube Kubernetes Cluster
 1. **Start Minikube with Multiple Nodes**
 2. **Checking the Status of Minikube with Cluster Name `--local-cluster`**
 3. **To Get the Nodes in the Cluster**
@@ -97,7 +97,7 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 9. **To Delete the Node from the Local-Cluster**
 10. **Stop Your Minikube Cluster**
 
-## Setting Up Kubernetes Environment Variables
+## 12.Setting Up Kubernetes Environment Variables
 1. **Find the Paths**
    - **Check Location for Minikube**
    - **Check Location for kubectl**
@@ -108,8 +108,29 @@ This repository covers the complete Kubernetes fundamentals along with examples 
    - **Add the Following Lines to the End of the /etc/profile File**
    - **Save the File and Exit the Editor. Apply the Changes**
 
-## Running Docker in Minikube
+## 13.Running Docker in Minikube
 1. **How to Use Local Docker Images with Minikube**
    - **Start the Minikube Cluster**
    - **Set Docker Environment: Configure Your Local Docker Client to Use the Docker Daemon Inside Minikube**
+   
+# 2: Kubernetes Introduction to YAML (YAML Ain't Markup Language)
+
+## 1.Key Features
+1. **Human-Readable**
+2. **Data Structures**
+3. **Indentation-Based**
+4. **Support for Comments**
+5. **Flexible and Powerful**
+
+## 2.YAML is a Serialization Language
+1. **Serialization**
+2. **Deserialization**
+
+## 4.Different Serialization Languages
+1. **YAML**
+2. **JSON**
+3. **XML**
+
+## 5.Summary
+
 
