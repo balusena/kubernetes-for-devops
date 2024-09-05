@@ -133,4 +133,87 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 
 ## 5.Summary
 
+# 3: Kubernetes Pods
+
+## 1.Introduction to Kubernetes Pods
+
+## 2.Sidecar Containers and Their Use Cases
+
+## 3.Need for a Pod
+   - **Atomic Deployment**
+   - **Resource Sharing**
+   - **Lifecycle Management**
+
+## 4.Scaling Applications with Pods
+   - **Manual Scaling**
+   - **Horizontal Pod Autoscaler (HPA)**
+
+## 5. **Pod Communication**
+   - **Networking**
+   - **Services**
+   - **Inter-Pod Communication**
+
+### Pod Overview
+   - **Kubernetes Pods: Key Points**
+     - **Kubernetes Pod**
+     - **Container Management**
+     - **Multi-container Pods**
+     - **Container Runtime Support**
+     - **Deployment Unit**
+     - **Network and Port Usage**
+     - **Resource Management**
+     - **Shared Resources**
+     - **Pod Spec**
+     - **Replication**
+     - **Volume Sharing**
+     - **Kubectl**
+
+## 6.Creating Pods with kubectl
+   - **Creating a nginx pod using kubectl**
+   - **To see list of pods in kubernetes cluster**
+
+## 7.Creating Pods with YAML
+   - **Clone this repository and move to example folder**
+   - **To get the apiVersion of pods in kubernetes**
+   - **Create the yaml file nginx-pod.yaml**
+   - **Creating a Pod**
+   - **Listing the Pods**
+   - **Deleting a Pod**
+
+## 8.Filtering Pods
+   - **Filtering Pods by Label**
+   - **Filtering Pods with Multiple Labels**
+   - **Getting Detailed Pod Information**
+   - **Getting Pod Information in YAML Format**
+
+## 9.Listing Pods with Details
+   - **To describe the pod with detail information about it**
+
+## 10.Getting Into a Pod
+   - **Accessing a Single Container Pod**
+   - **Accessing a Specific Container in a Multi-Container Pod**
+
+## 11.Port Forwarding
+   - **Introduction**
+   - **Accessing the Pod from Within the Node**
+   - **Accessing the Service**
+   - **Stopping Port Forwarding**
+
+## 12.Checking Pod Logs
+   - **Log Analysis**
+     - **Initialization Logs**
+     - **Access Logs**
+     - **Error Logs**
+
+## 13.Deleting Pods
+   - **Deleting Pods Using a YAML File**
+     - **After running this command, you can check the remaining pods in the cluster**
+   - **Deleting Pods Created with kubectl**
+     - **Incorrect Command**
+     - **Correct Command**
+
+## 14.Verifying Deletion
+   - **To ensure the pod has been deleted, you can run**
+
+
 
