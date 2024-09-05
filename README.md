@@ -258,6 +258,72 @@ This repository covers the complete Kubernetes fundamentals along with examples 
    - **Remove a Node Label - To remove a label from the node**
    - **Taint a Node - To add a taint to the node and prevent pods from being scheduled unless they tolerate the taint**
    - **Remove a Node Taint - To remove a taint from the node**
+   
+
+# 5: Kubernetes ReplicaSets and Deployments
+
+## 1.ReplicaSets
+   - **Replicaset Features**
+
+   - **Creating ReplicaSets with YAML**
+     - **Clone this repository and move to example folder**
+     - **To get the apiVersion of replicasets in kubernetes**
+     - **Create a replicaset using file nginx-replicaset.yaml**
+     - **To create the replicaset in kubernetes cluster**
+     - **To check whether replicaset is created in kubernetes cluster**
+     - **To get the list of pods running in the kubernetes cluster**
+
+## 2.Self-Healing in Kubernetes
+   - **To delete a pod from the Kubernetes cluster**
+
+## 3.High Availability in Kubernetes
+   - **List of Nodes in the Kubernetes Cluster**
+   - **Adding a Node to the Cluster**
+   - **List of Nodes After Adding the New Node**
+   - **Deleting a Node and Observing Pod Behavior**
+   - **Deleting a Node from the Cluster**
+   - **List of Pods After Deleting a Node**
+
+## 4.Deployment
+
+## 5.Rolling Update and Rollback in Deployment
+   - **Rolling Updates**
+   - **Rollback**
+   - **Deployment with Replicaset**
+
+- **Rolling Updates**
+   - **Deleting All Objects and Services from Kubernetes Cluster**
+   - **Confirming Deletion**
+   - **To get the apiVersion of deployments in kubernetes**
+   - **Create a deployment using file nginx-deployment.yaml**
+   - **To create the deployment in kubernetes cluster**
+   - **To check whether replicaset is created in kubernetes cluster**
+   - **To get the list of all resources in kubernetes cluster**
+   - **Verifying Pod Labels in Kubernetes Cluster**
+   - **Scaling an Application in Kubernetes** 
+   - **Listing All Pods before applying scaling**
+   - **Scaling an Application Using `kubectl`**
+   - **Listing All Pods after applying scaling using kubectl**
+   - **Changing the version from 1.21.3 to 1.21 using kubectl command without using deployment file**
+   - **Now try to list down the resources**
+   - **Inspecting Pod Details**
+   - **Viewing Rollout History of a Deployment**
+   - **Now change the image from version 1.21 to version 1.20 using --record**
+   - **To get the history of revisions done by rollouts**
+   - **Attempting to Create the Deployment**
+   - **To check the available namespaces**
+   - **Creating the Namespace**
+   - **Reapply nginx deployment configuration, after creating the namespace**
+   - **Viewing Rollout History of Revisions**
+
+- **Rollback**
+   - **To rollback the deployment to previous versions**
+   - **To see the rollout deployment status using kubectl rollout status**
+   - **To verify it was rolled back to the nginx:latest version, list all the pods and check the pod image**
+   - **To get the complete information about a pod**
+
+## 6.Summary
+
 
 
 
