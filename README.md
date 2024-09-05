@@ -214,6 +214,48 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 
 ## 14.Verifying Deletion
    - **To ensure the pod has been deleted, you can run**
+   
+# 4: Kubernetes Nodes
+
+## 1.Types of Nodes
+   - **Master Node**
+     - **Purpose** 
+     - **Components**
+       - **API Server**
+       - **Controller Manager**
+       - **Scheduler**
+       - **etcd**
+
+   - **Worker Node**
+     - **Purpose**
+     - **Components**
+       - **Kubelet**
+       - **Kube-Proxy**
+       - **Container Runtime**
+
+## 2.Node Lifecycle
+   - **Ready**
+   - **NotReady**
+   - **Unknown**
+
+## 3.Node Management**
+   - **Scaling**
+   - **Health Monitoring**
+   - **Maintenance**
+
+## 4.Node Overview
+
+## 5.Comprehensive List of Commands
+   - **To view nodes in your cluster**
+   - **To get detailed information about a specific node**
+   - **Cordon a Node - To mark the node as unschedulable**
+   - **Uncordon a Node - To mark the node as schedulable**
+   - **Drain a Node - To safely evict all pods from the node before marking it unschedulable**
+   - **Label a Node - To add a label to the node**
+   - **Remove a Node Label - To remove a label from the node**
+   - **Taint a Node - To add a taint to the node and prevent pods from being scheduled unless they tolerate the taint**
+   - **Remove a Node Taint - To remove a taint from the node**
+
 
 
 
