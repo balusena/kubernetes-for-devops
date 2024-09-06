@@ -443,10 +443,10 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 ## 3.Ingress & Ingress Controller Architecture
 
 ## 4.Benefits of Using Kubernetes Ingress
-- **1.Routing flexibility**
-- **2.Load balancing** 
-- **3.TLS termination** 
-- **4.Namespace isolation** 
+- **Routing flexibility**
+- **Load balancing** 
+- **TLS termination** 
+- **Namespace isolation** 
 
 - **Create a new cluster in minikube with name ingress-cluster**
 - **We are using this nginx-deployment file in new cluster for our deployment**
