@@ -587,6 +587,177 @@ This repository covers the complete Kubernetes fundamentals along with examples 
    - **Role-Based Access Control**
    - **Enterprise Setup**
    - **Deleting a Namespace** 
+   
+
+# 9: kubernetes Volumes
+- **Problem Statement-1**
+- **Problem Statement-2**
+
+## 1.What are kubernetes Volumes?
+
+## 2.Different types of volumes available in kubernetes with examples.
+
+## 1.emptyDir
+- **Description** 
+- **Lifecycle** 
+- **Use Cases** 
+   - **Example emptydir.yaml**
+
+## 2.hostPath
+- **Description** 
+- **Lifecycle** 
+- **Use Cases** 
+   - **Example hostpath.yaml**
+
+## 3.PersistentVolume (PV)
+- **Description** 
+- **Lifecycle** 
+- **Use Cases** 
+   - **Example pv.yaml**
+
+## 4.PersistentVolumeClaim (PVC)
+- **Description** 
+- **Lifecycle** 
+- **Use Cases** 
+   - **Example pvc.yaml**
+
+## 5.StorageClass
+- **Description** 
+- **Lifecycle** 
+- **Use Cases** 
+   - **Example sc.yaml**
+
+## 6.Deploy mongodb into kubernetes cluster
+- **For better understanding try to deploy mongodb into kubernetes cluster**
+   - **Download the mongodb compass "amd64.deb" in your local machine from MongoDB official website**
+   - **Create a deployment.yaml for mongodb**
+   - **Now apply the changes into the cluster**              
+   - **To get the list of all pods**
+   - **Now create the service.yaml**
+   - **Now apply the changes in the cluster**
+   - **To get the list of all services**
+   - **Now port-forward this service so that we can access mongodb from our local machine**
+
+## 7.MongoDB Compass Setup and Database Creation
+- **Connecting to MongoDB Compass**   
+- **Create a New Connection**   
+- **Creating a Simple Database**
+- **Verify Inserted Data**    
+- **To get the list of all pods in the cluster**
+- **To get into the pod with bin/bash command**
+- **To see on which pid the mongodb service is running**
+- **To kill the service/process**
+- **To list down all the pods**
+- **Now try to access the data we created earlier in mongodb db.todos**
+   - **Note**
+   - **Solution**
+
+- **emptyDir**
+   - **Create a Deployment File**
+   - **Apply the Changes to the Cluster**
+   - **Port-Forward the Service**
+   - **Creating a Simple Database in MongoDB**
+      - **Go to Databases**
+      - **Enter Database Details**
+      - **Database Name**: `db`
+      - **Collection Name**: `todos`
+      - **Add Data**
+      - **Verify Inserted Data**
+   - **To get the list of all pods in cluster**
+   - **To get into the pod with bin/bash command**
+   - **To see on which pid the mongodb service is running**
+   - **To kill the service/process**
+   - **To list down all the pods**
+   - **Now try to access the data we created earlier in mongodb db.todos**
+   - **Data Storage in emptyDir Volumes on Minikube**
+   - **Logging into Minikube Node**
+   - **Getting the Pod ID**
+   - **To get the pod ID directly**
+   - **Navigating to the Volume Data**
+   - **To list down the files in that directory "9bb53c02-9363-4a19-b9d3-470e36e6cf7b*"**
+   - **Exploring the MongoDB Volume**
+   - **Now lets try to delete the pod**
+   - **Now list down the emptydir directory again**
+   - **Now check this from the mongo compass**
+   - **Verifying MongoDB Files in Minikube when pod is running without any RESTARTS**
+      - **Listing Files in the `/data` Directory**
+         - **To check the contents of the `/data` directory on the Minikube node**
+      - **To get into the pod and see the data in the mongodb database**
+      - **Access the Pod**
+         - **Execute a shell inside the MongoDB pod**
+      - **List Files in the /data Directory**
+      - **List MongoDB Files in the /data/db Directory**
+
+- **hostPath**
+   - **Create /data directory and give full permissions(rwx) in your host machine**
+   - **Create the deployment file**
+   - **Now apply the changes into the cluster**
+   - **Now get the list of all pods**
+   - **Now let us port-forward this service so that we can access mongodb from our machine**
+   - **Creating a Simple Database in MongoDB**
+      - **Go to Databases**
+      - **Enter Database Details**
+      - **Add Data**
+      - **Verify Inserted Data**
+   - **To get the list of pods**
+   - **Now delete the pod**
+   - **To check the pods list**
+   - **Now again do the port-forwarding**
+   - **Kubernetes offers three components to persist data across pod restarts and node failures**
+      - **Persistent Volumes(PVs)**
+      - **Persistent Volume Claims(PVCs)**
+      - **Storage Classes(SCs)**
+
+- **Persistent Volumes(PVs)**
+   - **Create two directories in localhost machine i.e local_storage and Minikube**
+   - **Local Storage(host machine ubuntu) Directory**
+      - **Create a directory called /home/ubuntu/storage in localhost and give permissions**
+   - **Minikube cluster Storage Directory**
+      - **Create a directory called /home/docker/storage in minikube "local-cluster" and give permissions**
+      - **To get the api version of persistent volume**
+      - **To create the pv.yaml file**
+   - **Types of Persistent Volume Access Modes in Kubernetes**
+      - **ReadWriteMany (RWX)**
+      - **ReadWriteOnce (RWO)**
+      - **ReadOnlyMany (ROX)**
+      - **ReadOnlyOnce (RO)**
+      - **ReadWriteOncePod (RWOP)**
+   - **Now apply the changes to the local-cluster**
+   - **To get the list of PersistentVolumes in our cluster**
+
+- **2.Persistent Volume Claims(PVCs)**
+   - **Now create a PersistentVolumesClaim that need to be used in the pod**
+   - **Now apply the changes into the cluster**
+   - **List down all the PersistentVolumeClaim in the cluster**
+   - **To use this PV and PVC, we need to make some changes in the deployment.yaml file which is required for our pod**
+   - **Now apply the changes into the cluster**
+   - **To list down all the pods in the cluster**
+   - **Port-Forward the Service**
+   - **Now go to MongoDB Compass and refresh the database**
+   - **Now try to delete the pod in the cluster**
+   - **To get the list of all pods**
+   - **18.Now delete the pod**
+   - **To get the list of all pods**
+   - **Again do the port-forwarding as the connection is lost**
+   - **Now go to mongo compass and try to referesh the data as our pod is deleted**
+   - **To see where the data is mounted in local-cluster with PV,PVC,Deployemnt manifests**
+
+- **3.StorageClass(SCs)**
+   - **To get the apiresources of storageclass**
+   - **Create the StorageClass manifest**
+   - **Apply the changes in the cluster**
+   - **To get all the StorageClasses in the local-cluster**
+   - **Now we have storageclass use it in the pvc.yaml**
+   - **To get all the pvs in the local-cluster**
+   - **To apply the changes in the local-cluster**
+   - **To get the list of all PV's in the local-cluster**
+
+
+
+
+
+
+
 
 
 
