@@ -142,185 +142,185 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 ## 2.Sidecar Containers and Their Use Cases
 
 ## 3.Need for a Pod
-   - **Atomic Deployment**
-   - **Resource Sharing**
-   - **Lifecycle Management**
+1. **Atomic Deployment**
+2. **Resource Sharing**
+3. **Lifecycle Management**
 
 ## 4.Scaling Applications with Pods
-   - **Manual Scaling**
-   - **Horizontal Pod Autoscaler (HPA)**
+1. **Manual Scaling**
+2. **Horizontal Pod Autoscaler (HPA)**
 
-## 5. **Pod Communication**
-   - **Networking**
-   - **Services**
-   - **Inter-Pod Communication**
+## 5.Pod Communication
+1. **Networking**
+2. **Services**
+3. **Inter-Pod Communication**
 
 ### Pod Overview
-   - **Kubernetes Pods: Key Points**
-     - **Kubernetes Pod**
-     - **Container Management**
-     - **Multi-container Pods**
-     - **Container Runtime Support**
-     - **Deployment Unit**
-     - **Network and Port Usage**
-     - **Resource Management**
-     - **Shared Resources**
-     - **Pod Spec**
-     - **Replication**
-     - **Volume Sharing**
-     - **Kubectl**
+1. **Kubernetes Pods: Key Points**
+    - **Kubernetes Pod**
+    - **Container Management**
+    - **Multi-container Pods**
+    - **Container Runtime Support**
+    - **Deployment Unit**
+    - **Network and Port Usage**
+    - **Resource Management**
+    - **Shared Resources**
+    - **Pod Spec**
+    - **Replication**
+    - **Volume Sharing**
+    - **Kubectl**
 
 ## 6.Creating Pods with kubectl
-   - **Creating a nginx pod using kubectl**
-   - **To see list of pods in kubernetes cluster**
+1. **Creating a nginx pod using kubectl**
+2. **To see list of pods in kubernetes cluster**
 
 ## 7.Creating Pods with YAML
-   - **Clone this repository and move to example folder**
-   - **To get the apiVersion of pods in kubernetes**
-   - **Create the yaml file nginx-pod.yaml**
-   - **Creating a Pod**
-   - **Listing the Pods**
-   - **Deleting a Pod**
+1. **Clone this repository and move to example folder**
+2. **To get the apiVersion of pods in kubernetes**
+3. **Create the yaml file nginx-pod.yaml**
+4. **Creating a Pod**
+5. **Listing the Pods**
+6. **Deleting a Pod**
 
 ## 8.Filtering Pods
-   - **Filtering Pods by Label**
-   - **Filtering Pods with Multiple Labels**
-   - **Getting Detailed Pod Information**
-   - **Getting Pod Information in YAML Format**
+1. **Filtering Pods by Label**
+2. **Filtering Pods with Multiple Labels**
+3. **Getting Detailed Pod Information**
+4. **Getting Pod Information in YAML Format**
 
 ## 9.Listing Pods with Details
-   - **To describe the pod with detail information about it**
+1. **To describe the pod with detail information about it**
 
 ## 10.Getting Into a Pod
-   - **Accessing a Single Container Pod**
-   - **Accessing a Specific Container in a Multi-Container Pod**
+1. **Accessing a Single Container Pod**
+2. **Accessing a Specific Container in a Multi-Container Pod**
 
 ## 11.Port Forwarding
-   - **Introduction**
-   - **Accessing the Pod from Within the Node**
-   - **Accessing the Service**
-   - **Stopping Port Forwarding**
+1. **Introduction**
+2. **Accessing the Pod from Within the Node**
+3. **Accessing the Service**
+4. **Stopping Port Forwarding**
 
 ## 12.Checking Pod Logs
-   - **Log Analysis**
-      - **Initialization Logs**
-      - **Access Logs**
-      - **Error Logs**
+1. **Log Analysis**
+    - **Initialization Logs**
+    - **Access Logs**
+    - **Error Logs**
 
 ## 13.Deleting Pods
-   - **Deleting Pods Using a YAML File**
-      - **Checking the remaining pods in the cluster**
-   - **Deleting Pods Created with kubectl**
-      - **Incorrect Command**
-      - **Correct Command**
+1. **Deleting Pods Using a YAML File**
+    - **Checking the remaining pods in the cluster**
+2. **Deleting Pods Created with kubectl**
+    - **Incorrect Command**
+    - **Correct Command**
 
 ## 14.Verifying Deletion
-   - **To ensure the pod has been deleted, you can run**
+1. **To ensure the pod has been deleted, you can run**
    
 
 # 4: Kubernetes Nodes
 
 ## 1.Types of Nodes
-   - **Master Node**
-     - **Purpose** 
-     - **Components**
+1. **Master Node**
+    - **Purpose** 
+    - **Components**
        - **API Server**
        - **Controller Manager**
        - **Scheduler**
        - **etcd**
 
-   - **Worker Node**
-     - **Purpose**
-     - **Components**
-       - **Kubelet**
-       - **Kube-Proxy**
-       - **Container Runtime**
+2.**Worker Node**
+   - **Purpose**
+   - **Components**
+      - **Kubelet**
+      - **Kube-Proxy**
+      - **Container Runtime**
 
 ## 2.Node Lifecycle
-   - **Ready**
-   - **NotReady**
-   - **Unknown**
+1. **Ready**
+2. **NotReady**
+3. **Unknown**
 
 ## 3.Node Management**
-   - **Scaling**
-   - **Health Monitoring**
-   - **Maintenance**
+1. **Scaling**
+2. **Health Monitoring**
+3. **Maintenance**
 
 ## 4.Node Overview
 
 ## 5.Comprehensive List of Commands
-   - **To view nodes in a cluster**
-   - **To get detailed information about a specific node**
-   - **Cordon a Node - To mark the node as unschedulable**
-   - **Uncordon a Node - To mark the node as schedulable**
-   - **Drain a Node - To safely evict all pods from the node before marking it unschedulable**
-   - **Label a Node - To add a label to the node**
-   - **Remove a Node Label - To remove a label from the node**
-   - **Taint a Node - To add a taint to the node and prevent pods from being scheduled unless they tolerate the taint**
-   - **Remove a Node Taint - To remove a taint from the node**
+1. **To view nodes in a cluster**
+2. **To get detailed information about a specific node**
+3. **Cordon a Node - To mark the node as unschedulable**
+4. **Uncordon a Node - To mark the node as schedulable**
+5. **Drain a Node - To safely evict all pods from the node before marking it unschedulable**
+6. **Label a Node - To add a label to the node**
+7. **Remove a Node Label - To remove a label from the node**
+8. **Taint a Node - To add a taint to the node and prevent pods from being scheduled unless they tolerate the taint**
+9. **Remove a Node Taint - To remove a taint from the node**
    
 
 # 5: Kubernetes ReplicaSets and Deployments
 
 ## 1.ReplicaSets
-   - **Replicaset Features**
+1. **Replicaset Features**
 
-   - **Creating ReplicaSets with YAML**
-     - **Clone this repository and move to example folder**
-     - **To get the apiVersion of replicasets in kubernetes**
-     - **Create a replicaset using file nginx-replicaset.yaml**
-     - **To create the replicaset in kubernetes cluster**
-     - **To check whether replicaset is created in kubernetes cluster**
-     - **To get the list of pods running in the kubernetes cluster**
+2. **Creating ReplicaSets with YAML**
+    - **Clone this repository and move to example folder**
+    - **To get the apiVersion of replicasets in kubernetes**
+    - **Create a replicaset using file nginx-replicaset.yaml**
+    - **To create the replicaset in kubernetes cluster**
+    - **To check whether replicaset is created in kubernetes cluster**
+    - **To get the list of pods running in the kubernetes cluster**
 
 ## 2.Self-Healing in Kubernetes
-   - **To delete a pod from the Kubernetes cluster**
+1. **To delete a pod from the Kubernetes cluster**
 
 ## 3.High Availability in Kubernetes
-   - **List of Nodes in the Kubernetes Cluster**
-   - **Adding a Node to the Cluster**
-   - **List of Nodes After Adding the New Node**
-   - **Deleting a Node and Observing Pod Behavior**
-   - **Deleting a Node from the Cluster**
-   - **List of Pods After Deleting a Node**
+1. **List of Nodes in the Kubernetes Cluster**
+2. **Adding a Node to the Cluster**
+3. **List of Nodes After Adding the New Node**
+4. **Deleting a Node and Observing Pod Behavior**
+5. **Deleting a Node from the Cluster**
+6. **List of Pods After Deleting a Node**
 
 ## 4.Deployment
 
 ## 5.Rolling Update and Rollback in Deployment
-   - **Rolling Updates**
-   - **Rollback**
-   - **Deployment with Replicaset**
+1. **Rolling Updates**
+2. **Rollback**
+3. **Deployment with Replicaset**
 
-- **Rolling Updates**
-   - **Deleting All Objects and Services from Kubernetes Cluster**
-   - **Confirming Deletion**
-   - **To get the apiVersion of deployments in kubernetes**
-   - **Create a deployment using file nginx-deployment.yaml**
-   - **To create the deployment in kubernetes cluster**
-   - **To check whether replicaset is created in kubernetes cluster**
-   - **To get the list of all resources in kubernetes cluster**
-   - **Verifying Pod Labels in Kubernetes Cluster**
-   - **Scaling an Application in Kubernetes** 
-   - **Listing All Pods before applying scaling**
-   - **Scaling an Application Using `kubectl`**
-   - **Listing All Pods after applying scaling using kubectl**
-   - **Changing the version from 1.21.3 to 1.21 using kubectl command without using deployment file**
-   - **Now try to list down the resources**
-   - **Inspecting Pod Details**
-   - **Viewing Rollout History of a Deployment**
-   - **Now change the image from version 1.21 to version 1.20 using --record**
-   - **To get the history of revisions done by rollouts**
-   - **Attempting to Create the Deployment**
-   - **To check the available namespaces**
-   - **Creating the Namespace**
-   - **Reapply nginx deployment configuration, after creating the namespace**
-   - **Viewing Rollout History of Revisions**
+1. **Rolling Updates**
+    - **Deleting All Objects and Services from Kubernetes Cluster**
+    - **Confirming Deletion**
+    - **To get the apiVersion of deployments in kubernetes**
+    - **Create a deployment using file nginx-deployment.yaml**
+    - **To create the deployment in kubernetes cluster**
+    - **To check whether replicaset is created in kubernetes cluster**
+    - **To get the list of all resources in kubernetes cluster**
+    - **Verifying Pod Labels in Kubernetes Cluster**
+    - **Scaling an Application in Kubernetes** 
+    - **Listing All Pods before applying scaling**
+    - **Scaling an Application Using `kubectl`**
+    - **Listing All Pods after applying scaling using kubectl**
+    - **Changing the version from 1.21.3 to 1.21 using kubectl command without using deployment file**
+    - **Now try to list down the resources**
+    - **Inspecting Pod Details**
+    - **Viewing Rollout History of a Deployment**
+    - **Now change the image from version 1.21 to version 1.20 using --record**
+    - **To get the history of revisions done by rollouts**
+    - **Attempting to Create the Deployment**
+    - **To check the available namespaces**
+    - **Creating the Namespace**
+    - **Reapply nginx deployment configuration, after creating the namespace**
+    - **Viewing Rollout History of Revisions**
 
-- **Rollback**
-   - **To rollback the deployment to previous versions**
-   - **To see the rollout deployment status using kubectl rollout status**
-   - **To verify it was rolled back to the nginx:latest version, list all the pods and check the pod image**
-   - **To get the complete information about a pod**
+2. **Rollback**
+    - **To rollback the deployment to previous versions**
+    - **To see the rollout deployment status using kubectl rollout status**
+    - **To verify it was rolled back to the nginx:latest version, list all the pods and check the pod image**
+    - **To get the complete information about a pod**
 
 ## 6.Summary
 
@@ -328,27 +328,27 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 # 6: kubernetes Services
 
 ## 1.Types of Services
-- **ClusterIP**
-- **Multiport**
-- **NodePort**
-- **LoadBalancer**
+1. **ClusterIP**
+2. **Multiport**
+3. **NodePort**
+4. **LoadBalancer**
 
 ## 2.Benefits
 
 ## 3.How Kubernetes Services Works.
-1.**Use case-1**
-  - **Kubernetes Services Workflow**
-  - **Other advantages of Kubernetes Services**
-    - **Load balancing** 
-    - **Service discovery** 
-    - **Zero downtime deployments** 
+1. **Use case-1**
+    - **Kubernetes Services Workflow**
+    - **Other advantages of Kubernetes Services**
+       - **Load balancing** 
+       - **Service discovery** 
+       - **Zero downtime deployments** 
 
-2.**Use case-2:**
-  - **The different Service types in Kubernetes are**
-    - **ClusterIP Service**
-    - **Multi-Port Service**
-    - **NodePort Service**
-    - **LoadBalancer Service**
+2. **Use case-2:**
+    - **The different Service types in Kubernetes are**
+       - **ClusterIP Service**
+       - **Multi-Port Service**
+       - **NodePort Service**
+       - **LoadBalancer Service**
   
     - **To get the apiVersion of services in kubernetes**
     - **Create a service using file nginx-service.yaml**
@@ -356,64 +356,64 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 3.**ClusterIP-Service**
 
 ## 4.Understanding Services
-- **cluster-ip-service.yaml**
-   - **Now apply the changes to the services into kubernetes**
-   - **Now list down all the services**
-      - **Verifying External Access**
-   - **This service is not accessible from outside of the cluster lets verify**
+1. **cluster-ip-service.yaml**
+    - **Now apply the changes to the services into kubernetes**
+    - **Now list down all the services**
+       - **Verifying External Access**
+    - **This service is not accessible from outside of the cluster lets verify**
       - **Verifying Internal Access:**
-   - **This service can be accessible from any Pods with in the cluster, verify this by getting into any of the Pods in cluster**
-      - **To get the list of all Pods Running in the cluster**
-      - **Accessing ClusterIP Service using IP address of the service**
-         - **Using kubectl exec to enter one of the pods and trying to access the service internally**
-         - **Accessing ClusterIP Service using name of the service**
-         - **Accessing Services Using Port-Forwarding**
-   - **Port-Forwarding a Service**
-   - **Verifying in a Web Browser**
-      - **Now, go to your web browser and check the following URL**
-      - **Services Offers Load balancing**
-   - **Testing Load Balancing with Kubernetes Services**
-      - **To get the list of all Pods Running in the cluster**
-      - **To get into the pod with sh**
-      - **Automating Load Testing with Shell Script**
-      - **Shell Script for Load Testing**
-         - **You can use the following shell script to automate the load testing**
-      - **Verifying Load Balancing by Monitoring Pod Logs**
-         - **Monitoring Pod Logs**
-         - **Logs of Pod 1**
-         - **Logs of Pod 2** 
-         - **Running the Shell Script**
-            - **Access the Pod**
-            - **Run the Shell Script**
-            - **Script Output**
-            - **Pod Logs and Load Balancing Verification**
-               - **Pod 1 Logs**
-               - **Pod 2 Logs**
-   - **Pods Associated with Services**
-      - **To see what pods are associated with the services**
-      - **We can also check which pods are associated with a service by describing the service**
-         - **Checking Pods and Endpoints**
-            - **Option 1:Scaling Using kubectl scale**              
-               - **To set the number of replicas to 3**
-            - **Option 2:Editing the Deployment YAML**        
-               - **Edit the deployment YAML file directly to change the number of replicas**
+    - **This service can be accessible from any Pods with in the cluster, verify this by getting into any of the Pods in cluster**
+       - **To get the list of all Pods Running in the cluster**
+       - **Accessing ClusterIP Service using IP address of the service**
+          - **Using kubectl exec to enter one of the pods and trying to access the service internally**
+          - **Accessing ClusterIP Service using name of the service**
+          - **Accessing Services Using Port-Forwarding**
+    - **Port-Forwarding a Service**
+    - **Verifying in a Web Browser**
+       - **Now, go to your web browser and check the following URL**
+       - **Services Offers Load balancing**
+    - **Testing Load Balancing with Kubernetes Services**
+       - **To get the list of all Pods Running in the cluster**
+       - **To get into the pod with sh**
+       - **Automating Load Testing with Shell Script**
+       - **Shell Script for Load Testing**
+          - **You can use the following shell script to automate the load testing**
+       - **Verifying Load Balancing by Monitoring Pod Logs**
+          - **Monitoring Pod Logs**
+          - **Logs of Pod 1**
+          - **Logs of Pod 2** 
+          - **Running the Shell Script**
+             - **Access the Pod**
+             - **Run the Shell Script**
+             - **Script Output**
+             - **Pod Logs and Load Balancing Verification**
+                - **Pod 1 Logs**
+                - **Pod 2 Logs**
+    - **Pods Associated with Services**
+       - **To see what pods are associated with the services**
+       - **We can also check which pods are associated with a service by describing the service**
+          - **Checking Pods and Endpoints**
+             - **Option 1:Scaling Using kubectl scale**              
+                - **To set the number of replicas to 3**
+             - **Option 2:Editing the Deployment YAML**        
+                - **Edit the deployment YAML file directly to change the number of replicas**
 
-4. **2.Multi-Port Service**
+2. **Multi-Port Service**
     - **multi-port-service.yaml**
     - **With this configuration**
 
-5. **3.NodePort Service**
+3. **NodePort Service**
     - **Important Points**   
        - **NodePort Range**
        - **Automatic Port Assignment**
        - **Port Handling**
     - **nginx-service.yaml**
-      - **In this configuration**
-      - **Apply the changes of the service in the kubernetes cluster**
-      - **List down all the services in the cluster**
-      - **To get the IP address in the minikube of my local-cluster**
+       - **In this configuration**
+       - **Apply the changes of the service in the kubernetes cluster**
+       - **List down all the services in the cluster**
+       - **To get the IP address in the minikube of my local-cluster**
 
-6. **4.LoadBalancer Service**
+4. **LoadBalancer Service**
     - **nginx-service.yaml**
     - **In this configuration**
        - **type**  
@@ -431,86 +431,86 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 # 7: kubernetes Ingress
 
 ## 1.What is Kubernetes Ingress?
-- **Note:The AWS, Azure, GCP cloud ingress controller implementation differs a little**
-   - **AWS** 
-   - **Azure** 
-   - **GCP** 
+1. **Note:The AWS, Azure, GCP cloud ingress controller implementation differs a little**
+    - **AWS** 
+    - **Azure** 
+    - **GCP** 
    
 ## 2.How Does Kubernetes Ingress work?
-- **Kubernetes Ingress Resource** 
-- **2.Kubernetes Ingress Controller** 
+1. **Kubernetes Ingress Resource** 
+2. **Kubernetes Ingress Controller** 
 
 ## 3.Ingress & Ingress Controller Architecture
 
 ## 4.Benefits of Using Kubernetes Ingress
-- **Routing flexibility**
-- **Load balancing** 
-- **TLS termination** 
-- **Namespace isolation** 
+1. **Routing flexibility**
+2. **Load balancing** 
+3. **TLS termination** 
+4. **Namespace isolation** 
 
-- **Create a new cluster in minikube with name ingress-cluster**
-- **We are using this nginx-deployment file in new cluster for our deployment**
-- **We are using below nginx-service file to create service in the cluster**
-- **To get the information about all services running in the cluster**
-- **To get the information about all pods,services,deploments,replicasets**
+5. **Create a new cluster in minikube with name ingress-cluster**
+6. **We are using this nginx-deployment file in new cluster for our deployment**
+7. **We are using below nginx-service file to create service in the cluster**
+8. **To get the information about all services running in the cluster**
+9. **To get the information about all pods,services,deploments,replicasets**
 
 ## 5.Setting Up Kubernetes Ingress and Ingress controller
-- **Create a new cluster in minikube with name ingress-cluster**
-- **Setup the Ingress Controller**
-- **To deploy nginx-ingress-controller in minikube**
-- **To verify whether nginx-ingress-controller is enabled or not**
-- **ingress-controller is a pod and it gets exposed through a service**
-   - **Ingress Rules**
-- **To get the apiVersion of ingress in kubernetes**
-- **Create the Ingress Resource YAML File**
-- **Ingress-Rule**
-- **Path Type**
-   - **ImplementationSpecific** 
-   - **Exact**
-   - **Prefix**
-- **Apply the changes to the ingress-cluster to implement the ingress-rule**
-- **We can verify that, it was created with apply nginx-ingress.yaml file**
-- **Now go to the browser and check whether we can able to access the nginx-demo.com**
-- **To we can get the minikube ip by using this**
-- **Now we should map the minikube ip address to our nginx-demo.com in our machine,this can be done by editing below**
-- **Now go to the browser and check whether we can able to access the nginx-demo.com**
-- **Now extend this ingress to access our to-do ui and api applications**
-- **Apply the changes in the ingress-cluster**
+1. **Create a new cluster in minikube with name ingress-cluster**
+2. **Setup the Ingress Controller**
+3. **To deploy nginx-ingress-controller in minikube**
+4. **To verify whether nginx-ingress-controller is enabled or not**
+5. **ingress-controller is a pod and it gets exposed through a service**
+    - **Ingress Rules**
+6. **To get the apiVersion of ingress in kubernetes**
+7. **Create the Ingress Resource YAML File**
+8. **Ingress-Rule**
+9. **Path Type**
+    - **ImplementationSpecific** 
+    - **Exact**
+    - **Prefix**
+10. **Apply the changes to the ingress-cluster to implement the ingress-rule**
+11. **We can verify that, it was created with apply nginx-ingress.yaml file**
+13. **Now go to the browser and check whether we can able to access the nginx-demo.com**
+14. **To we can get the minikube ip by using this**
+15. **Now we should map the minikube ip address to our nginx-demo.com in our machine,this can be done by editing below**
+16. **Now go to the browser and check whether we can able to access the nginx-demo.com**
+17. **Now extend this ingress to access our to-do ui and api applications**
+18. **Apply the changes in the ingress-cluster**
 
 ## 6.Now we will access these two applications using ingress
-- **We will be accessing this application in two ways of routing**
-   - **Path-Based Routing/Mapping:**
-   - **Host-Based Routing/Mapping:**
+1. **We will be accessing this application in two ways of routing**
+    - **Path-Based Routing/Mapping:**
+    - **Host-Based Routing/Mapping:**
 
-- **Path-Based Routing/Mapping**
-   - **Create the todo-ingress-path-based.yaml file**
-   - **Explanation**
-   - **Apply the Ingress Configuration**
-   - **We can verify that it was created with**
-   - **Map the Minikube IP Address to todo.com**
-   - **Access the Applications in the Browser**
+2. **Path-Based Routing/Mapping**
+    - **Create the todo-ingress-path-based.yaml file**
+    - **Explanation**
+    - **Apply the Ingress Configuration**
+    - **We can verify that it was created with**
+    - **Map the Minikube IP Address to todo.com**
+    - **Access the Applications in the Browser**
 
-- **Host-Based Routing/Mapping**
-   - Create the file todo-ingress-host-based.yaml**
-   - **Explanation**
-   - **Apply the Ingress Configuration**
-   - **We can verify that it was created with**
-   - **Map the Minikube IP Address to Our Hosts**
-   - **Access the Applications in the Browser**
+3. **Host-Based Routing/Mapping**
+    - Create the file todo-ingress-host-based.yaml**
+    - **Explanation**
+    - **Apply the Ingress Configuration**
+    - **We can verify that it was created with**
+    - **Map the Minikube IP Address to Our Hosts**
+    - **Access the Applications in the Browser**
 
-- **Default Backend**
-   - **To illustrate, let's describe the Ingress named nginx-ingress**
-   - **Example Configuration for Default Backend**
-   - **Create a file named default-backend.yaml**
-   - **Apply the configuration**
+4. **Default Backend**
+    - **To illustrate, let's describe the Ingress named nginx-ingress**
+    - **Example Configuration for Default Backend**
+    - **Create a file named default-backend.yaml**
+    - **Apply the configuration**
 
 ## 7.Securing Application with HTTPS using TLS Certificates in Ingress
-- **Step 1:Generate a Self-Signed Certificate**
-- **Step 2:Create a Kubernetes Secret**
-- **Step 3:Update Ingress Resource with TLS Secret**
-- **step 4:Apply the Changes**
-   - **Apply the updated Ingress resource to the cluster**
-   - **Go tho browser and access your nginx-demo.com with https**
+1. **Step 1:Generate a Self-Signed Certificate**
+2. **Step 2:Create a Kubernetes Secret**
+3. **Step 3:Update Ingress Resource with TLS Secret**
+4. **step 4:Apply the Changes**
+    - **Apply the updated Ingress resource to the cluster**
+    - **Go tho browser and access your nginx-demo.com with https**
 
 
 # 8: kubernetes Namespaces
@@ -518,151 +518,151 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 ## 1.What is Namespace?
 
 ## 2.Need for Namespaces
-- **1Avoding Conflict**
-- **2.Restricting Access**
-- **3.Resource Limits**
-- **4.Default Namespaces**
-   - **When we create a Kubernetes cluster, we get four default namespaces**
-      - **Default**
-      - **kube-node-lease**
-      - **kube-public**
-      - **kube-system**
+1. **Avoding Conflict**
+2. **Restricting Access**
+3. **Resource Limits**
+4. **Default Namespaces**
+    - **When we create a Kubernetes cluster, we get four default namespaces**
+       - **Default**
+       - **kube-node-lease**
+       - **kube-public**
+       - **kube-system**
 
-- **Default Namespace**
-- **kube-node-lease Namespace**
-- **kube-public Namespace**
-- **kube-system Namespace**
+5. **Default Namespace**
+6.**kube-node-lease Namespace**
+7.**kube-public Namespace**
+8.**kube-system Namespace**
 
-- **Custom Namespaces**
+9. **Custom Namespaces**
 
 ## 3.Organizing Resources
 
 ## 4.Namespaces Can Be Created in Two Ways:
-- **Using `kubectl`**
-- **Using a configuration file**
+1. **Using `kubectl`**
+2. **Using a configuration file**
 
-- **Creating a Namespace Using `kubectl`**
-- **Listing All Namespaces**
-- **Creating Namespaces Using a Configuration File**
-- **Getting the `apiVersion` of Namespaces in Kubernetes**
-- **Creating a Namespace Using a Configuration File**
-- **Applying the Configuration to the Cluster**
-- **Deleting the Existing Namespace**
-- **Reapplying the Configuration**
-- **Creating the `todo` Namespace**
-   - **Create a Configuration File named `todo-namespace.yaml`**
-- **Apply the configuration file to create the todo namespace**
-- **Verify the Creation of the todo Namespace**
-- **Current Resources in the Cluster**
-   - **Note:The above output consists of**
-      - **Pods**
-      - **Services**
-      - **Deployments**
-      - **ReplicaSets**
-- **Creating Resources in Their Respective Namespaces**
-- **Create the `nginx-deployment.yaml` File**
-- **Apply the Changes to the Cluster**
-- **Now get all the resources in the cluster**
-- **To get all the resources from nginx namespace**
-- **If we want to get all the reources from all namespaces**
-- **Apply the configuration file to create the nginx-service in the nginx namespace**
-- **To verify that the nginx-service is created in the nginx namespace**
-- **Now we can listdown the resources without specifying the namespace**
-- **Moving `todo` Resources to the `todo` Namespace**
-- **Create a file named `todo-ui-api.yaml`**
-- **Apply the configuration file to create the todo resources in the todo namespace**
-   - **Accessing Services Across Namespaces**
-- **Viewing Resources**
-   - **First, list the resources to confirm the setup**
-- **Accessing todo Service from nginx Pod**
-   - **Enter the nginx Pod**
-- **Attempt to Access the todo Service**
-- **Accessing the Service Using Fully Qualified Domain Name (FQDN)**
-   - **Services in Kubernetes can be accessed using a DNS pattern that includes the service name, namespace, and the .svc.cluster.local suffix**
-   - **The DNS name can be simplified by omitting the .svc.cluster.local suffix:**
-- **Notes on Namespace Usage:**
-   - **Accessing Services** 
-   - **Default Namespace** 
-   - **Multiple Teams/Environments** 
-   - **Role-Based Access Control**
-   - **Enterprise Setup**
-   - **Deleting a Namespace** 
+3. **Creating a Namespace Using `kubectl`**
+4. **Listing All Namespaces**
+5. **Creating Namespaces Using a Configuration File**
+6. **Getting the `apiVersion` of Namespaces in Kubernetes**
+7. **Creating a Namespace Using a Configuration File**
+8. **Applying the Configuration to the Cluster**
+9. **Deleting the Existing Namespace**
+10. **Reapplying the Configuration**
+11. **Creating the `todo` Namespace**
+     - **Create a Configuration File named `todo-namespace.yaml`**
+12. **Apply the configuration file to create the todo namespace**
+13. **Verify the Creation of the todo Namespace**
+14. **Current Resources in the Cluster**
+     - **Note:The above output consists of**
+        - **Pods**
+        - **Services**
+        - **Deployments**
+        - **ReplicaSets**
+15. **Creating Resources in Their Respective Namespaces**
+16. **Create the `nginx-deployment.yaml` File**
+17. **Apply the Changes to the Cluster**
+18. **Now get all the resources in the cluster**
+19. **To get all the resources from nginx namespace**
+20. **If we want to get all the reources from all namespaces**
+21. **Apply the configuration file to create the nginx-service in the nginx namespace**
+22. **To verify that the nginx-service is created in the nginx namespace**
+23. **Now we can listdown the resources without specifying the namespace**
+24. **Moving `todo` Resources to the `todo` Namespace**
+25. **Create a file named `todo-ui-api.yaml`**
+26. **Apply the configuration file to create the todo resources in the todo namespace**
+     - **Accessing Services Across Namespaces**
+27. **Viewing Resources**
+     - **First, list the resources to confirm the setup**
+28. **Accessing todo Service from nginx Pod**
+     - **Enter the nginx Pod**
+29. **Attempt to Access the todo Service**
+30. **Accessing the Service Using Fully Qualified Domain Name (FQDN)**
+     - **Services in Kubernetes can be accessed using a DNS pattern that includes the service name, namespace, and the .svc.cluster.local suffix**
+     - **The DNS name can be simplified by omitting the .svc.cluster.local suffix:**
+30. **Notes on Namespace Usage:**
+     - **Accessing Services** 
+     - **Default Namespace** 
+     - **Multiple Teams/Environments** 
+     - **Role-Based Access Control**
+     - **Enterprise Setup**
+     - **Deleting a Namespace** 
    
 
 # 9: kubernetes Volumes
-- **Problem Statement-1**
-- **Problem Statement-2**
+1. **Problem Statement-1**
+2. **Problem Statement-2**
 
 ## 1.What are kubernetes Volumes?
 
 ## 2.Different types of volumes available in kubernetes with examples.
 
 ## 1.emptyDir
-- **Description** 
-- **Lifecycle** 
-- **Use Cases** 
-   - **Example emptydir.yaml**
+1. **Description** 
+2. **Lifecycle** 
+3. **Use Cases** 
+    - **Example emptydir.yaml**
 
 ## 2.hostPath
-- **Description** 
-- **Lifecycle** 
-- **Use Cases** 
-   - **Example hostpath.yaml**
+1. **Description** 
+2. **Lifecycle** 
+3. **Use Cases** 
+    - **Example hostpath.yaml**
 
 ## 3.PersistentVolume (PV)
-- **Description** 
-- **Lifecycle** 
-- **Use Cases** 
-   - **Example pv.yaml**
+1. **Description** 
+2. **Lifecycle** 
+3. **Use Cases** 
+    - **Example pv.yaml**
 
 ## 4.PersistentVolumeClaim (PVC)
-- **Description** 
-- **Lifecycle** 
-- **Use Cases** 
-   - **Example pvc.yaml**
+1. **Description** 
+2. **Lifecycle** 
+3. **Use Cases** 
+    - **Example pvc.yaml**
 
 ## 5.StorageClass
-- **Description** 
-- **Lifecycle** 
-- **Use Cases** 
-   - **Example sc.yaml**
+1. **Description** 
+2. **Lifecycle** 
+3. **Use Cases** 
+    - **Example sc.yaml**
 
 ## 6.Deploy mongodb into kubernetes cluster
-- **For better understanding try to deploy mongodb into kubernetes cluster**
-   - **Download the mongodb compass "amd64.deb" in your local machine from MongoDB official website**
-   - **Create a deployment.yaml for mongodb**
-   - **Now apply the changes into the cluster**              
-   - **To get the list of all pods**
-   - **Now create the service.yaml**
-   - **Now apply the changes in the cluster**
-   - **To get the list of all services**
-   - **Now port-forward this service so that we can access mongodb from our local machine**
+1. **For better understanding try to deploy mongodb into kubernetes cluster**
+    - **Download the mongodb compass "amd64.deb" in your local machine from MongoDB official website**
+    - **Create a deployment.yaml for mongodb**
+    - **Now apply the changes into the cluster**              
+    - **To get the list of all pods**
+    - **Now create the service.yaml**
+    - **Now apply the changes in the cluster**
+    - **To get the list of all services**
+    - **Now port-forward this service so that we can access mongodb from our local machine**
 
 ## 7.MongoDB Compass Setup and Database Creation
-- **Connecting to MongoDB Compass**   
-- **Create a New Connection**   
-- **Creating a Simple Database**
-- **Verify Inserted Data**    
-- **To get the list of all pods in the cluster**
-- **To get into the pod with bin/bash command**
-- **To see on which pid the mongodb service is running**
-- **To kill the service/process**
-- **To list down all the pods**
-- **Now try to access the data we created earlier in mongodb db.todos**
-   - **Note**
-   - **Solution**
+1. **Connecting to MongoDB Compass**   
+2. **Create a New Connection**   
+3. **Creating a Simple Database**
+4. **Verify Inserted Data**    
+5. **To get the list of all pods in the cluster**
+6. **To get into the pod with bin/bash command**
+7. **To see on which pid the mongodb service is running**
+8. **To kill the service/process**
+9. **To list down all the pods**
+10. **Now try to access the data we created earlier in mongodb db.todos**
+     - **Note**
+     - **Solution**
 
-- **emptyDir**
-   - **Create a Deployment File**
-   - **Apply the Changes to the Cluster**
-   - **Port-Forward the Service**
-   - **Creating a Simple Database in MongoDB**
-      - **Go to Databases**
-      - **Enter Database Details**
-      - **Database Name**: `db`
-      - **Collection Name**: `todos`
-      - **Add Data**
-      - **Verify Inserted Data**
+1. **emptyDir**
+    - **Create a Deployment File**
+    - **Apply the Changes to the Cluster**
+    - **Port-Forward the Service**
+    - **Creating a Simple Database in MongoDB**
+       - **Go to Databases**
+       - **Enter Database Details**
+       - **Database Name**: `db`
+       - **Collection Name**: `todos`
+       - **Add Data**
+       - **Verify Inserted Data**
    - **To get the list of all pods in cluster**
    - **To get into the pod with bin/bash command**
    - **To see on which pid the mongodb service is running**
@@ -688,78 +688,77 @@ This repository covers the complete Kubernetes fundamentals along with examples 
       - **List Files in the /data Directory**
       - **List MongoDB Files in the /data/db Directory**
 
-- **hostPath**
-   - **Create /data directory and give full permissions(rwx) in your host machine**
-   - **Create the deployment file**
-   - **Now apply the changes into the cluster**
-   - **Now get the list of all pods**
-   - **Now let us port-forward this service so that we can access mongodb from our machine**
-   - **Creating a Simple Database in MongoDB**
-      - **Go to Databases**
-      - **Enter Database Details**
-      - **Add Data**
-      - **Verify Inserted Data**
-   - **To get the list of pods**
-   - **Now delete the pod**
-   - **To check the pods list**
-   - **Now again do the port-forwarding**
-   - **Kubernetes offers three components to persist data across pod restarts and node failures**
-      - **Persistent Volumes(PVs)**
-      - **Persistent Volume Claims(PVCs)**
-      - **Storage Classes(SCs)**
+2. **hostPath**
+    - **Create /data directory and give full permissions(rwx) in your host machine**
+    - **Create the deployment file**
+    - **Now apply the changes into the cluster**
+    - **Now get the list of all pods**
+    - **Now let us port-forward this service so that we can access mongodb from our machine**
+    - **Creating a Simple Database in MongoDB**
+       - **Go to Databases**
+       - **Enter Database Details**
+       - **Add Data**
+       - **Verify Inserted Data**
+    - **To get the list of pods**
+    - **Now delete the pod**
+    - **To check the pods list**
+    - **Now again do the port-forwarding**
+    - **Kubernetes offers three components to persist data across pod restarts and node failures**
+       - **Persistent Volumes(PVs)**
+       - **Persistent Volume Claims(PVCs)**
+       - **Storage Classes(SCs)**
 
-- **Persistent Volumes(PVs)**
-   - **Create two directories in localhost machine i.e local_storage and Minikube**
-   - **Local Storage(host machine ubuntu) Directory**
-      - **Create a directory called /home/ubuntu/storage in localhost and give permissions**
-   - **Minikube cluster Storage Directory**
-      - **Create a directory called /home/docker/storage in minikube "local-cluster" and give permissions**
-      - **To get the api version of persistent volume**
-      - **To create the pv.yaml file**
-   - **Types of Persistent Volume Access Modes in Kubernetes**
-      - **ReadWriteMany (RWX)**
-      - **ReadWriteOnce (RWO)**
-      - **ReadOnlyMany (ROX)**
-      - **ReadOnlyOnce (RO)**
-      - **ReadWriteOncePod (RWOP)**
-   - **Now apply the changes to the local-cluster**
-   - **To get the list of PersistentVolumes in our cluster**
+3. **Persistent Volumes(PVs)**
+    - **Create two directories in localhost machine i.e local_storage and Minikube**
+    - **Local Storage(host machine ubuntu) Directory**
+       - **Create a directory called /home/ubuntu/storage in localhost and give permissions**
+    - **Minikube cluster Storage Directory**
+       - **Create a directory called /home/docker/storage in minikube "local-cluster" and give permissions**
+       - **To get the api version of persistent volume**
+       - **To create the pv.yaml file**
+    - **Types of Persistent Volume Access Modes in Kubernetes**
+       - **ReadWriteMany (RWX)**
+       - **ReadWriteOnce (RWO)**
+       - **ReadOnlyMany (ROX)**
+       - **ReadOnlyOnce (RO)**
+       - **ReadWriteOncePod (RWOP)**
+    - **Now apply the changes to the local-cluster**
+    - **To get the list of PersistentVolumes in our cluster**
 
-- **Persistent Volume Claims(PVCs)**
-   - **Now create a PersistentVolumesClaim that need to be used in the pod**
-   - **Now apply the changes into the cluster**
-   - **List down all the PersistentVolumeClaim in the cluster**
-   - **To use this PV and PVC, we need to make some changes in the deployment.yaml file which is required for our pod**
-   - **Now apply the changes into the cluster**
-   - **To list down all the pods in the cluster**
-   - **Port-Forward the Service**
-   - **Now go to MongoDB Compass and refresh the database**
-   - **Now try to delete the pod in the cluster**
-   - **To get the list of all pods**
-   - **18.Now delete the pod**
-   - **To get the list of all pods**
-   - **Again do the port-forwarding as the connection is lost**
-   - **Now go to mongo compass and try to referesh the data as our pod is deleted**
-   - **To see where the data is mounted in local-cluster with PV,PVC,Deployemnt manifests**
+4. **Persistent Volume Claims(PVCs)**
+    - **Now create a PersistentVolumesClaim that need to be used in the pod**
+    - **Now apply the changes into the cluster**
+    - **List down all the PersistentVolumeClaim in the cluster**
+    - **To use this PV and PVC, we need to make some changes in the deployment.yaml file which is required for our pod**
+    - **Now apply the changes into the cluster**
+    - **To list down all the pods in the cluster**
+    - **Port-Forward the Service**
+    - **Now go to MongoDB Compass and refresh the database**
+    - **Now try to delete the pod in the cluster**
+    - **To get the list of all pods**
+    - **18.Now delete the pod**
+    - **To get the list of all pods**
+    - **Again do the port-forwarding as the connection is lost**
+    - **To see where the data is mounted in local-cluster with PV,PVC,Deployemnt manifests**
 
-- **StorageClass(SCs)**
-   - **To get the apiresources of storageclass**
-   - **Create the StorageClass manifest**
-   - **Apply the changes in the cluster**
-   - **To get all the StorageClasses in the local-cluster**
-   - **Now we have storageclass use it in the pvc.yaml**
-   - **To get all the pvs in the local-cluster**
-   - **To apply the changes in the local-cluster**
-   - **To get the list of all PV's in the local-cluster**
+5. **StorageClass(SCs)**
+    - **To get the apiresources of storageclass**
+    - **Create the StorageClass manifest**
+    - **Apply the changes in the cluster**
+    - **To get all the StorageClasses in the local-cluster**
+    - **Now we have storageclass use it in the pvc.yaml**
+    - **To get all the pvs in the local-cluster**
+    - **To apply the changes in the local-cluster**
+    - **To get the list of all PV's in the local-cluster**
 
 
 # 10: kubernetes StatefulSets
-- **scaling, and consistent updates**
-- **Stable, unique network identities**
-- **Persistent storage**
-- **Sequential pod creation and scaling**
-- **Ideal for stateful applications**
-- **Controlled rolling updates**
+1. **scaling, and consistent updates**
+2. **Stable, unique network identities**
+3. **Persistent storage**
+4. **Sequential pod creation and scaling**
+5. **Ideal for stateful applications**
+6. **Controlled rolling updates**
 
 ## 1.StatefulSet Workflow 
 
@@ -768,64 +767,64 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 ## 3.Use Cases of StatefulSet
 
 ## 4.Key Benefits of StatefulSet
-- **Ordered Scaling and Deployment**
-- **Automated Rolling Updates**
-- **Persistent Storage Association**
-- **Unique Network Identifiers**
+1. **Ordered Scaling and Deployment**
+2. **Automated Rolling Updates**
+3. **Persistent Storage Association**
+4. **Unique Network Identifiers**
 
 ## 5.Limitations of Kubernetes StatefulSet
-- **Persistent Storage Handling**
-- **Storage Provisioning Requirement**
-- **Manual Headless Service Creation**
-- **Pod Termination on StatefulSet Deletion**
-- **Risks with Rolling Updates**
+1. **Persistent Storage Handling**
+2. **Storage Provisioning Requirement**
+3. **Manual Headless Service Creation**
+4. **Pod Termination on StatefulSet Deletion**
+5. **Risks with Rolling Updates**
 
 ## 6.Stateful Applications vs Stateless Applications
 
 ## 7.Problems Encountered When Deploying Stateful Applications with Multiple Replicas.
-- **Problem Statement-1**
-- **Problem Statement-2**
-- **Problem Statement-3**
+1. **Problem Statement-1**
+2. **Problem Statement-2**
+3. **Problem Statement-3**
 
 ## 8.Deployment vs StatefulSets
-- **To get the api-resources of statefulset**
-- **create sc.yaml**
-- **Apply the changes into the cluster**                                                        
-- **Now create a statefulset.yaml file**
-- **Now apply the changes into the local-cluster**
+1. **To get the api-resources of statefulset**
+2. **create sc.yaml**
+3. **Apply the changes into the cluster**                                                        
+4. **Now create a statefulset.yaml file**
+5. **Now apply the changes into the local-cluster**
 
-- **Ordered Pods**
-   - **To list the all the pods in the local-cluster**
-   - **Now try to scale up the StatefulSet and observe the behavior of the pods in the local cluster**
-   - **To list all the pods in the local-cluster**
-   - **Now lets try to sacledown and see what happens to the pods in the local-cluster**
-   - **To list all the pods in the local-cluster**
+1. **Ordered Pods**
+    - **To list the all the pods in the local-cluster**
+    - **Now try to scale up the StatefulSet and observe the behavior of the pods in the local cluster**
+    - **To list all the pods in the local-cluster**
+    - **Now lets try to sacledown and see what happens to the pods in the local-cluster**
+    - **To list all the pods in the local-cluster**
 
-- **2.Sticky Identity**
-   - **Now try to delete the pod and see if the same name is given to the pod in the local-cluster**
-   - **To get the list of pods in the local-cluster**
-   - **To get the list of pods in the local-cluster monitoring with watch (-w) flag**
-   - **To get the list of pods in the local-cluster**
+2. **2.Sticky Identity**
+    - **Now try to delete the pod and see if the same name is given to the pod in the local-cluster**
+    - **To get the list of pods in the local-cluster**
+    - **To get the list of pods in the local-cluster monitoring with watch (-w) flag**
+    - **To get the list of pods in the local-cluster**
 
-- **3.Seperate PersistentVolumeClaims**
-   - **Now to confirm each pod is using separate persistentvolumeclaims in the local-cluster**
-   - **To describe the mongo-0 pod and get full information**
+3. **3.Seperate PersistentVolumeClaims**
+    - **Now to confirm each pod is using separate persistentvolumeclaims in the local-cluster**
+    - **To describe the mongo-0 pod and get full information**
 
-- **4.Headless Service**
-   - **Now, let's create a headless service in the local cluster**
-   - **Apply the changes in the local-cluster**
-   - **To verify that the headless services are created in the local-cluster**
-   - **Now let us create the MongoDB replica sets in the local cluster**
-   - **To get into the mongo pod in the local-cluster**
-   - **Initiating the MongoDB Replica Set**
-   - **Creating MongoDB Replica Sets in the Local Cluster**
-      - **Step 1:Execute the Command to Initiate the Replica Set**
-      - **Step 2:Reconnect to the MongoDB Shell and Verify Replica Set Status**
-      - **Step 3:Verify Replica Set Status**
-   - **Creating and Verifying Data Replication in MongoDB Replica Sets**
-      - **Step 1:Create a Simple Database and Insert Data into the Primary Node**
-      - **Step 2:Verify Data Replication in the First Secondary Node**
-      - **Step 3:Verify Data Replication in the Second Secondary Node**
+4. **4.Headless Service**
+    - **Now, let's create a headless service in the local cluster**
+    - **Apply the changes in the local-cluster**
+    - **To verify that the headless services are created in the local-cluster**
+    - **Now let us create the MongoDB replica sets in the local cluster**
+    - **To get into the mongo pod in the local-cluster**
+    - **Initiating the MongoDB Replica Set**
+    - **Creating MongoDB Replica Sets in the Local Cluster**
+       - **Step 1:Execute the Command to Initiate the Replica Set**
+       - **Step 2:Reconnect to the MongoDB Shell and Verify Replica Set Status**
+       - **Step 3:Verify Replica Set Status**
+    - **Creating and Verifying Data Replication in MongoDB Replica Sets**
+       - **Step 1:Create a Simple Database and Insert Data into the Primary Node**
+       - **Step 2:Verify Data Replication in the First Secondary Node**
+       - **Step 3:Verify Data Replication in the Second Secondary Node**
       
 ## 9.Summary
 
