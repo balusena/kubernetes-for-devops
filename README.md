@@ -328,10 +328,10 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 # 6: kubernetes Services
 
 ## 1.Types of Services
-1.**ClusterIP**
-2.**Multiport**
-3.**NodePort**
-4.**LoadBalancer**
+- **ClusterIP**
+- **Multiport**
+- **NodePort**
+- **LoadBalancer**
 
 ## 2.Benefits
 
@@ -428,7 +428,7 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 ## 5.Summary
 
 
-# 7:  kubernetes Ingress
+# 7: kubernetes Ingress
 
 ## 1.What is Kubernetes Ingress?
 - **Note:The AWS, Azure, GCP cloud ingress controller implementation differs a little**
