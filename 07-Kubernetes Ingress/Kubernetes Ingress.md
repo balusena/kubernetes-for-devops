@@ -99,12 +99,12 @@ provide built-in load balancing capabilities. They distribute incoming traffic a
 a service, ensuring high availability and efficient resource utilization. This load balancing feature 
 enhances application performance and scalability.
 
-**4.TLS termination:** Ingress supports SSL/TLS termination, enabling secure communication between clients
+**3.TLS termination:** Ingress supports SSL/TLS termination, enabling secure communication between clients
 and backend services. It allows the use of SSL certificates to encrypt the traffic, ensuring data 
 confidentiality and integrity. This feature eliminates the need for each individual service to manage 
 its own SSL certificate and simplifies the management of encryption at the cluster level.
 
-**5.Namespace isolation:** Ingress resources are namespaced objects in Kubernetes, meaning they can be 
+**4.Namespace isolation:** Ingress resources are namespaced objects in Kubernetes, meaning they can be 
 scoped to specific namespaces. This isolation enables different teams or applications within a cluster to
 have their own dedicated Ingress configurations, preventing interference and maintaining security 
 boundaries.
