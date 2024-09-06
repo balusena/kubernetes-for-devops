@@ -725,7 +725,7 @@ This repository covers the complete Kubernetes fundamentals along with examples 
    - **Now apply the changes to the local-cluster**
    - **To get the list of PersistentVolumes in our cluster**
 
-- **2.Persistent Volume Claims(PVCs)**
+- **Persistent Volume Claims(PVCs)**
    - **Now create a PersistentVolumesClaim that need to be used in the pod**
    - **Now apply the changes into the cluster**
    - **List down all the PersistentVolumeClaim in the cluster**
@@ -742,7 +742,7 @@ This repository covers the complete Kubernetes fundamentals along with examples 
    - **Now go to mongo compass and try to referesh the data as our pod is deleted**
    - **To see where the data is mounted in local-cluster with PV,PVC,Deployemnt manifests**
 
-- **3.StorageClass(SCs)**
+- **StorageClass(SCs)**
    - **To get the apiresources of storageclass**
    - **Create the StorageClass manifest**
    - **Apply the changes in the cluster**
