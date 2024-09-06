@@ -753,6 +753,83 @@ This repository covers the complete Kubernetes fundamentals along with examples 
    - **To get the list of all PV's in the local-cluster**
 
 
+# 10: kubernetes StatefulSets
+- **scaling, and consistent updates**
+- **Stable, unique network identities**
+- **Persistent storage**
+- **Sequential pod creation and scaling**
+- **Ideal for stateful applications**
+- **Controlled rolling updates**
+
+## 1.StatefulSet Workflow 
+
+## 2.When to Use StatefulSet?
+
+## 3.Use Cases of StatefulSet
+
+## 4.Key Benefits of StatefulSet
+- **Ordered Scaling and Deployment**
+- **Automated Rolling Updates**
+- **Persistent Storage Association**
+- **Unique Network Identifiers**
+
+## 5.Limitations of Kubernetes StatefulSet
+- **Persistent Storage Handling**
+- **Storage Provisioning Requirement**
+- **Manual Headless Service Creation**
+- **Pod Termination on StatefulSet Deletion**
+- **Risks with Rolling Updates**
+
+## 6.Stateful Applications vs Stateless Applications
+
+## 7.Problems Encountered When Deploying Stateful Applications with Multiple Replicas.
+- **Problem Statement-1**
+- **Problem Statement-2**
+- **Problem Statement-3**
+
+## 8.Deployment vs StatefulSets
+- **To get the api-resources of statefulset**
+- **create sc.yaml**
+- **Apply the changes into the cluster**                                                        
+- **Now create a statefulset.yaml file**
+- **Now apply the changes into the local-cluster**
+
+- **Ordered Pods**
+   - **To list the all the pods in the local-cluster**
+   - **Now try to scale up the StatefulSet and observe the behavior of the pods in the local cluster**
+   - **To list all the pods in the local-cluster**
+   - **Now lets try to sacledown and see what happens to the pods in the local-cluster**
+   - **To list all the pods in the local-cluster**
+
+- **2.Sticky Identity**
+   - **Now try to delete the pod and see if the same name is given to the pod in the local-cluster**
+   - **To get the list of pods in the local-cluster**
+   - **To get the list of pods in the local-cluster monitoring with watch (-w) flag**
+   - **To get the list of pods in the local-cluster**
+
+- **3.Seperate PersistentVolumeClaims**
+   - **Now to confirm each pod is using separate persistentvolumeclaims in the local-cluster**
+   - **To describe the mongo-0 pod and get full information**
+
+- **4.Headless Service**
+   - **Now, let's create a headless service in the local cluster**
+   - **Apply the changes in the local-cluster**
+   - **To verify that the headless services are created in the local-cluster**
+   - **Now let us create the MongoDB replica sets in the local cluster**
+   - **To get into the mongo pod in the local-cluster**
+   - **Initiating the MongoDB Replica Set**
+   - **Creating MongoDB Replica Sets in the Local Cluster**
+      - **Step 1:Execute the Command to Initiate the Replica Set**
+      - **Step 2:Reconnect to the MongoDB Shell and Verify Replica Set Status**
+      - **Step 3:Verify Replica Set Status**
+   - **Creating and Verifying Data Replication in MongoDB Replica Sets**
+      - **Step 1:Create a Simple Database and Insert Data into the Primary Node**
+      - **Step 2:Verify Data Replication in the First Secondary Node**
+      - **Step 3:Verify Data Replication in the Second Secondary Node**
+      
+## 9.Summary
+
+
 
 
 
