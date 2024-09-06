@@ -513,6 +513,83 @@ This repository covers the complete Kubernetes fundamentals along with examples 
    - **Go tho browser and access your nginx-demo.com with https**
 
 
+# 8: kubernetes Namespaces
+
+## 1.What is Namespace?
+
+## 2.Need for Namespaces
+- **1Avoding Conflict**
+- **2.Restricting Access**
+- **3.Resource Limits**
+- **4.Default Namespaces**
+   - **When we create a Kubernetes cluster, we get four default namespaces**
+      - **Default**
+      - **kube-node-lease**
+      - **kube-public**
+      - **kube-system**
+
+- **Default Namespace**
+- **kube-node-lease Namespace**
+- **kube-public Namespace**
+- **kube-system Namespace**
+
+- **Custom Namespaces**
+
+## 3.Organizing Resources
+
+## 4.Namespaces Can Be Created in Two Ways:
+- **Using `kubectl`**
+- **Using a configuration file**
+
+- **Creating a Namespace Using `kubectl`**
+- **Listing All Namespaces**
+- **Creating Namespaces Using a Configuration File**
+- **Getting the `apiVersion` of Namespaces in Kubernetes**
+- **Creating a Namespace Using a Configuration File**
+- **Applying the Configuration to the Cluster**
+- **Deleting the Existing Namespace**
+- **Reapplying the Configuration**
+- **Creating the `todo` Namespace**
+   - **Create a Configuration File named `todo-namespace.yaml`**
+- **Apply the configuration file to create the todo namespace**
+- **Verify the Creation of the todo Namespace**
+- **Current Resources in the Cluster**
+   - **Note:The above output consists of**
+      - **Pods**
+      - **Services**
+      - **Deployments**
+      - **ReplicaSets**
+- **Creating Resources in Their Respective Namespaces**
+- **Create the `nginx-deployment.yaml` File**
+- **Apply the Changes to the Cluster**
+- **Now get all the resources in the cluster**
+- **To get all the resources from nginx namespace**
+- **If we want to get all the reources from all namespaces**
+- **Apply the configuration file to create the nginx-service in the nginx namespace**
+- **To verify that the nginx-service is created in the nginx namespace**
+- **Now we can listdown the resources without specifying the namespace**
+- **Moving `todo` Resources to the `todo` Namespace**
+- **Create a file named `todo-ui-api.yaml`**
+- **Apply the configuration file to create the todo resources in the todo namespace**
+   - **Accessing Services Across Namespaces**
+- **Viewing Resources**
+   - **First, list the resources to confirm the setup**
+- **Accessing todo Service from nginx Pod**
+   - **Enter the nginx Pod**
+- **Attempt to Access the todo Service**
+- **Accessing the Service Using Fully Qualified Domain Name (FQDN)**
+   - **Services in Kubernetes can be accessed using a DNS pattern that includes the service name, namespace, and the .svc.cluster.local suffix**
+   - **The DNS name can be simplified by omitting the .svc.cluster.local suffix:**
+- **Notes on Namespace Usage:**
+   - **Accessing Services** 
+   - **Default Namespace** 
+   - **Multiple Teams/Environments** 
+   - **Role-Based Access Control**
+   - **Enterprise Setup**
+   - **Deleting a Namespace** 
+
+
+
 
 
 
