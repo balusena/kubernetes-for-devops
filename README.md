@@ -325,6 +325,110 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 ## 6.Summary
 
 
+# 6: kubernetes Services
+
+## 1.Types of Services
+1.**ClusterIP**
+2.**Multiport**
+3.**NodePort**
+4.**LoadBalancer**
+
+## 2.Benefits
+
+## 3.How Kubernetes Services Works.
+1.**Use case-1**
+  - **Kubernetes Services Workflow**
+  - **Other advantages of Kubernetes Services**
+    - **1.Load balancing** 
+    - **2.Service discovery** 
+    - **3.Zero downtime deployments** 
+
+2.**Use case-2:**
+  - **The different Service types in Kubernetes are**
+    - **1.ClusterIP Service**
+    - **2.Multi-Port Service**
+    - **3.NodePort Service**
+    - **4.LoadBalancer Service**
+  
+    - **1.To get the apiVersion of services in kubernetes**
+    - **2.Create a service using file nginx-service.yaml**
+
+3.**1.ClusterIP-Service**
+
+## 4.Understanding Services
+- **cluster-ip-service.yaml**
+   - **3.Now apply the changes to the services into kubernetes**
+   - **4.Now list down all the services**
+      - **Verifying External Access**
+   - **5.This service is not accessible from outside of the cluster lets verify**
+      - **Verifying Internal Access:**
+   - **6.This service can be accessible from any Pods with in the cluster, verify this by getting into any of the Pods in cluster**
+      - **To get the list of all Pods Running in the cluster**
+      - **Accessing ClusterIP Service using IP address of the service**
+         - **Using kubectl exec to enter one of the pods and trying to access the service internally**
+         - **Accessing ClusterIP Service using name of the service**
+         - **Accessing Services Using Port-Forwarding**
+   - **7.Port-Forwarding a Service**
+   - **8.Verifying in a Web Browser**
+      - **Now, go to your web browser and check the following URL**
+      - **Services Offers Load balancing**
+   - **9.Testing Load Balancing with Kubernetes Services**
+      - **To get the list of all Pods Running in the cluster**
+      - **To get into the pod with sh**
+      - **Automating Load Testing with Shell Script**
+      - **Shell Script for Load Testing**
+         - **You can use the following shell script to automate the load testing**
+      - **Verifying Load Balancing by Monitoring Pod Logs**
+         - **Monitoring Pod Logs**
+         - **Logs of Pod 1**
+         - **Logs of Pod 2** 
+         - **Running the Shell Script**
+            - **Access the Pod**
+            - **Run the Shell Script**
+            - **Script Output**
+            - **Pod Logs and Load Balancing Verification**
+               - **Pod 1 Logs**
+               - **Pod 2 Logs**
+   - **10.Pods Associated with Services**
+      - **To see what pods are associated with the services**
+      - **We can also check which pods are associated with a service by describing the service**
+         - **Checking Pods and Endpoints**
+            - **Option 1:Scaling Using kubectl scale**              
+               - **To set the number of replicas to 3**
+            - **Option 2:Editing the Deployment YAML**        
+               - **Edit the deployment YAML file directly to change the number of replicas**
+
+4. **2.Multi-Port Service**
+    - **multi-port-service.yaml**
+    - **With this configuration**
+
+5. **3.NodePort Service**
+    - **Important Points**   
+       - **NodePort Range**
+       - **Automatic Port Assignment**
+       - **Port Handling**
+    - **nginx-service.yaml**
+      - **In this configuration**
+      - **Apply the changes of the service in the kubernetes cluster**
+      - **List down all the services in the cluster**
+      - **To get the IP address in the minikube of my local-cluster**
+
+6. **4.LoadBalancer Service**
+    - **nginx-service.yaml**
+    - **In this configuration**
+       - **type**  
+       - **port**
+       - **targetPort**
+       - **nodePort**
+
+    - **Apply the changes of the service in the kubernetes cluster**
+    - **List down all the services in the cluster**
+    - **Accessing the LoadBalancer Service**
+    
+## 5.Summary
+
+
+
 
 
 
