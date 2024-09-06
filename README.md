@@ -428,6 +428,93 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 ## 5.Summary
 
 
+# 7:  kubernetes Ingress
+
+## 1.What is Kubernetes Ingress?
+- **Note:The AWS, Azure, GCP cloud ingress controller implementation differs a little**
+   - **AWS** 
+   - **Azure** 
+   - **GCP** 
+   
+## 2.How Does Kubernetes Ingress work?
+- **Kubernetes Ingress Resource** 
+- **2.Kubernetes Ingress Controller** 
+
+## 3.Ingress & Ingress Controller Architecture
+
+## 4.Benefits of Using Kubernetes Ingress
+- **1.Routing flexibility**
+- **2.Load balancing** 
+- **3.TLS termination** 
+- **4.Namespace isolation** 
+
+- **Create a new cluster in minikube with name ingress-cluster**
+- **We are using this nginx-deployment file in new cluster for our deployment**
+- **We are using below nginx-service file to create service in the cluster**
+- **To get the information about all services running in the cluster**
+- **To get the information about all pods,services,deploments,replicasets**
+
+## 5.Setting Up Kubernetes Ingress and Ingress controller
+- **Create a new cluster in minikube with name ingress-cluster**
+- **Setup the Ingress Controller**
+- **To deploy nginx-ingress-controller in minikube**
+- **To verify whether nginx-ingress-controller is enabled or not**
+- **ingress-controller is a pod and it gets exposed through a service**
+   - **Ingress Rules**
+- **To get the apiVersion of ingress in kubernetes**
+- **Create the Ingress Resource YAML File**
+- **Ingress-Rule**
+- **Path Type**
+   - **ImplementationSpecific** 
+   - **Exact**
+   - **Prefix**
+- **Apply the changes to the ingress-cluster to implement the ingress-rule**
+- **We can verify that, it was created with apply nginx-ingress.yaml file**
+- **Now go to the browser and check whether we can able to access the nginx-demo.com**
+- **To we can get the minikube ip by using this**
+- **Now we should map the minikube ip address to our nginx-demo.com in our machine,this can be done by editing below**
+- **Now go to the browser and check whether we can able to access the nginx-demo.com**
+- **Now extend this ingress to access our to-do ui and api applications**
+- **Apply the changes in the ingress-cluster**
+
+## 6.Now we will access these two applications using ingress
+- **We will be accessing this application in two ways of routing**
+   - **Path-Based Routing/Mapping:**
+   - **Host-Based Routing/Mapping:**
+
+- **Path-Based Routing/Mapping**
+   - **Create the todo-ingress-path-based.yaml file**
+   - **Explanation**
+   - **Apply the Ingress Configuration**
+   - **We can verify that it was created with**
+   - **Map the Minikube IP Address to todo.com**
+   - **Access the Applications in the Browser**
+
+- **Host-Based Routing/Mapping**
+   - Create the file todo-ingress-host-based.yaml**
+   - **Explanation**
+   - **Apply the Ingress Configuration**
+   - **We can verify that it was created with**
+   - **Map the Minikube IP Address to Our Hosts**
+   - **Access the Applications in the Browser**
+
+- **Default Backend**
+   - **To illustrate, let's describe the Ingress named nginx-ingress**
+   - **Example Configuration for Default Backend**
+   - **Create a file named default-backend.yaml**
+   - **Apply the configuration**
+
+## 7.Securing Application with HTTPS using TLS Certificates in Ingress
+- **Step 1:Generate a Self-Signed Certificate**
+- **Step 2:Create a Kubernetes Secret**
+- **Step 3:Update Ingress Resource with TLS Secret**
+- **step 4:Apply the Changes**
+   - **Apply the updated Ingress resource to the cluster**
+   - **Go tho browser and access your nginx-demo.com with https**
+
+
+
+
 
 
 
