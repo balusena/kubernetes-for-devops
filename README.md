@@ -339,40 +339,40 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 1.**Use case-1**
   - **Kubernetes Services Workflow**
   - **Other advantages of Kubernetes Services**
-    - **1.Load balancing** 
-    - **2.Service discovery** 
-    - **3.Zero downtime deployments** 
+    - **Load balancing** 
+    - **Service discovery** 
+    - **Zero downtime deployments** 
 
 2.**Use case-2:**
   - **The different Service types in Kubernetes are**
-    - **1.ClusterIP Service**
-    - **2.Multi-Port Service**
-    - **3.NodePort Service**
-    - **4.LoadBalancer Service**
+    - **ClusterIP Service**
+    - **Multi-Port Service**
+    - **NodePort Service**
+    - **LoadBalancer Service**
   
-    - **1.To get the apiVersion of services in kubernetes**
-    - **2.Create a service using file nginx-service.yaml**
+    - **To get the apiVersion of services in kubernetes**
+    - **Create a service using file nginx-service.yaml**
 
-3.**1.ClusterIP-Service**
+3.**ClusterIP-Service**
 
 ## 4.Understanding Services
 - **cluster-ip-service.yaml**
-   - **3.Now apply the changes to the services into kubernetes**
-   - **4.Now list down all the services**
+   - **Now apply the changes to the services into kubernetes**
+   - **Now list down all the services**
       - **Verifying External Access**
-   - **5.This service is not accessible from outside of the cluster lets verify**
+   - **This service is not accessible from outside of the cluster lets verify**
       - **Verifying Internal Access:**
-   - **6.This service can be accessible from any Pods with in the cluster, verify this by getting into any of the Pods in cluster**
+   - **This service can be accessible from any Pods with in the cluster, verify this by getting into any of the Pods in cluster**
       - **To get the list of all Pods Running in the cluster**
       - **Accessing ClusterIP Service using IP address of the service**
          - **Using kubectl exec to enter one of the pods and trying to access the service internally**
          - **Accessing ClusterIP Service using name of the service**
          - **Accessing Services Using Port-Forwarding**
-   - **7.Port-Forwarding a Service**
-   - **8.Verifying in a Web Browser**
+   - **Port-Forwarding a Service**
+   - **Verifying in a Web Browser**
       - **Now, go to your web browser and check the following URL**
       - **Services Offers Load balancing**
-   - **9.Testing Load Balancing with Kubernetes Services**
+   - **Testing Load Balancing with Kubernetes Services**
       - **To get the list of all Pods Running in the cluster**
       - **To get into the pod with sh**
       - **Automating Load Testing with Shell Script**
@@ -389,7 +389,7 @@ This repository covers the complete Kubernetes fundamentals along with examples 
             - **Pod Logs and Load Balancing Verification**
                - **Pod 1 Logs**
                - **Pod 2 Logs**
-   - **10.Pods Associated with Services**
+   - **Pods Associated with Services**
       - **To see what pods are associated with the services**
       - **We can also check which pods are associated with a service by describing the service**
          - **Checking Pods and Endpoints**
