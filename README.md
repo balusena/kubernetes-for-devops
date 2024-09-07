@@ -1016,6 +1016,82 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 5. **Keep An Eye On Probes Regularly**
 
 
+# 13: kubernetes Resource Management
+
+## 1. Key Things We Need to Understand:
+1. **Requesting CPU and Memory** 
+2. **Limiting CPU and Memory** 
+3. **Quality of Service (QoS)** 
+4. **Setting Minimum, Maximum, and Default Resources for Pods in a Namespace** 
+5. **Limiting Resources in a Namespace** 
+
+## 2.Computing Resources
+1. **Requests**
+2. **Limits**
+
+## 3.Stress Tool
+
+1. **Requests and Limits:**
+    - **Note:Now we are going to use the stress tool**
+
+1. **Create a pod in minikube cluster**
+2. **To list down the nodes of the minikube cluster**
+3. **To describe this minikube node**
+4. **Now try to apply this changes into into the minikube cluster**
+5. **To get the status of this pod**
+6. **Now change the memory in the manifest file to 2GB and see that the pod gets scheduled**
+7. **Now try to apply this changes into into the minikube cluster**       
+8. **Now delete this pod**
+9. **Now try to apply this changes into into the minikube cluster**       
+10. **To get the list of pods in cluster**
+11. **To get the status of pod in cluster**
+12. **To check how many resources a pod is consuming**
+13. **To enable metrics server in minikube**
+14. **To check how many resources a pod is consuming**
+15. **Now lets create a pod in minikube cluster**
+16. **First delete the pod**
+17. **Now apply the changes to the pod**
+18. **Now list down the pod**
+19. **Now lets create a pod in minikube cluster**
+20. **First delete the pod**
+21. **Now apply the changes to the pod**
+22. **Now list down the pods and see the status**
+
+## 4.Memory Management
+
+## 5.Quality of Service(QoS):
+1. **Best Effort Class** 
+2. **Guaranteed Class** 
+3. **Burstable Class**
+
+1. **We can describe the pods Quality of service(QoS) using**
+
+## 6.Limit Range
+1. **Create a new manifest called limit-range-demo.yaml**
+2. **Apply the changes in the cluster**
+3. **Now create a pod more than the limit see what happens**
+    - **Before applying these changes into the cluster do the below things**
+
+4. **Delete the existing pod from the cluster**
+5. **Now apply the changes into the cluster**
+6. **Create a new manifest called limit-range-demo.yaml**
+7. **Apply the changes in the cluster**
+8. **Now create a pod more than the limit see what happens**
+9. **Apply the changes in the cluster**
+10. **To get the list of pods in the cluster**
+
+## 7.Resource Quota
+1. **Now create a new manifesat resource-quota-demo.yaml in cluster**
+2. **Now create a pod more than the limit and see what will happens**
+3. **Apply the changes in the cluster**
+    - **To resolve this error make the changes in resources-demo-pod.yaml**
+4. **Now create a pod more than the limit see what happens**
+    - **Note:Dont use above manifest in future, The below manifest runs the pods without restarts bcz this satisfies my ResourceQuota:
+    - **Note:Instead of memory limit 1Gi make it to 200Mi, that change can create a pod in the cluster.**
+5. **To get the complete information of the pod in the cluster**
+
+
+
 
 
 
