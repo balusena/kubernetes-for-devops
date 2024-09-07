@@ -935,6 +935,88 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 3. **If a configuration includes both sensitive and non-sensitive data, you should use Secrets.**
 
 
+# 12: kubernetes Probes
+
+## 1.Reasons for any application to be unhealthy
+
+## 2.kubernetes Probes and types
+1. **Liveness Probe**
+2. **Readiness Probe**
+3. **Startup Probe**
+
+## 3.Liveness Probe
+1. **Purpose** 
+2. **Use Case** 
+
+1. **Use the statefulset to test the livenessprobe in local-cluster**
+
+## 4.Probing Mechanisms.
+1. **Exec**
+2. **HTTP**
+3. **TCP**
+
+2. **For our mongo deployment lets make a simple change in statefulset.yaml file and check if our container is healthy or not**
+
+## 5.Probing Customization.
+1. **initialDelaySeconds**
+2. **periodSeconds**
+3. **timeoutSeconds**
+4. **failureThreshold**
+5. **successThreshold**
+
+3. **Now apply the changes in the local-cluster**
+4. **To list all the pods in a cluster**
+5. **To describe the pod and get all the information about the pod**
+6. **Correct the db1 to db in statefulset.yaml and apply the changes in local-cluster**
+7. **To list all the pods**
+
+## 6.Readiness Probe:
+1. **Purpose** 
+2. **Use Case** 
+
+1. **Use the statefulset to test the livenessprobe in local-cluster**
+2. **Now apply the changes in the local-cluster**
+3. **To get the list of pods with a watch flag**
+4. **We can check this by decribing the mongo-2 pod**
+5. **Now let us try to describe the service and see this mongo-2 pod's IP is deleted from the endpoints list or not**
+6. **Now try to describe the service mongo**
+    - **Now fix this redainessprobe and see that the pod is again added back into the local-cluster**
+7. **Now delete the changes in the local-cluster**
+8. **Now apply the changes in the local-cluster**
+9. **Now to list all the pods in a local-cluster**
+10. **Now try to describe the service mongo and see all the three pods are available in local-cluster**
+
+## 7.Startup Probe:
+1. **Purpose** 
+2. **Use Case** 
+3. **We can set the restart policy in the pod's spec, which defines when the pod should be restarted:**
+    - **Always:**
+    - **OnFailure:**
+    - **Never:**
+    
+1. **Use the statefulset to test the livenessprobe in local-cluster**
+2. **Now delete the statefulset.yaml from cluster**
+3. **Now apply changes in the local-cluster**          
+4. **Now list down all the pod in the local-cluster**
+5. **To get the information about the pod**
+6. **Now list down all the pod in the local-cluster**
+    - **Now simply correct the error in startup probe**
+7. **To delete the statefulset in the cluster**
+8. **To apply the statefulset in the cluster**
+9. **To get the list of pods running in the cluster**
+
+## 8.Probes Workflow:
+1. **How Startup, Liveness, and Readiness Probes Work Together:**
+
+## Best Practices:
+1. **Ideal Frequency**
+2. **Light Weight**
+3. **Correct Restart Policy**
+4. **Use Only When Needed**
+5. **Keep An Eye On Probes Regularly**
+
+
+
 
 
 
