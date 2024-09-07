@@ -812,7 +812,7 @@ This repository covers the complete Kubernetes fundamentals along with examples 
     - **Now to confirm each pod is using separate persistentvolumeclaims in the local-cluster**
     - **To describe the mongo-0 pod and get full information**
 
-4. **4.Headless Service**
+4. **Headless Service**
     - **Now, let's create a headless service in the local cluster**
     - **Apply the changes in the local-cluster**
     - **To verify that the headless services are created in the local-cluster**
