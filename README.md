@@ -829,6 +829,112 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 ## 9.Summary
 
 
+# 11: kubernetes ConfigMaps and Secrets.
+
+- 1. **ConfigMaps** 
+- 2. **Secrets** 
+
+## 1.ConfigMaps
+
+## 2.Creating and Managing ConfigMaps.
+
+## 3.Types of ConfigMaps
+- 1. **Imperative Way:Creating a ConfigMap Without Using a Definition File**
+      - **Creating a ConfigMap from Literal Values**
+      - **Creating a ConfigMap from a File**
+      - **Creating a ConfigMap from a Directory**
+
+- 2. **Declarative Way:Creating a ConfigMap Using a Definition File**
+      - **creating a ConfigMap named app-config with key-value pairs using YAML**
+      - **Using ConfigMaps in Pods**
+      - **Using ConfigMaps as Environment Variables**
+      - **2Using ConfigMaps as Mounted Volumes**
+      
+## 4.Secrets
+
+## 5.Types of Secrets
+- 1. **Opaque** 
+- 2. **kubernetes.io/service-account-token**
+- 3. **kubernetes.io/dockercfg and kubernetes.io/dockerconfigjson**
+- 4. **kubernetes.io/basic-auth**
+- 5. **kubernetes.io/ssh-auth**
+- 6. **kubernetes.io/tls**
+
+## 6.Secret vs ConfigMap
+
+## 7.Security and Best Practices for ConfigMaps and Secrets in Kubernetes.
+- 1. **ConfigMaps**
+      - **Sensitive Data**
+      - **Access Control**
+      - **Encryption**
+      - **Limited Use**
+      - **Immutability**
+
+- 2. **Secrets**
+      - **Data Sensitivity**
+      - **Encryption at Rest**
+      - **API Access Control**
+      - **Avoid Direct Access**
+      - **Secret Rotation**
+
+## 8.General Practices.
+- 1. **Secure Delivery**
+- 2. **Minimize Exposure**
+- 3. **Namespace Isolation**
+- 4. **Audit and Monitoring**
+- 5. **Least Privilege**
+- 6. **Automation**
+- 7. **Regular Review**
+- 8. **Educate and Train**
+
+## 9.Do Not Hradcode
+
+## 10.Different Ways to Configure Data in YAML
+- 1. **Passing Arguments**
+- 2. **Environment Variables** 
+- 3. **Configuration Files**
+
+- 1. **To get the api-resources of ConfigMap**
+- 2. **Creating a ConfigMap in local-cluster**
+      - **Important Notes**
+         - **Size Limitation** 
+         - **Immutable ConfigMaps** 
+- 3. **Applying the ConfigMap in local-cluster**
+- 4. **Verify whether the ConfigMap is created in local-cluster**
+- 5. **create the statefulset.yaml**
+- 6. **Now apply the statefulset.yaml changes in the local-cluster**
+- 7. **Now lets try to list the pods that are running in the local-cluster**
+- 8. **Now list down the environmental variables**
+- 9. **Now lets see the configuation file is mounted or not**
+- 10. **Now lets update the configmap and see by Creating a ConfigMap in local-cluster**
+- 11. **Now apply the changes in the local-cluster**
+- 12. **Now get into the pod and see if the values are updated automatically**
+- 13. **Now lets check the environmental variables**
+- 14. **Now lets restart a pod and see whether the environmental variables are updated after pod restart or not**
+- 15. **Now list into the same mongo-0 pod and list down the environmental variables**
+- 16. **To see if the data is stored in the new path i.e /data/db in the container**
+- 17. **Creating a secret file in local-cluster**
+- 19. **To encode a text from a command line**
+- 20. **To refer to this secret data from the pod we need to do some changes in statefulset**
+- 21. **Now lets delete the password from the mongo-congigmap.yaml**
+- 22. **Now apply the changes in the local-cluster**
+- 23. **Now delete the statefulset.yaml and reapply the changes in the local-cluster**
+- 24. **Now get inside the mongo-0 pod in the local-cluster**
+- 25. **Just like we updated the configmap we can update the secret too this can be done by**
+- 26. **Changing a secret file in local-cluster**
+- 27. **Now apply the changes in the local-cluster**
+- 28. **Now delte the mongo-0 pod**
+- 29. **The pods gets automatically created bcz we are using statefulset**
+- 30. **Now get into the mongo-0 pod and see the changes are reflected**
+
+## 11.Choosing between ConfigMap and Secret is very simple
+- 1. **If you want to store non-sensitive, plain configuration data, use a ConfigMap.**
+- 2. **If you want to store any sensitive data, use a Secret.**
+- 3. **If a configuration includes both sensitive and non-sensitive data, you should use Secrets.**
+
+
+
+
 
 
 
