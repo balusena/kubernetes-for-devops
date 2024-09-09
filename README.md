@@ -1197,6 +1197,106 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 ## 5.Summary
 
 
+# 15: Kubernetes Autoscaling:
+
+## 1.Types of Autoscalers:
+1. **Kubernetes offers 3 types of Autoscalers**
+    - **HPA(Horizontal Pod Autoscaler)
+    - **VPA(Vertical Pod Autoscaler)
+    - **CA(Cluster Autoscaler)
+
+## 2.HPA(Horizontal Pod Autoscaler)
+
+## 3.VPA(Vertical Pod Autoscaler)
+
+## 4.CA(Cluster Autoscaler)
+
+## 5.Scale Up and Scale Down in (HPA, VPA, CA) Autoscaling
+1. **Scale Up**
+2. **Scale Down**
+
+## 6.Working examples of Autoscalers
+
+## 7.Horizontal Pod Autoscaler (HPA)**
+1. **Horizontal Pod Autoscaler (HPA) Workflow**
+2. **Usecase**
+
+## 8.Create a simple Spring Boot API with a `/stress` endpoint that generates CPU load when invoked**
+
+1. **Now deploy this API with kubernetes deployment**
+2. **Now create a kubernetes service in cluster to access this application**
+3. **Now create/define a HPA-Horizontal Pod AutoScaler for the above deployment**
+4. **First apply our deployment of spring boot application**
+5. **Now apply the service to access this application**
+6. **Now apply the HPA in cluster**
+7. **Now list down all the pods in the cluster**
+8. **Now lets list down the metrics of these pods**
+9. **Now list down the pods again**
+10. **We can verify that HPA scaled it down by describing the HPA**
+11. **Now try to describe this HPA**
+12. **Now create a manifest file for traffic-generator.yaml**
+13. **Now apply the changes in the cluster**
+14. **To get the list of pods running in the cluster**
+15. **Now try to get into this pod**
+16. **To access the Traffic Generator Pod**
+17. **Now lets simulate the load with this command in the pod**
+18. **Now lets open the new tab and see the pod matrix**
+19. **Now lets open the new tab and see the pod matrix**
+20. **Now lets try to list the HPA from the cluster**
+21. **We can also verify this by describing HPA**
+22. **Now lets list down the metrics of the pod**
+23. **Now lets get the HPA**
+24. **.Now list down the pods in cluster**
+25. **Now lets get the HPA**
+26. **We can also verify this by describing HPA**
+
+## 9.Vertical Pod Autoscaler (VPA)
+1. **Vertical Pod Autoscaler (VPA) Workflow**
+    - **Vertical Pod Autoscaler (VPA) performs three steps**
+       - **Reads Resource Metrics** 
+       - **Recommends Resources** 
+       - **Updates Resources (Optional)** 
+
+1. **Now create a vpa.yaml manifest file**
+    - **Note:Here, our target is the same utility-api, and the updateMode is set to Off. The updateMode has three values**
+       - Auto 
+       - Off
+       - Initial
+2. **Now apply the changes in the cluster**
+3. **Cloning VPA from the Git**
+4. **Now get into the autoscaler repository/directory run this command to install VPA**
+5. **Now apply the changes in the cluster for VPA**
+6. **We can verify that by using**
+7. **Now try to describe this VPA**
+
+## 10.Cluster Autoscaler(CA)
+1. **Note: We are using AWS cloud provider example for Cluster Autoscaler (CA)**
+
+2. **Steps to Configure and Use Cluster Autoscaler on AWS**
+    - **Set Up an EKS Cluster**
+    - **Install the Cluster Autoscaler on EKS**
+    - **Update IAM Policy to Allow EKS Cluster Autoscaler to Modify Nodes**
+    - **Verify the Setup of the Cluster Autoscaler on EKS:**
+
+1. **Create a ca.yaml file**
+2. **Apply the ca.yaml File**
+3. **Check the status of the Cluster Autoscaler**
+4. **Describe the Cluster Autoscaler**
+
+## 11.Monitoring Cluster Autoscaler: Nodes Before and After Scheduling a Pod
+1. **Check Nodes Before Scheduling**
+2. **Trigger Autoscaling by Scheduling a New Pod**
+3. **Apply the Deployment**
+4. **To get the list of pods in the cluster**
+5. **Check the Cluster Autoscaler logs to see if it detected the unschedulable pod and started adding nodes**
+6. **After the Cluster Autoscaler adds a new node, check the nodes in the cluster again**
+7. **Finally, check that the previously unschedulable pod is now running**
+
+
+
+
+
+
 
 
 
