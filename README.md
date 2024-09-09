@@ -1537,6 +1537,16 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 18. **To get the list of pods**
 19. **Now, to delete the CronJob we created: when we delete the CronJob, the associated jobs will also be deleted**
 
+## Liking the Project?
+
+# ⭐❤️
+
+If you find this project helpful, please consider giving it a ⭐! It helps others discover the project and keeps me motivated to improve it.
+
+Thank you for your support!
+
+---
+Made with ❤️ and passion to contribute to the DevOps community by [Bala Senapathi](https://github.com/balusena)
 
 
 
