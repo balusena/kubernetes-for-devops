@@ -1091,6 +1091,113 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 5. **To get the complete information of the pod in the cluster**
 
 
+# 14: Kubernetes Advanced Scheduling
+
+1. **NodeName**
+2. **NodeSelector**
+3. **Affinity**
+    - **Node Affinity**
+    - **Pod Affinity**
+4. **Taints and Tolerations**
+
+## 1.How Kubernetes Scheduler Works
+1. **Create a minikube cluster with 4 nodes**
+2. **To verify the nodes in the cluster**
+
+## 2.Different methods to guide Kubernetes in scheduling pods onto specific nodes.
+
+## 1.nodeName
+1. **Now create a simple deployment file todo-ui-deployment.yaml**
+2. **Now apply the deployment changes in cluster**
+3. **Now list down the pods in the cluster and give wide option to display the nodes also**
+
+## 2.nodeSelector
+1. **Add the label to the first node i.e minikube**
+2. **Add the label to the third node i.e minikube-m03**
+3. **Now verify the node labels in the cluster**
+    - **Note: We can see all the labels of nodes.** 
+    - **Labels of first node:minikube**
+    - **Labels of second node:minikube-m02**
+    - **Labels of third node:minikube:m03**
+    - **Labels of fourth node:minikube-m04**
+4. **To filter our nodes with specific labels in our cluster**
+5. **Now change the deployment file todo-ui-deployment.yaml**
+6. **Now apply the deployment changes in cluster**
+7. **Now list down the pods in the cluster and give wide option to display the nodes also**
+
+## 3.Affinity
+
+## 1.Node Affinity:
+1. **Node Affinity is further divided into two types**
+    - **Required During Scheduling, Ignore During Execution**
+    - **Preffered During Scheduling, Ignore During Execution**
+
+2. **Required During Scheduling, Ignore During Execution** 
+    - **Required During Scheduling** 
+    - **Ignore During Execution** 
+
+1. **Now create a simple deployment file todo-ui-deployment.yaml**
+    - **Note:** We assign node labels using `matchExpressions`, where we specify the key-value pair. 
+       - **Key:"rank"**
+       - **Operators**
+          - **Gt** Greater than
+          - **Lt** Less than
+          - **In** Contains specified values
+          - **NotIn** Does not contain specified values
+          - **Exists** Contains specified labels
+          - **DoesNotExist** Does not contain specified labels
+2. **Now apply the deployment changes in cluster**
+3. **Now list down the pods in the cluster and give wide option to display the nodes also**
+4. **Now add these labels to the nodes 2 and 3 in the cluster**
+    - **Add the label to the second node i.e minikube-m02**
+    - **Add the label to the third node i.e minikube-m03**
+5. **Now list down the pods in the cluster with above changes**
+
+3. **Preferred During Scheduling, Ignore During Execution** 
+1. **Now create a simple deployment file todo-ui-deployment.yaml**
+2. **Now apply the deployment changes in cluster**
+3. **Now list down the pods in the cluster and give wide option to display the nodes also**
+4. **Now create a simple deployment file todo-ui-deployment.yaml**
+5. **Now apply the deployment changes in cluster**
+6. **Now list down the pods in the cluster and give wide option to display the nodes also**
+
+## 2.Pod Affinity
+1. **Create a todo-api-deployment in cluster**
+
+1.**podAffinity is categorized into two types**
+   - **Soft Affinity**
+   - **Hard Affinity**
+2. **Now apply the deployment changes in cluster**
+3. **Now list down the pods in the cluster and give wide option to display the nodes also**
+
+## 3.podAntiAffinity:
+1. **Create a todo-api-deployment in cluster**
+2. **Now apply the changes in the cluster**
+3. **Now list down all the pods in the cluster**
+
+## 4.Taints and Tolerations:
+1. **There are 3 types of Taint effects**
+    - **NoSchedule (Hard)** 
+    - **PreferNoSchedule (Soft)** 
+    - **NoExecute (Strict)** 
+
+1. **So we can add it into the node Now taint a second node minikube-m02 in the cluster**
+2. **Now verify this by listing down the pods**
+3. **Now verify this by listing down the pods**
+4. **If we want to look at the taints that are applied on a node we should describe the node i.e, minikube-02**
+5. **We can delete a taint by using**
+6. **Now add a taint with different effect now NoSchedule on node 2 i.e, "minikube-m02"**
+7. **Create a todo-api-deployment in cluster**
+8. **Now apply the changes in the cluster**
+9. **Now list down all the pods in the cluster**
+10. **Create a todo-api-deployment in cluster**
+11. **Now apply the changes in the cluster**
+12. **Now list down all the pods in the cluster**
+
+## 5.Summary
+
+
+
 
 
 
