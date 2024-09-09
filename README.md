@@ -1,5 +1,7 @@
 # kubernetes-for-devops
-![Kubernetes]()
+
+![Kubernetes](https://github.com/balusena/kubernetes-for-devops/blob/main/kubernetes.png)
+
 The Kubernetes for DevOps repository offers an extensive guide designed to help DevOps professionals master Kubernetes.
 It starts with a foundational introduction to Kubernetes and its setup, ensuring a solid understanding of the platform. 
 The guide covers YAML, the language used for defining Kubernetes configurations, and progresses through key Kubernetes 
