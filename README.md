@@ -1326,7 +1326,7 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 4. **Now apply this manifest in the cluster**
 5. **To verify the roles in the cluster**
 
-## 5.Creating a RoleBinding, attaching the Role and Subject and granting permissions to User "balu" Using RoleBinding
+## 5.Creating a RoleBinding to Attach Role, Subject, and Grant Permissions to User "balu"
 1. **Create a rolebinding in the cluster**
 2. **Now apply this rolebinding in the cluster**
 3. **Now lets witch back to the user balu-minikube**
