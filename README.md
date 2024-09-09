@@ -1,4 +1,4 @@
-# kubernetes-for-devops
+# Kubernetes For Devops
 
 ![Kubernetes](https://github.com/balusena/kubernetes-for-devops/blob/main/kubernetes.png)
 
