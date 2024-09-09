@@ -1293,6 +1293,90 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 7. **Finally, check that the previously unschedulable pod is now running**
 
 
+# 16: Kubernetes Role Based Access Control(RBAC)
+
+## 1.Authentication and Authorization
+1. **Authentication**
+2. **Authorization**
+
+## 2.Create User
+1. **Create a simple nginx pod in minikube**
+2. **Apply the changes in the cluster**
+                            
+## 3.Users and Groups
+1. **Creating a user**
+2. **Open the config file in nano editor**
+3. **First we should generate the users private key with openssl and store output file to the current folder**
+4. **Next we must create a certificate signing request for the user "balu" with above private key**
+5. **To get the details of present working directory**
+6. **Our private key and CertificateSigningRequest(csr) are ready now verify them using**
+7. **To sign it we should generate this command**
+8. **Next we should add the user "balu" to the cluster**
+9. **We should create the context with the same command**
+10. **We can also verify that by using**
+11. **To switch the context**
+12. **Now try to list down the pods in the cluster**
+13. **Now switch back to the minikube user**
+
+## 4.Role and RoleBinding
+1. **Creating a Role**
+    - **Create a simple role manifest file**
+2. **To see what kind of verbs we can give for a particular user**
+3. **To switch the context**
+4. **Now apply this manifest in the cluster**
+5. **To verify the roles in the cluster**
+
+## 5.Creating a RoleBinding, attaching the Role and Subject and granting permissions to User "balu" Using RoleBinding
+1. **Create a rolebinding in the cluster**
+2. **Now apply this rolebinding in the cluster**
+3. **Now lets witch back to the user balu-minikube**
+4. **Now list down the pods to see whether balu-minikube is having permissions to list down the pods**          
+5. **Now lets create a pod in balu-minikube with user balu and see we can create a pod here**
+6. **Now lets switch back to the minikube user**
+7. **Now create a namespace "ns" and with namespace name "test" in minikube**
+8. **Now create a new pod in this namespace**
+9. **To verify this list down the pods in test namespace**
+10. **Now switch back to balu-minikube of user balu and try to access this pod in the test namespace**
+
+## 6.ClusterRole and ClusterRoleBinding
+1. **Create a clusterrole in the cluste**
+2. **Create a clusterrolebinding in the cluster**
+3. **Now apply the ClusterRole changes in the cluster**
+4. **Now switch back to the minikube context**
+5. **Now apply the ClusterRole changes in the minikube context**
+6. **Now apply the ClusterRoleBinding changes in the minikube context**
+7. **Now switch back to the balu-minikube context**
+8. **Now try to access or get the pod from test namespace we created**
+9. **To get the pods from all the namespaces in the cluster**
+
+## 7.Groups
+1. **Create cluster-role-binding in the cluster**
+2. **Now apply the cluster-role-binding changes in the cluster**
+
+## 6.Service Accounts
+1. **To get the service account in cluster**
+2. **Now switch back to the minikube context**
+3. **We can also find this namespace in test namespace**
+4. **To create a service account in minikube**
+5. **To get the service account in cluster**
+6. **Now create a simple kubectl-pod and try to get the list of pods from this pod**
+7. **Apply the changes in the minikube**
+8. **Now get into the kubectl-pod**
+9. **Now try to list down the pods**
+10. **Now make changes in kubectl-pod**
+11. **Now delete the pod in the cluster**
+12. **Now apply the changes in the cluster to create the pod**
+13. **Now try to get into the pods and try to list down the pods**
+14. **To add permissions to this service account "test-sa" for this make changes in role-binding.yaml**
+15. **Apply the changes in the cluster**
+16. **Now try to list down the pods after updating the role-binding.yaml**
+17. **Now come out of pod and see if we can perform action with a command**
+18. **To test if a service account is having permission or not**
+19. **Now lets try to see if we can get the pods**
+
+
+
+
 
 
 
