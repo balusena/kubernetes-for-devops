@@ -1431,6 +1431,113 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 18. **Deleting a DaemonSet Without Deleting Managed Pods (Updated Method)**
 
 
+# 18: Kubernetes Jobs and CronJobs
+
+## 1.Kubernetes Jobs Lifecycle
+
+## 2.Use Cases
+1. **DB Backups**
+2. **Log Rotation**
+3. **Data Processing**
+
+## 3.Now let us see how we can take the backup of the mongodb using job and then schedule it with cronjob
+1. **To get the information about StatefulSets**
+2. **Create the mongo-configmap.yaml**
+3. **Apply the changes in the cluster**
+4. **To encode a text from a command line**
+5. **Create the mongo-secret.yaml**
+6. **Apply the changes in the cluster**
+7. **Create the sc.yaml**
+8. **Apply the changes in the cluster**
+9. **Create the statefulset.yaml**
+10. **Apply the changes in the cluster**
+11. **Create headless-service.yaml**
+12. **Apply the changes in the local-cluster**
+13. **To verify that the headless services are created in the local-cluster**
+14. **Now let us try create the mongodb replicasets in local-cluster**
+15. **To get the list of pods in the local-cluster**
+16. **To get into the mongo pod in the local-cluster**
+17. **Now lets try to execute the same command inside the mongo-0 pod in local-cluster**
+18. **Now exit and get into the mongo-0 pod again**
+19. **Create a database with a collection in the Primary Node and verify if the same data is replicated in the Secondary Nodes**
+20. **Now log into the second node of the pod and see that it have the same data as primary node**
+21. **Now exit from this mongo-1 pod and verify that the mongo-2 is having the same replicated data**
+22. **Now list the pods in cluster**
+23. **Now verify the statefulsets in the cluster**
+24. **Now create the pvc.yaml manifest file**
+25. **Now apply the changes into the cluster**
+
+## 4.Kubernetes Jobs
+1. **Now create a job manifest file in cluster**
+2. **Now apply this changes and see whether the database is getting exported or not** 
+3. **Now list down the jobs that are running in cluster**
+4. **Now list down the pods that are running in the cluster**
+5. **Now try to get the logs of error which is effecting pod to get created in cluster**
+6. **Whenever you are getting this error we need to do the following changes in your mongodb database**
+    - **1.Access MongoDB** 
+    - **2.Start MongoDB Shell** 
+    - **3.Check the Replica Set Status** 
+    - **4.Check Users and Roles** 
+    - **5.Test Authentication** 
+    - **6.Check Authentication Mechanism** 
+       - **Create the Username and Password in the mongodb**
+    - **7.Now apply the job.yaml again in the cluster**
+    - **8.Now try to list down the pods in the cluster**
+    - **9.Now try to list down the jobs in cluster**
+    - **10.Now see whether our data is exported or not.This data should be exported to volumes,so list down the volumes**
+       - **To get PVC**
+       - **To get PV**
+    - **11.Now describe this volume where the data is getting stored** 
+    - **12.Now lets get into our host i.e, minikube**
+    - **13.Now try to list down the contents of the directory**
+    - **14.Now get into the admin, test databases**
+       - **Getting into admin database**
+       - **Getting into test database**
+    - **15.If we are doubtful, let’s get into the MongoDB pod and check if that collection exists**
+    - **16.Now try to list down the databases in the mongodb**
+    - **17.Now try to list down the collections in the database as we have created collections in test not in admin database**
+    - **18.Now try to list down the jobs again in cluster**
+    - **19.Now verify this by listing the pods**
+    - **20.Create home-work.yaml**
+    - **21.To get the list of jobs in the cluster**
+    - **22.Apply the changes in the cluster**
+    - **22.Make the changes in the home-work.yaml**
+    - **23.Now apply the changes in cluster**
+    - **24.Now list down the pods**
+    - **25.Now get the logs of the two pods**
+    - **26.Now list down the jobs in cluster**
+    - **27.To get the list of pod**
+    - **28.To stop this Job from creating more pods or to check the final status of the Job, you can delete the Job**
+    - **29.To list down the pods**
+    - **30.This will terminate the Job, and you can then check its final status using `kubectl get jobs`**
+
+## 5.Kubernetes CronJobs
+1. **Now create a cronjob manifest in cluster**
+    - **CronJobs Concurrency Policy**
+       - **The available options are**
+          - **Allow** 
+          - **Forbid** 
+          - **Replace** 
+2. **Now apply the changes in the cluster**
+3. **Now list down the all the cronjobs in cluster**
+4. **Now list down the pods**
+5. **Now list down the jobs**
+6. **Now verify the list of pods in cluster**
+7. **Now get the list of jobs in the cluster**
+8. **Now apply the changes in the cluster**
+9. **Now list down the jobs in cluster**
+10. **Now get into the minikube and see whether data is being exported to the file specified i.e, mongodump**
+11. **Now list down the jobs**
+12. **We can also suspend the CronJob to stop creating jobs temporarily. To do this, edit the CronJob**
+13. **Jobs created before applying patching**
+14. **Now get the last schedule of the cronjob**
+15. **Now lets try to rollback the suspend patch so that the pods will be created normally**
+16. **To get the list of CronJobs**
+17. **To get the list of jobs in the cluster**
+18. **To get the list of pods**
+19. **Now, to delete the CronJob we created: when we delete the CronJob, the associated jobs will also be deleted**
+
+
 
 
 
