@@ -1375,6 +1375,63 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 19. **Now lets try to see if we can get the pods**
 
 
+# 17: Kubernetes DaemonSets:
+
+## 1.Key Points
+1. **Automatic Scheduling** 
+2. **Use Cases** 
+3. **Node Selectors**
+4. **Updates**
+
+## 2.DaemonSets for Node-Specific Tasks
+1. **DaemonSets** 
+    - **Collecting Logs** 
+    - **Monitoring Metrics** 
+    - **Node Maintenance Tasks** 
+
+## 3.Monitoring Nodes with DaemonSets
+1. **DaemonSets** 
+    - **Here's how DaemonSets address the challenge**
+       - **Automatic Scheduling** 
+       - **Consistency** 
+       - **Difference from Deployments** 
+
+## 4.Common Use Cases for DaemonSets
+1. **Logging Agents**
+    - **Example**
+    - **Purpose** 
+
+2. **Monitoring Agents**
+    - **Example** 
+    - **Purpose** 
+
+3. **Network Agents**
+    - **Example** 
+    - **Purpose** 
+
+## 5.Practical Example: Running Prometheus Node Exporter with DaemonSet
+1. **Now create a simple daemonset**
+    - **To get the api-version of daemonset in our cluster**
+2. **Apply the changes in the cluster**
+3. **We can verify that using**
+4. **Now list down the pods**
+5. **We can verify that using**
+6. **Now try to add another node to our cluster**
+7. **To get the list of nodes in our cluster**
+8. **We can verify that by using**
+9. **Now lets try to delete the second node i.e, minikube-m02**
+10. **Now try to list down the pods**
+11. **Now that we have monitoring pods running, let's check if they are providing metrics by port-forwarding these pods**
+12. **Now lets go to the browser**
+13. **To verify the daemonsets in all namespaces**
+14. **Now list down the pods**
+15. **When ever we delete a daemonset all pods managed by it are automatically deleted.We can verify that by using**
+16. **To get the list of pods**
+17. **Deleting a DaemonSet Without Deleting Managed Pods (Deprecated Method)**
+18. **Deleting a DaemonSet Without Deleting Managed Pods (Updated Method)**
+
+
+
 
 
 
