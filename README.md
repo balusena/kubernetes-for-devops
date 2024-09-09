@@ -1164,18 +1164,18 @@ This repository covers the complete Kubernetes fundamentals along with examples 
 ## 2.Pod Affinity
 1. **Create a todo-api-deployment in cluster**
 
-1.**podAffinity is categorized into two types**
-   - **Soft Affinity**
-   - **Hard Affinity**
+1. **podAffinity is categorized into two types**
+    - **Soft Affinity**
+    - **Hard Affinity**
 2. **Now apply the deployment changes in cluster**
 3. **Now list down the pods in the cluster and give wide option to display the nodes also**
 
-## 3.podAntiAffinity:
+## 3.podAntiAffinity
 1. **Create a todo-api-deployment in cluster**
 2. **Now apply the changes in the cluster**
 3. **Now list down all the pods in the cluster**
 
-## 4.Taints and Tolerations:
+## 4.Taints and Tolerations
 1. **There are 3 types of Taint effects**
     - **NoSchedule (Hard)** 
     - **PreferNoSchedule (Soft)** 
