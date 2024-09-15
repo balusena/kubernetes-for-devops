@@ -1560,7 +1560,7 @@ a structured approach to mastering Kubernetes, from basic setup to advanced mana
 > - **DevOps Engineers**: Get quick access to the tools you use every day.
 > - **Sysadmins**: Simplify operations with easy-to-follow guides.
 > - **Developers**: Understand the infrastructure behind your applications.
-> - **DevOps Newcomers**: Transform from beginner to expert with our in-depth concepts and hands-on projects.
+> - **DevOps Newcomers**: Transform from beginner to expert with in-depth concepts and hands-on projects.
 
 ## 🛠️ How to Use This Repository
 
